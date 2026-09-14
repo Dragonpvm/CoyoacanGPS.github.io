@@ -1,400 +1,1684 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Coyoacán GPS</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    
-    html, body { 
-      width: 100%; 
-      height: 100dvh; 
-      background: #000; 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-      overflow: hidden; 
-    }
-    
-    .app-viewport { 
-      display: flex; 
-      flex-direction: column; 
-      width: 100%; 
-      height: 100dvh; 
-    }
-    
-    .camera-container { 
-      position: relative; 
-      flex: 1; 
-      width: 100%; 
-      background: #000; 
-      overflow: hidden; 
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    video { 
-      width: 100%; 
-      height: 100%; 
-      object-fit: cover; 
-    }
-    
-    /* CAJA GPS EXACTA DE LA FOTO 1 */
-    .gps-overlay-box {
-      position: absolute; 
-      bottom: 16px; 
-      left: 12px; 
-      right: 12px;
-      background: rgba(10, 10, 10, 0.90);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 12px;
-      padding: 12px;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      z-index: 10;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.7);
-    }
 
-    /* CONTENEDOR DE PIN DEL MAPA */
-    .map-container {
-      width: 96px;
-      height: 96px;
-      min-width: 96px;
-      background: #ffffff;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+<meta charset="UTF-8">
 
-    .map-pin-svg {
-      width: 52px;
-      height: 64px;
-    }
+<meta
+  name="viewport"
+  content="width=device-width,
+           initial-scale=1.0,
+           maximum-scale=1.0,
+           user-scalable=no,
+           viewport-fit=cover"
+>
 
-    /* COLUMNA DE DATOS */
-    .data-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      color: #ffffff;
-    }
+<title>Coyoacán GPS</title>
 
-    .brand-line {
-      font-size: 11px;
-      font-weight: 700;
-      color: #dedede;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      letter-spacing: 0.5px;
-    }
 
-    .brand-square {
-      width: 9px;
-      height: 9px;
-      background: #fbc02d;
-      border-radius: 1px;
-      display: inline-block;
-    }
+<style>
 
-    .city-line {
-      font-weight: 800;
-      color: #ffffff;
-      font-size: 14.5px;
-      line-height: 1.2;
-      margin-top: 1px;
-    }
+/* =========================================================
+   RESET
+   ========================================================= */
 
-    .address-line {
-      color: #e0e0e0;
-      font-size: 11.5px;
-      font-weight: 400;
-      line-height: 1.2;
-    }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 
-    .coords-line {
-      color: #b0b0b0;
-      font-size: 10.5px;
-      margin-top: 1px;
-    }
+  -webkit-tap-highlight-color: transparent;
+}
 
-    .datetime-line {
-      font-weight: 700;
-      color: #ffffff;
-      font-size: 11.5px;
-      margin-top: 1px;
-    }
 
-    /* PANEL DE CONTROL INFERIOR */
-    .controls-panel { 
-      height: 95px; 
-      min-height: 95px;
-      background: #000000; 
-      display: flex; 
-      justify-content: space-evenly; 
-      align-items: center; 
-      border-top: 1px solid #1a1a1a;
-      z-index: 20;
-    }
-    
-    .btn-side { 
-      background: #1c1c1e; 
-      color: #fff; 
-      border: 1px solid #2c2c2e; 
-      padding: 10px 18px; 
-      border-radius: 10px; 
-      font-size: 0.85rem; 
-      font-weight: 600; 
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-    }
-    
-    .btn-capture { 
-      width: 68px; 
-      height: 68px; 
-      border-radius: 50%; 
-      background: #ffffff; 
-      border: 4px solid #e63946; 
-      cursor: pointer; 
-    }
+html,
+body {
 
-    /* MODAL DE VISTA PREVIA */
-    #preview-modal { 
-      display: none; 
-      position: fixed; 
-      inset: 0; 
-      background: #000; 
-      z-index: 100; 
-      flex-direction: column; 
-    }
-    
-    #preview-img { 
-      width: 100%; 
-      flex: 1; 
-      object-fit: contain; 
-      background: #000; 
-    }
-    
-    .preview-actions { 
-      height: 85px; 
-      background: #000000; 
-      display: flex; 
-      justify-content: space-evenly; 
-      align-items: center; 
-    }
-  </style>
+  width: 100%;
+  height: 100%;
+
+  background: #000;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   APP
+   ========================================================= */
+
+.app-viewport {
+
+  width: 100%;
+  height: 100dvh;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #000;
+}
+
+
+/* =========================================================
+   CÁMARA
+   ========================================================= */
+
+.camera-container {
+
+  position: relative;
+
+  width: 100%;
+
+  flex: 1;
+  min-height: 0;
+
+  background: #000;
+
+  overflow: hidden;
+}
+
+
+video {
+
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+
+/* =========================================================
+   TARJETA GPS
+   ========================================================= */
+
+.gps-box {
+
+  position: absolute;
+
+  left: 3%;
+  right: 3%;
+
+  bottom: 2%;
+
+  width: 94%;
+
+  height: 20%;
+
+  background:
+    rgba(0, 0, 0, 0.78);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.4);
+
+  border-radius: 8px;
+
+  padding: 2%;
+
+  display: flex;
+
+  gap: 2.5%;
+
+  align-items: stretch;
+
+  z-index: 10;
+
+  backdrop-filter: blur(6px);
+
+  box-shadow:
+    0 4px 20px
+    rgba(0,0,0,0.6);
+}
+
+
+/* =========================================================
+   COLUMNA IZQUIERDA
+   ========================================================= */
+
+.gps-left {
+
+  width: 25%;
+
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: stretch;
+}
+
+
+/* =========================================================
+   LOGO + COYOACAN GPS
+   ========================================================= */
+
+.gps-brand {
+
+  width: 100%;
+
+  height: 27%;
+
+  display: flex;
+
+  align-items: center;
+
+  margin-bottom: 5%;
+}
+
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.gps-logo {
+
+  height: 100%;
+
+  aspect-ratio: 1 / 1;
+
+  background: #fff;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  overflow: hidden;
+
+  flex-shrink: 0;
+}
+
+
+/*
+   Aquí puedes poner tu logo real:
+
+   <img src="logo.png">
+
+   Por ahora usamos el símbolo.
+*/
+
+.gps-logo span {
+
+  font-size: 55%;
+
+  color: #c79b38;
+
+  line-height: 1;
+}
+
+
+/* =========================================================
+   COYOACAN GPS
+   ========================================================= */
+
+.brand-title {
+
+  height: 100%;
+
+  flex: 1;
+
+  min-width: 0;
+
+  background: #000;
+
+  color: #fff;
+
+  display: flex;
+
+  align-items: center;
+
+  padding: 0 5%;
+
+  font-size: clamp(10px, 2.8vw, 24px);
+
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   MAPA
+   ========================================================= */
+
+.map-square {
+
+  width: 100%;
+
+  flex: 1;
+
+  min-height: 0;
+
+  background: #fff;
+
+  border-radius: 4px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   PIN
+   ========================================================= */
+
+.map-pin {
+
+  font-size: clamp(45px, 14vw, 130px);
+
+  line-height: 1;
+}
+
+
+/* =========================================================
+   COLUMNA DERECHA
+   ========================================================= */
+
+.info-column {
+
+  flex: 1;
+
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  color: #fff;
+}
+
+
+/* =========================================================
+   CIUDAD
+   ========================================================= */
+
+.city-title-large {
+
+  width: 100%;
+
+  background: #000;
+
+  color: #fff;
+
+  padding: 1% 2%;
+
+  font-size:
+    clamp(13px, 3.8vw, 30px);
+
+  font-weight: 800;
+
+  line-height: 1.15;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   INFORMACIÓN
+   ========================================================= */
+
+.address-text {
+
+  margin-top: 2%;
+
+  background: #000;
+
+  color: #fff;
+
+  padding: 1% 2%;
+
+  font-size:
+    clamp(10px, 3vw, 23px);
+
+  font-weight: 500;
+
+  line-height: 1.2;
+}
+
+
+.coords-text {
+
+  background: #000;
+
+  color: #ccc;
+
+  padding: 0 2%;
+
+  font-size:
+    clamp(9px, 2.7vw, 21px);
+
+  line-height: 1.2;
+}
+
+
+.datetime-text {
+
+  background: #000;
+
+  color: #fff;
+
+  padding: 0 2%;
+
+  font-size:
+    clamp(10px, 2.9vw, 22px);
+
+  font-weight: 700;
+
+  line-height: 1.2;
+}
+
+
+.watermark-text {
+
+  position: absolute;
+
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   BOTONES
+   ========================================================= */
+
+.controls-panel {
+
+  width: 100%;
+
+  height: 95px;
+
+  min-height: 95px;
+
+  background: #0a0a0a;
+
+  display: flex;
+
+  justify-content: space-evenly;
+
+  align-items: center;
+
+  border-top: 1px solid #222;
+
+  z-index: 20;
+}
+
+
+.btn-side {
+
+  background: #1a1a1a;
+
+  color: #fff;
+
+  border: 1px solid #333;
+
+  padding: 9px 15px;
+
+  border-radius: 8px;
+
+  font-size: 0.8rem;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+.btn-capture {
+
+  width: 66px;
+
+  height: 66px;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  border: 4px solid #e63946;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   PREVIEW
+   ========================================================= */
+
+#preview-modal {
+
+  display: none;
+
+  position: fixed;
+
+  inset: 0;
+
+  background: #000;
+
+  z-index: 100;
+
+  flex-direction: column;
+}
+
+
+#preview-img {
+
+  width: 100%;
+
+  height: auto;
+
+  flex: 1;
+
+  min-height: 0;
+
+  object-fit: contain;
+
+  background: #000;
+}
+
+
+.preview-actions {
+
+  width: 100%;
+
+  height: 85px;
+
+  min-height: 85px;
+
+  background: #0a0a0a;
+
+  display: flex;
+
+  justify-content: space-evenly;
+
+  align-items: center;
+}
+
+
+/* =========================================================
+   TELÉFONOS PEQUEÑOS
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  .gps-box {
+
+    left: 3%;
+    right: 3%;
+
+    padding: 2%;
+
+    gap: 2%;
+  }
+
+  .gps-left {
+
+    width: 27%;
+  }
+
+  .brand-title {
+
+    font-size: 10px;
+
+    padding-left: 4%;
+  }
+
+  .city-title-large {
+
+    font-size: 13px;
+  }
+
+  .address-text {
+
+    font-size: 10px;
+  }
+
+  .coords-text {
+
+    font-size: 9px;
+  }
+
+  .datetime-text {
+
+    font-size: 10px;
+  }
+}
+
+
+/* =========================================================
+   TELÉFONOS GRANDES
+   ========================================================= */
+
+@media (min-width: 600px) {
+
+  .gps-box {
+
+    left: 20px;
+    right: 20px;
+
+    width: auto;
+
+    height: 190px;
+
+    bottom: 20px;
+  }
+
+  .gps-left {
+
+    width: 170px;
+  }
+
+}
+
+</style>
+
 </head>
+
+
 <body>
 
-  <div class="app-viewport">
-    <div class="camera-container">
-      <video id="video-stream" autoplay playsinline muted></video>
-      
-      <!-- CUADRO FLOTANTE -->
-      <div class="gps-overlay-box" id="overlay-card">
-        <div class="map-container">
-          <svg class="map-pin-svg" viewBox="0 0 100 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50 0C22.4 0 0 22.4 0 50C0 87.5 50 130 50 130C50 130 100 87.5 100 50C100 22.4 77.6 0 50 0Z" fill="#EA4335"/>
-            <ellipse cx="50" cy="48" rx="18" ry="18" fill="#B31412"/>
-            <rect x="47" y="85" width="6" height="35" fill="#5F6368" />
-          </svg>
+
+<!-- =========================================================
+     APP
+     ========================================================= -->
+
+<div class="app-viewport">
+
+
+  <!-- =======================================================
+       CÁMARA
+       ======================================================= -->
+
+  <div class="camera-container">
+
+
+    <video
+      id="video-stream"
+      autoplay
+      playsinline
+      muted>
+    </video>
+
+
+    <!-- =====================================================
+         GPS
+         ESTA ES LA ESTRUCTURA ÚNICA
+         ===================================================== -->
+
+    <div class="gps-box">
+
+
+      <!-- =================================================
+           IZQUIERDA
+           ================================================= -->
+
+      <div class="gps-left">
+
+
+        <!-- LOGO + COYOACAN GPS -->
+
+        <div class="gps-brand">
+
+
+          <div class="gps-logo">
+
+            <span>☀</span>
+
+          </div>
+
+
+          <div class="brand-title">
+
+            Coyoacan GPS
+
+          </div>
+
+
         </div>
 
-        <div class="data-container">
-          <div class="brand-line"><span class="brand-square"></span> COYOACAN GPS</div>
-          <div class="city-line">CDMX, Ciudad de México, México</div>
-          <div class="address-line">Calle Centenario 123, Del Carmen, Coyoacán</div>
-          <div class="coords-line">Lat 19.351234, Long -99.165678</div>
-          <div class="datetime-line" id="live-clock">14/9/2026, 9:27:27 a. m.</div>
+
+        <!-- MAPA -->
+
+        <div class="map-square">
+
+          <span class="map-pin">📍</span>
+
         </div>
+
+
       </div>
+
+
+      <!-- =================================================
+           DERECHA
+           ================================================= -->
+
+      <div class="info-column">
+
+
+        <!-- CIUDAD -->
+
+        <div class="city-title-large">
+
+          CDMX, Ciudad de México, México
+
+        </div>
+
+
+        <!-- DIRECCIÓN -->
+
+        <div class="address-text">
+
+          Calle Centenario 123, Del Carmen, Coyoacán
+
+        </div>
+
+
+        <!-- COORDENADAS -->
+
+        <div class="coords-text">
+
+          Lat 19.351234, Long -99.165678
+
+        </div>
+
+
+        <!-- FECHA -->
+
+        <div
+          class="datetime-text"
+          id="live-clock"
+        >
+
+          14/09/2026, 9:25:17 a.m.
+
+        </div>
+
+
+      </div>
+
+
     </div>
 
-    <div class="controls-panel">
-      <button class="btn-side">📹 Video</button>
-      <button class="btn-capture" onclick="takeSnapshot()"></button>
-      <button class="btn-side">🖼️ Galería</button>
-    </div>
+
   </div>
 
-  <div id="preview-modal">
-    <img id="preview-img" alt="Evidencia">
-    <div class="preview-actions">
-      <button class="btn-side" style="background: #222;" onclick="discardPhoto()">❌ Descartar</button>
-      <button class="btn-side" style="background: #e63946; border: none;" onclick="downloadPhoto()">💾 Guardar Evidencia</button>
-    </div>
+
+  <!-- =======================================================
+       CONTROLES
+       ======================================================= -->
+
+  <div class="controls-panel">
+
+
+    <button
+      class="btn-side"
+      onclick="alert('Modo video')"
+    >
+      📹 Video
+    </button>
+
+
+    <button
+      class="btn-capture"
+      onclick="takeSnapshot()"
+    >
+    </button>
+
+
+    <button
+      class="btn-side"
+      onclick="alert('Galería')"
+    >
+      🖼️ Galería
+    </button>
+
+
   </div>
 
-  <canvas id="canvas" style="display:none;"></canvas>
 
-  <script>
-    const video = document.getElementById('video-stream');
-    const clockEl = document.getElementById('live-clock');
-    let fileName = '';
+</div>
 
-    function updateClock() {
-      const now = new Date();
-      const dateStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
-      const timeStr = now.toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true });
-      clockEl.innerText = `${dateStr}, ${timeStr}`;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
 
-    navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } },
-      audio: false
-    }).then(stream => {
-      video.srcObject = stream;
-    }).catch(() => {
-      navigator.mediaDevices.getUserMedia({ video: true }).then(stream => video.srcObject = stream);
-    });
+<!-- =========================================================
+     PREVIEW
+     ========================================================= -->
 
-    function drawRoundedRect(ctx, x, y, width, height, radius, fillStyle, strokeStyle) {
-      ctx.beginPath();
-      ctx.moveTo(x + radius, y);
-      ctx.lineTo(x + width - radius, y);
-      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-      ctx.lineTo(x + width, y + height - radius);
-      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-      ctx.lineTo(x + radius, y + height);
-      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-      ctx.lineTo(x, y + radius);
-      ctx.quadraticCurveTo(x, y, x + radius, y);
-      ctx.closePath();
-      
-      if (fillStyle) {
-        ctx.fillStyle = fillStyle;
-        ctx.fill();
+<div id="preview-modal">
+
+
+  <img
+    id="preview-img"
+    alt="Evidencia"
+  >
+
+
+  <div class="preview-actions">
+
+
+    <button
+      class="btn-side"
+      style="background:#222;"
+      onclick="discardPhoto()"
+    >
+      ❌ Descartar
+    </button>
+
+
+    <button
+      class="btn-side"
+      style="
+        background:#e63946;
+        border:none;
+      "
+      onclick="downloadPhoto()"
+    >
+      💾 Guardar Evidencia
+    </button>
+
+
+  </div>
+
+
+</div>
+
+
+<canvas
+  id="canvas"
+  style="display:none;"
+></canvas>
+
+
+<script>
+
+/* =========================================================
+   ELEMENTOS
+   ========================================================= */
+
+const video =
+  document.getElementById("video-stream");
+
+const clockEl =
+  document.getElementById("live-clock");
+
+let fileName = "";
+
+
+/* =========================================================
+   RELOJ
+   ========================================================= */
+
+function updateClock() {
+
+  const now = new Date();
+
+  clockEl.innerText =
+    now.toLocaleString(
+      "es-MX",
+      {
+        day: "numeric",
+        month: "numeric",
+        year: "numeric",
+
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+
+        hour12: true
       }
-      if (strokeStyle) {
-        ctx.strokeStyle = strokeStyle;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
+    );
+}
+
+
+setInterval(
+  updateClock,
+  1000
+);
+
+updateClock();
+
+
+/* =========================================================
+   CÁMARA
+   ========================================================= */
+
+navigator.mediaDevices
+  .getUserMedia({
+
+    video: {
+
+      facingMode: {
+        ideal: "environment"
+      },
+
+      width: {
+        ideal: 1920
+      },
+
+      height: {
+        ideal: 1080
       }
+
+    },
+
+    audio: false
+
+  })
+
+  .then(
+    stream => {
+
+      video.srcObject =
+        stream;
+
     }
+  )
 
-    function takeSnapshot() {
-      const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
-      
-      const w = video.videoWidth || 1280;
-      const h = video.videoHeight || 720;
-      canvas.width = w;
-      canvas.height = h;
+  .catch(
+    () => {
 
-      // 1. Imagen base
-      ctx.drawImage(video, 0, 0, w, h);
+      navigator.mediaDevices
+        .getUserMedia({
+          video: true
+        })
+        .then(
+          stream => {
 
-      // 2. Proporciones y dimensiones ajustadas
-      const margin = w * 0.03;
-      const cardW = w - (margin * 2);
-      const cardH = h * 0.19;
-      const cardY = h - cardH - margin;
-      const radius = 14;
+            video.srcObject =
+              stream;
 
-      // Dibujar fondo transparente con esquinas redondeadas exactas
-      drawRoundedRect(ctx, margin, cardY, cardW, cardH, radius, "rgba(10, 10, 10, 0.90)", "rgba(255, 255, 255, 0.25)");
+          }
+        );
 
-      // 3. Cuadro Blanco del Mapa (Izquierda) con esquinas redondeadas
-      const mapW = cardH * 0.74;
-      const mapX = margin + 14;
-      const mapY = cardY + (cardH - mapW) / 2;
-      drawRoundedRect(ctx, mapX, mapY, mapW, mapW, 8, "#ffffff", null);
-
-      // Pin dibujado en Canvas en vector limpio
-      const pinW = mapW * 0.55;
-      const pinH = mapW * 0.70;
-      const pinX = mapX + (mapW - pinW) / 2;
-      const pinY = mapY + (mapW - pinH) / 2;
-
-      const centerX = pinX + (pinW / 2);
-      const headRadius = pinW * 0.45;
-      const headCenterY = pinY + headRadius;
-
-      // Cuerpo pin rojo
-      ctx.fillStyle = "#EA4335";
-      ctx.beginPath();
-      ctx.arc(centerX, headCenterY, headRadius, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.moveTo(centerX - headRadius, headCenterY + 2);
-      ctx.lineTo(centerX, pinY + pinH - 10);
-      ctx.lineTo(centerX + headRadius, headCenterY + 2);
-      ctx.fill();
-
-      // Centro del pin
-      ctx.fillStyle = "#B31412";
-      ctx.beginPath();
-      ctx.arc(centerX, headCenterY, headRadius * 0.45, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Aguja inferior
-      ctx.fillStyle = "#5F6368";
-      ctx.fillRect(centerX - 2, pinY + pinH - 12, 4, 12);
-
-      // 4. Textos con fuentes idénticas a la pantalla
-      const textX = mapX + mapW + 14;
-      const baseFont = w * 0.021;
-      const systemFont = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-
-      // Línea 1: Brand
-      let currentY = mapY + (mapW * 0.16);
-      ctx.fillStyle = "#fbc02d";
-      ctx.fillRect(textX, currentY - (baseFont * 0.6), baseFont * 0.65, baseFont * 0.65);
-
-      ctx.fillStyle = "#dedede";
-      ctx.font = `700 ${baseFont * 0.8}px ${systemFont}`;
-      ctx.fillText("COYOACAN GPS", textX + (baseFont * 0.95), currentY);
-
-      // Línea 2: Ciudad
-      currentY += (mapW * 0.22);
-      ctx.fillStyle = "#ffffff";
-      ctx.font = `800 ${baseFont * 1.25}px ${systemFont}`;
-      ctx.fillText("CDMX, Ciudad de México, México", textX, currentY);
-
-      // Línea 3: Dirección
-      currentY += (mapW * 0.20);
-      ctx.fillStyle = "#e0e0e0";
-      ctx.font = `400 ${baseFont * 0.95}px ${systemFont}`;
-      ctx.fillText("Calle Centenario 123, Del Carmen, Coyoacán", textX, currentY);
-
-      // Línea 4: Coordenadas
-      currentY += (mapW * 0.17);
-      ctx.fillStyle = "#b0b0b0";
-      ctx.font = `400 ${baseFont * 0.85}px ${systemFont}`;
-      ctx.fillText("Lat 19.351234, Long -99.165678", textX, currentY);
-
-      // Línea 5: Fecha / Hora exacta
-      currentY += (mapW * 0.19);
-      ctx.fillStyle = "#ffffff";
-      ctx.font = `700 ${baseFont * 0.95}px ${systemFont}`;
-      ctx.fillText(clockEl.innerText, textX, currentY);
-
-      // Descarga / Vista previa
-      const now = new Date();
-      fileName = `Evidencia_${now.toISOString().replace(/[:.]/g, '-')}.jpg`;
-      document.getElementById('preview-img').src = canvas.toDataURL('image/jpeg', 0.95);
-      document.getElementById('preview-modal').style.display = 'flex';
     }
+  );
 
-    function discardPhoto() {
-      document.getElementById('preview-modal').style.display = 'none';
-    }
 
-    function downloadPhoto() {
-      const a = document.createElement('a');
-      a.href = document.getElementById('preview-img').src;
-      a.download = fileName;
-      a.click();
-      discardPhoto();
-    }
-  </script>
+/* =========================================================
+   TOMAR FOTO
+   ========================================================= */
+
+function takeSnapshot() {
+
+
+  const canvas =
+    document.getElementById("canvas");
+
+  const ctx =
+    canvas.getContext("2d");
+
+
+  /* =======================================================
+     FOTO VERTICAL
+     
+     IMPORTANTE:
+     La imagen final tiene la misma proporción
+     vertical que la pantalla del teléfono.
+     ======================================================= */
+
+  const outputW = 1080;
+
+  const outputH = 1920;
+
+
+  canvas.width =
+    outputW;
+
+  canvas.height =
+    outputH;
+
+
+  /* =======================================================
+     VIDEO ORIGINAL
+     ======================================================= */
+
+  const videoW =
+    video.videoWidth || 1920;
+
+  const videoH =
+    video.videoHeight || 1080;
+
+
+  /*
+   * Queremos exactamente el mismo formato
+   * que vemos en el teléfono: 9:16.
+   */
+
+  const targetRatio =
+    outputW / outputH;
+
+  const videoRatio =
+    videoW / videoH;
+
+
+  let sx = 0;
+  let sy = 0;
+  let sw = videoW;
+  let sh = videoH;
+
+
+  /* =======================================================
+     RECORTE IGUAL A object-fit: cover
+     ======================================================= */
+
+  if (videoRatio > targetRatio) {
+
+    /*
+     * El video es demasiado ancho.
+     */
+
+    sh = videoH;
+
+    sw =
+      videoH * targetRatio;
+
+    sx =
+      (videoW - sw) / 2;
+
+    sy = 0;
+
+  }
+  else {
+
+    /*
+     * El video es demasiado alto.
+     */
+
+    sw = videoW;
+
+    sh =
+      videoW / targetRatio;
+
+    sx = 0;
+
+    sy =
+      (videoH - sh) / 2;
+  }
+
+
+  /* =======================================================
+     DIBUJAR FOTO
+     ======================================================= */
+
+  ctx.drawImage(
+
+    video,
+
+    sx,
+    sy,
+    sw,
+    sh,
+
+    0,
+    0,
+    outputW,
+    outputH
+
+  );
+
+
+  /* =======================================================
+     GPS
+     
+     AQUÍ USAMOS EXACTAMENTE LAS MISMAS
+     PROPORCIONES QUE LA VISTA DE PANTALLA.
+     ======================================================= */
+
+  drawGpsOverlay(
+    ctx,
+    outputW,
+    outputH
+  );
+
+
+  /* =======================================================
+     NOMBRE DEL ARCHIVO
+     ======================================================= */
+
+  const now =
+    new Date();
+
+
+  fileName =
+    "Evidencia_" +
+    now
+      .toISOString()
+      .replace(/[:.]/g, "-") +
+    ".jpg";
+
+
+  /* =======================================================
+     MOSTRAR PREVIEW
+     ======================================================= */
+
+  document
+    .getElementById("preview-img")
+    .src =
+    canvas.toDataURL(
+      "image/jpeg",
+      0.95
+    );
+
+
+  document
+    .getElementById("preview-modal")
+    .style.display =
+    "flex";
+}
+
+
+/* =========================================================
+   DIBUJAR GPS
+   ========================================================= */
+
+function drawGpsOverlay(
+  ctx,
+  w,
+  h
+) {
+
+
+  /* =======================================================
+     DIMENSIONES
+     ======================================================= */
+
+  const margin =
+    w * 0.03;
+
+
+  const boxW =
+    w * 0.94;
+
+
+  const boxH =
+    h * 0.20;
+
+
+  const boxX =
+    margin;
+
+
+  const boxY =
+    h -
+    boxH -
+    h * 0.02;
+
+
+  /* =======================================================
+     CAJA PRINCIPAL
+     ======================================================= */
+
+  ctx.fillStyle =
+    "rgba(0,0,0,0.78)";
+
+
+  ctx.fillRect(
+    boxX,
+    boxY,
+    boxW,
+    boxH
+  );
+
+
+  ctx.strokeStyle =
+    "rgba(255,255,255,0.4)";
+
+
+  ctx.lineWidth =
+    2;
+
+
+  ctx.strokeRect(
+    boxX,
+    boxY,
+    boxW,
+    boxH
+  );
+
+
+  /* =======================================================
+     PADDING
+     ======================================================= */
+
+  const padding =
+    boxW * 0.02;
+
+
+  /* =======================================================
+     COLUMNA IZQUIERDA
+     ======================================================= */
+
+  const leftX =
+    boxX + padding;
+
+
+  const leftW =
+    boxW * 0.25;
+
+
+  const gap =
+    boxW * 0.025;
+
+
+  /* =======================================================
+     LOGO
+     ======================================================= */
+
+  const brandH =
+    boxH * 0.27;
+
+
+  const logoSize =
+    brandH;
+
+
+  ctx.fillStyle =
+    "#ffffff";
+
+
+  ctx.fillRect(
+    leftX,
+    boxY + padding,
+    logoSize,
+    logoSize
+  );
+
+
+  /* =======================================================
+     LOGO PROVISIONAL
+     ======================================================= */
+
+  ctx.fillStyle =
+    "#c79b38";
+
+
+  ctx.font =
+    `${logoSize * 0.55}px Arial`;
+
+
+  ctx.textAlign =
+    "center";
+
+
+  ctx.textBaseline =
+    "middle";
+
+
+  ctx.fillText(
+
+    "☀",
+
+    leftX +
+      logoSize / 2,
+
+    boxY +
+      padding +
+      logoSize / 2
+
+  );
+
+
+  /* =======================================================
+     COYOACAN GPS
+     ======================================================= */
+
+  const brandX =
+    leftX + logoSize;
+
+
+  const brandW =
+    leftW - logoSize;
+
+
+  ctx.fillStyle =
+    "#000000";
+
+
+  ctx.fillRect(
+
+    brandX,
+
+    boxY + padding,
+
+    brandW,
+
+    brandH
+
+  );
+
+
+  ctx.fillStyle =
+    "#ffffff";
+
+
+  ctx.font =
+    `bold ${w * 0.028}px Arial`;
+
+
+  ctx.textAlign =
+    "left";
+
+
+  ctx.textBaseline =
+    "middle";
+
+
+  ctx.fillText(
+
+    "Coyoacan GPS",
+
+    brandX + brandW * 0.05,
+
+    boxY +
+      padding +
+      brandH / 2
+
+  );
+
+
+  /* =======================================================
+     MAPA
+     ======================================================= */
+
+  const mapX =
+    leftX;
+
+
+  const mapY =
+    boxY +
+    padding +
+    brandH +
+    boxH * 0.05;
+
+
+  const mapW =
+    leftW;
+
+
+  const mapH =
+    boxY +
+    boxH -
+    padding -
+    mapY;
+
+
+  ctx.fillStyle =
+    "#ffffff";
+
+
+  ctx.fillRect(
+    mapX,
+    mapY,
+    mapW,
+    mapH
+  );
+
+
+  /* =======================================================
+     PIN
+     ======================================================= */
+
+  const pinX =
+    mapX +
+    mapW / 2;
+
+
+  const pinY =
+    mapY +
+    mapH * 0.38;
+
+
+  const pinRadius =
+    Math.min(
+      mapW,
+      mapH
+    ) * 0.22;
+
+
+  ctx.fillStyle =
+    "#e63946";
+
+
+  ctx.beginPath();
+
+  ctx.arc(
+
+    pinX,
+    pinY,
+
+    pinRadius,
+
+    0,
+    Math.PI * 2
+
+  );
+
+  ctx.fill();
+
+
+  /* Punta */
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+
+    pinX -
+      pinRadius,
+
+    pinY +
+      pinRadius * 0.35
+
+  );
+
+
+  ctx.lineTo(
+
+    pinX,
+
+    mapY +
+      mapH * 0.82
+
+  );
+
+
+  ctx.lineTo(
+
+    pinX +
+      pinRadius,
+
+    pinY +
+      pinRadius * 0.35
+
+  );
+
+
+  ctx.closePath();
+
+  ctx.fill();
+
+
+  /* Centro */
+
+  ctx.fillStyle =
+    "#ffffff";
+
+
+  ctx.beginPath();
+
+  ctx.arc(
+
+    pinX,
+    pinY,
+
+    pinRadius * 0.45,
+
+    0,
+    Math.PI * 2
+
+  );
+
+  ctx.fill();
+
+
+  /* =======================================================
+     COLUMNA DERECHA
+     ======================================================= */
+
+  const rightX =
+    leftX +
+    leftW +
+    gap;
+
+
+  const rightW =
+    boxW -
+    leftW -
+    gap -
+    padding * 2;
+
+
+  /* =======================================================
+     CIUDAD
+     ======================================================= */
+
+  const cityH =
+    boxH * 0.27;
+
+
+  ctx.fillStyle =
+    "#000000";
+
+
+  ctx.fillRect(
+
+    rightX,
+
+    boxY + padding,
+
+    rightW,
+
+    cityH
+
+  );
+
+
+  ctx.fillStyle =
+    "#ffffff";
+
+
+  ctx.font =
+    `bold ${w * 0.038}px Arial`;
+
+
+  ctx.textAlign =
+    "left";
+
+
+  ctx.textBaseline =
+    "middle";
+
+
+  ctx.fillText(
+
+    "CDMX, Ciudad de México, México",
+
+    rightX +
+      rightW * 0.02,
+
+    boxY +
+      padding +
+      cityH / 2
+
+  );
+
+
+  /* =======================================================
+     INFORMACIÓN
+     ======================================================= */
+
+  const infoX =
+    rightX;
+
+
+  let currentY =
+    boxY +
+    padding +
+    cityH +
+    boxH * 0.08;
+
+
+  /* Dirección */
+
+  ctx.fillStyle =
+    "#ffffff";
+
+
+  ctx.font =
+    `${w * 0.030}px Arial`;
+
+
+  ctx.textBaseline =
+    "alphabetic";
+
+
+  ctx.fillText(
+
+    "Calle Centenario 123, Del Carmen, Coyoacán",
+
+    infoX +
+      rightW * 0.02,
+
+    currentY
+
+  );
+
+
+  /* Coordenadas */
+
+  currentY +=
+    boxH * 0.17;
+
+
+  ctx.fillStyle =
+    "#cccccc";
+
+
+  ctx.font =
+    `${w * 0.027}px Arial`;
+
+
+  ctx.fillText(
+
+    "Lat 19.351234, Long -99.165678",
+
+    infoX +
+      rightW * 0.02,
+
+    currentY
+
+  );
+
+
+  /* =======================================================
+     FECHA
+     ======================================================= */
+
+  currentY +=
+    boxH * 0.18;
+
+
+  const now =
+    new Date();
+
+
+  ctx.fillStyle =
+    "#ffffff";
+
+
+  ctx.font =
+    `bold ${w * 0.028}px Arial`;
+
+
+  ctx.fillText(
+
+    now.toLocaleString(
+      "es-MX",
+      {
+        day: "numeric",
+        month: "numeric",
+        year: "numeric",
+
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+
+        hour12: true
+      }
+    ),
+
+    infoX +
+      rightW * 0.02,
+
+    currentY
+
+  );
+
+}
+
+
+/* =========================================================
+   DESCARTAR
+   ========================================================= */
+
+function discardPhoto() {
+
+  document
+    .getElementById(
+      "preview-modal"
+    )
+    .style.display =
+    "none";
+
+}
+
+
+/* =========================================================
+   GUARDAR
+   ========================================================= */
+
+function downloadPhoto() {
+
+  const a =
+    document.createElement("a");
+
+
+  a.href =
+    document
+      .getElementById(
+        "preview-img"
+      )
+      .src;
+
+
+  a.download =
+    fileName;
+
+
+  a.click();
+
+
+  discardPhoto();
+
+}
+
+</script>
+
 </body>
+
 </html>
