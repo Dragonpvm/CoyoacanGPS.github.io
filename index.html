@@ -15,8 +15,6 @@
 
   <!-- =====================================================
        HTML2CANVAS
-       Se utiliza para capturar la misma tarjeta HTML
-       que se está mostrando en pantalla.
        ===================================================== -->
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -125,11 +123,6 @@
 
     /* =====================================================
        TARJETA GPS
-
-       ESTA ES LA ÚNICA TARJETA QUE EXISTE.
-
-       La misma tarjeta que se ve antes de tomar la foto
-       será la que se capture después.
        ===================================================== */
 
     .gps-box {
@@ -138,50 +131,55 @@
 
       left: 12px;
       right: 12px;
-
       bottom: 16px;
 
-      background:
-        rgba(0, 0, 0, 0.78);
+      /*
+       * NEGRO TRANSPARENTE
+       */
+      background: rgba(0, 0, 0, 0.78);
 
-      border:
-        1px solid
-        rgba(255, 255, 255, 0.40);
+      border: 1px solid rgba(255, 255, 255, 0.40);
 
       border-radius: 8px;
 
-      padding: 10px 12px;
+      padding: 8px;
 
       display: flex;
 
-      gap: 12px;
+      gap: 10px;
 
-      align-items: center;
+      align-items: flex-start;
 
       z-index: 10;
 
-      box-shadow:
-        0 4px 20px
-        rgba(0, 0, 0, 0.60);
+      backdrop-filter: blur(6px);
 
-      /*
-       * Muy importante:
-       * la tarjeta conserva exactamente sus dimensiones
-       * independientemente del tamaño del teléfono.
-       */
+      box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.60);
     }
 
 
     /* =====================================================
        MAPA / PIN
+       
+       ESTE TAMAÑO ES RESPONSIVE.
+       NO HAY QUE SOBRESCRIBIRLO DESPUÉS.
        ===================================================== */
 
     .map-square {
 
-      width: 90px;
-      height: 90px;
+      /*
+       * Se adapta automáticamente:
+       *
+       * mínimo 130px
+       * crece según el teléfono/tablet
+       * máximo 160px
+       */
+      width: clamp(130px, 42vw, 160px);
 
-      min-width: 90px;
+      height: clamp(115px, 35vw, 125px);
+
+      min-width: clamp(130px, 42vw, 160px);
 
       background: #ffffff;
 
@@ -189,18 +187,121 @@
 
       display: flex;
 
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
+
+      align-items: stretch;
+
+      justify-content: flex-start;
 
       overflow: hidden;
+
+      flex-shrink: 0;
+    }
+
+
+    /* =====================================================
+       CABECERA DEL MAPA
+       ===================================================== */
+
+    .map-header {
+
+      width: 100%;
+
+      height: 32px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: flex-start;
+
+      padding-left: 5px;
+      padding-right: 5px;
+
+      box-sizing: border-box;
+
+      background: #ffffff;
+
+      overflow: hidden;
+
+      white-space: nowrap;
+    }
+
+
+    /* =====================================================
+       LOGO
+       ===================================================== */
+
+    .map-logo {
+
+      width: 27px;
+      height: 27px;
+
+      flex-shrink: 0;
+
+      object-fit: contain;
+
+      display: block;
+    }
+
+
+    /* =====================================================
+       TÍTULO DEL MAPA
+       ===================================================== */
+
+    .map-title {
+
+      margin-left: 5px;
+
+      color: #000000;
+
+      /*
+       * El tamaño también se adapta.
+       */
+      font-size: clamp(9px, 2.8vw, 11px);
+
+      font-weight: 800;
+
+      line-height: 1;
+
+      white-space: nowrap;
+
+      flex-shrink: 0;
+    }
+
+
+    /* =====================================================
+       ÁREA BLANCA DEL MAPA
+       ===================================================== */
+
+    .map-white-area {
+
+      width: calc(100% - 8px);
+
+      height: calc(100% - 36px);
+
+      margin-left: 4px;
+
+      background: #ffffff;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      border-radius: 3px;
+
+      overflow: hidden;
+
+      flex: 1;
+
+      min-height: 0;
     }
 
 
     /* =====================================================
        PIN SVG
-
-       Usamos SVG en lugar de emoji para que el navegador
-       no cambie su aspecto entre pantalla y fotografía.
        ===================================================== */
 
     .map-pin-svg {
@@ -209,6 +310,9 @@
       height: 68px;
 
       display: block;
+
+      max-width: 70%;
+      max-height: 75%;
     }
 
 
@@ -482,6 +586,10 @@
 
     /* =====================================================
        TELÉFONOS PEQUEÑOS
+       
+       IMPORTANTE:
+       NO CAMBIAMOS EL MAP-SQUARE AQUÍ.
+       El tamaño responsive ya está definido arriba.
        ===================================================== */
 
     @media (max-width: 380px) {
@@ -493,18 +601,9 @@
 
         bottom: 12px;
 
-        padding: 8px 9px;
+        padding: 6px;
 
         gap: 8px;
-      }
-
-
-      .map-square {
-
-        width: 78px;
-        height: 78px;
-
-        min-width: 78px;
       }
 
 
@@ -555,7 +654,10 @@
 
 
     /* =====================================================
-       TELÉFONOS GRANDES
+       TABLETS / PANTALLAS GRANDES
+       
+       IMPORTANTE:
+       NO CAMBIAMOS EL MAP-SQUARE AQUÍ.
        ===================================================== */
 
     @media (min-width: 600px) {
@@ -568,15 +670,8 @@
         bottom: 20px;
 
         padding: 12px 14px;
-      }
 
-
-      .map-square {
-
-        width: 110px;
-        height: 110px;
-
-        min-width: 110px;
+        gap: 12px;
       }
 
 
@@ -657,9 +752,6 @@
 
       <!-- ===============================================
            TARJETA GPS
-
-           ESTA MISMA TARJETA SE VE EN PANTALLA
-           Y SE CAPTURA EN LA FOTOGRAFÍA.
            =============================================== -->
 
       <div class="gps-box">
@@ -673,65 +765,33 @@
 
 
           <!-- ===========================================
-               PIN
+               CABECERA
                =========================================== -->
 
-          <svg
-            class="map-pin-svg"
-            viewBox="0 0 100 140"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+          <div class="map-header">
 
-            <!-- Cuerpo rojo -->
+            <img
+              class="map-logo"
+              src="Logo.jpeg"
+              alt="Coyoacan GPS"
+            >
 
-            <path
-              d="
-                M50 0
-                C22.4 0 0 22.4 0 50
-                C0 87.5 50 140 50 140
-                C50 140 100 87.5 100 50
-                C100 22.4 77.6 0 50 0
-                Z
-              "
-              fill="#EA4335"
-            />
+            <span class="map-title">
+              Coyoacan GPS
+            </span>
+
+          </div>
 
 
-            <!-- Centro blanco -->
+          <!-- ===========================================
+               MAPA
+               =========================================== -->
 
-            <ellipse
-              cx="50"
-              cy="45"
-              rx="20"
-              ry="20"
-              fill="#ffffff"
-            />
+          <div class="map-white-area">
 
+            <!-- AQUÍ VA TU SVG DEL PIN -->
 
-            <!-- Palo -->
-
-            <rect
-              x="47"
-              y="90"
-              width="6"
-              height="40"
-              fill="#78909C"
-            />
-
-
-            <!-- Punta -->
-
-            <path
-              d="
-                M50 140
-                L45 95
-                L55 95
-                Z
-              "
-              fill="#78909C"
-            />
-
-          </svg>
+          </div>
 
 
         </div>
@@ -909,8 +969,6 @@
 
   <!-- =====================================================
        CANVAS OCULTO
-       Se utiliza únicamente para capturar el frame
-       de la cámara.
        ===================================================== -->
 
   <canvas
@@ -1342,12 +1400,6 @@
         /*
          * ==============================================
          * OCULTAR VIDEO
-         *
-         * IMPORTANTE:
-         *
-         * NO ocultamos gps-box.
-         *
-         * gps-box seguirá visible.
          * ==============================================
          */
 
@@ -1391,10 +1443,6 @@
           0
         );
 
-
-        /*
-         * El canvas queda detrás de la tarjeta GPS.
-         */
 
         backgroundCanvas.style.position =
           'absolute';
@@ -1450,12 +1498,6 @@
         /*
          * ==============================================
          * CAPTURAR TODO EL CONTENEDOR
-         *
-         * Aquí está la diferencia fundamental:
-         *
-         * html2canvas captura el gps-box REAL.
-         *
-         * NO dibujamos otra tarjeta.
          * ==============================================
          */
 
@@ -1464,52 +1506,26 @@
             cameraContainer,
             {
 
-              /*
-               * Misma anchura visual
-               */
-
               width:
                 dimensions.width,
-
-
-              /*
-               * Misma altura visual
-               */
 
               height:
                 dimensions.height,
 
-
-              /*
-               * Misma escala
-               */
-
               scale:
                 dimensions.scale,
-
 
               backgroundColor:
                 '#000000',
 
-
               useCORS:
                 true,
-
 
               allowTaint:
                 true,
 
-
               logging:
                 false,
-
-
-              /*
-               * El video ya está oculto.
-               *
-               * El canvas que pusimos detrás contiene
-               * el frame de la cámara.
-               */
 
               ignoreElements:
                 function(element) {
@@ -1583,7 +1599,9 @@
 
 
         /*
-         * Eliminar canvas temporal.
+         * ==============================================
+         * ELIMINAR CANVAS TEMPORAL
+         * ==============================================
          */
 
         backgroundCanvas.remove();
@@ -1601,11 +1619,6 @@
           'No fue posible tomar la fotografía.'
         );
 
-
-        /*
-         * Asegurarnos de que el video
-         * vuelva a aparecer.
-         */
 
         video.style.visibility =
           'visible';
