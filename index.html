@@ -7,10 +7,9 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     
-    /* Layout dinámico adaptable a cualquier resolución */
     html, body { 
       width: 100%; 
-      height: 100dvh; /* dvh se adapta a la altura real descontando la barra de Chrome */
+      height: 100dvh; 
       background: #000; 
       font-family: system-ui, -apple-system, sans-serif; 
       overflow: hidden; 
@@ -23,7 +22,6 @@
       height: 100dvh; 
     }
     
-    /* Zona del stream de Cámara */
     .camera-container { 
       position: relative; 
       flex: 1; 
@@ -41,57 +39,103 @@
       object-fit: cover; 
     }
     
-    /* Banner GPS Legible y Escalable */
+    /* BANNER SEMI-TRANSPARENTE */
     .gps-banner {
       position: absolute; 
-      bottom: 15px; 
+      bottom: 12px; 
       left: 12px; 
       right: 12px;
-      background: rgba(0, 0, 0, 0.85); 
-      border-radius: 14px; 
-      padding: 14px 16px;
+      background: rgba(0, 0, 0, 0.65); 
+      border-radius: 16px; 
+      padding: 12px 14px;
       display: flex; 
       align-items: center; 
-      gap: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      backdrop-filter: blur(8px);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      gap: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
       z-index: 10;
     }
-    
-    .gps-pin { 
-      width: 44px; 
-      height: 44px; 
-      background: #e63946; 
-      border-radius: 50%; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      font-size: 22px; 
-      flex-shrink: 0; 
+
+    /* MINIMAPA LADO IZQUIERDO */
+    .map-box {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      background: #2a3a2a;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      position: relative;
+      flex-shrink: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    /* Simulación de cuadrícula de mapa */
+    .map-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: 
+        linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+
+    .map-pin {
+      font-size: 24px;
+      z-index: 2;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
     }
     
+    /* TEXTOS COMPACTOS Y LEGIBLES */
     .gps-info { 
-      color: #eee; 
-      font-size: 0.85rem; 
-      line-height: 1.35; 
+      color: #fff; 
+      font-size: 0.82rem; 
+      line-height: 1.25; 
       flex: 1;
     }
     
-    .gps-info strong { 
-      font-size: 1.05rem; 
-      color: #fff; 
-      display: block; 
-      margin-bottom: 2px; 
+    .watermark { 
+      font-size: 0.75rem; 
+      color: #e63946; 
+      font-weight: 800; 
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    .gps-info .clock {
+    .city-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 2px;
+    }
+
+    .address {
+      color: #dddddd;
+      font-size: 0.8rem;
+      margin-bottom: 1px;
+    }
+
+    .coords {
+      color: #bbbbbb;
+      font-size: 0.78rem;
+      margin-bottom: 2px;
+    }
+
+    .clock {
       color: #4cc9f0;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.82rem;
     }
     
-    /* Controles Inferiores Fijos (Estilo GPS Map Camera) */
+    /* PANEL DE CONTROLES INFERIOR */
     .controls-panel { 
       height: 110px; 
       min-height: 110px;
@@ -124,13 +168,7 @@
       cursor: pointer; 
       box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
     }
-    
-    .btn-capture:active { 
-      transform: scale(0.92); 
-      background: #ccc; 
-    }
 
-    /* Modal de Previsualización antes de Guardar */
     #preview-modal { 
       display: none; 
       position: fixed; 
@@ -160,36 +198,38 @@
 <body>
 
   <div class="app-viewport">
-    <!-- CÁMARA + BANNER -->
     <div class="camera-container">
       <video id="video-stream" autoplay playsinline muted></video>
       
       <div class="gps-banner">
-        <div class="gps-pin">📍</div>
+        <!-- Mapa Izquierda -->
+        <div class="map-box">
+          <span class="map-pin">📍</span>
+        </div>
+
+        <!-- Información Ordenada -->
         <div class="gps-info">
-          <strong>Coyoacán GPS</strong>
-          CDMX, Ciudad de México, México<br>
-          Calle Centenario 123, Del Carmen, Coyoacán<br>
-          Lat 19.351234, Long -99.165678<br>
-          <span class="clock" id="live-clock">Sincronizando reloj...</span>
+          <div class="watermark">📍 Coyoacán GPS</div>
+          <div class="city-title">CDMX, Ciudad de México, México</div>
+          <div class="address">Calle Centenario 123, Del Carmen, Coyoacán</div>
+          <div class="coords">Lat 19.351234, Long -99.165678</div>
+          <div class="clock" id="live-clock">Sincronizando reloj...</div>
         </div>
       </div>
     </div>
 
-    <!-- PANEL INFERIOR FIJO -->
     <div class="controls-panel">
-      <button class="btn-side" onclick="alert('Opción de video')">📹 Video</button>
+      <button class="btn-side" onclick="alert('Modo video')">📹 Video</button>
       <button class="btn-capture" onclick="takeSnapshot()"></button>
-      <button class="btn-side" onclick="alert('Visor de Galería')">🖼️ Galería</button>
+      <button class="btn-side" onclick="alert('Galería')">🖼️ Galería</button>
     </div>
   </div>
 
-  <!-- PREVISUALIZACIÓN -->
   <div id="preview-modal">
-    <img id="preview-img" alt="Vista previa de evidencia">
+    <img id="preview-img" alt="Vista previa">
     <div class="preview-actions">
       <button class="btn-side" style="background: #2a2a2a;" onclick="discardPhoto()">❌ Descartar</button>
-      <button class="btn-side" style="background: #e63946; border: none; font-size: 0.95rem;" onclick="downloadPhoto()">💾 Guardar Evidencia</button>
+      <button class="btn-side" style="background: #e63946; border: none;" onclick="downloadPhoto()">💾 Guardar Evidencia</button>
     </div>
   </div>
 
@@ -200,7 +240,6 @@
     const clockEl = document.getElementById('live-clock');
     let fileName = '';
 
-    // Actualizador de reloj
     function updateClock() {
       const now = new Date();
       clockEl.innerText = now.toLocaleString('es-MX');
@@ -208,7 +247,6 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Iniciar cámara trasera nativa
     navigator.mediaDevices.getUserMedia({
       video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } },
       audio: false
@@ -218,7 +256,6 @@
       navigator.mediaDevices.getUserMedia({ video: true }).then(stream => video.srcObject = stream);
     });
 
-    // Procesamiento de la Foto con Marca de Agua
     function takeSnapshot() {
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
@@ -228,36 +265,76 @@
       canvas.width = width;
       canvas.height = height;
 
-      // 1. Dibujar cuadro de video
+      // 1. Dibujar Foto de Cámara
       ctx.drawImage(video, 0, 0, width, height);
 
-      // 2. Banner Proporcional HD
+      // 2. Dimensiones del Banner Semi-transparente en Canvas HD
       const margin = width * 0.03;
-      const bannerHeight = height * 0.22; // Altura adaptativa
+      const bannerHeight = height * 0.24;
       const bannerWidth = width - (margin * 2);
       const bannerY = height - bannerHeight - margin;
 
-      ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+      // Fondo transparente
+      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
       ctx.roundRect(margin, bannerY, bannerWidth, bannerHeight, width * 0.02);
       ctx.fill();
 
-      // Textos legibles en alta resolución
-      const baseFontSize = width * 0.028;
+      // Border delgado
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // 3. Dibujar Cuadro del Mapa
+      const mapSize = bannerHeight * 0.75;
+      const mapX = margin + (bannerHeight * 0.12);
+      const mapY = bannerY + (bannerHeight * 0.12);
+
+      ctx.fillStyle = "#2a3a2a";
+      ctx.roundRect(mapX, mapY, mapSize, mapSize, mapSize * 0.15);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+      ctx.stroke();
+
+      // Pin sobre el minimapa
+      ctx.font = `${mapSize * 0.45}px sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("📍", mapX + (mapSize / 2), mapY + (mapSize / 2));
+
+      // 4. Textos con la Nueva Estructura
+      ctx.textAlign = "left";
+      ctx.textBaseline = "alphabetic";
+      const textX = mapX + mapSize + (margin * 0.8);
+      const baseFontSize = width * 0.024;
+
+      // Marca de agua
+      ctx.fillStyle = "#e63946";
+      ctx.font = `bold ${baseFontSize * 0.9}px sans-serif`;
+      ctx.fillText("📍 COYOACÁN GPS", textX, bannerY + (bannerHeight * 0.22));
+
+      // Título Ciudad / País
       ctx.fillStyle = "#ffffff";
-      ctx.font = `bold ${baseFontSize * 1.3}px sans-serif`;
-      ctx.fillText("Coyoacán GPS", margin + (width * 0.03), bannerY + (bannerHeight * 0.28));
-      
-      ctx.font = `${baseFontSize}px sans-serif`;
+      ctx.font = `bold ${baseFontSize * 1.35}px sans-serif`;
+      ctx.fillText("CDMX, Ciudad de México, México", textX, bannerY + (bannerHeight * 0.42));
+
+      // Dirección
       ctx.fillStyle = "#dddddd";
-      ctx.fillText("CDMX, Ciudad de México, México - Calle Centenario 123", margin + (width * 0.03), bannerY + (bannerHeight * 0.52));
-      ctx.fillText("Lat 19.351234, Long -99.165678", margin + (width * 0.03), bannerY + (bannerHeight * 0.72));
-      
+      ctx.font = `${baseFontSize}px sans-serif`;
+      ctx.fillText("Calle Centenario 123, Del Carmen, Coyoacán", textX, bannerY + (bannerHeight * 0.60));
+
+      // Coordenadas
+      ctx.fillStyle = "#bbbbbb";
+      ctx.font = `${baseFontSize * 0.95}px sans-serif`;
+      ctx.fillText("Lat 19.351234, Long -99.165678", textX, bannerY + (bannerHeight * 0.77));
+
+      // Fecha y Hora
       const now = new Date();
       fileName = `Evidencia_${now.toISOString().replace(/[:.]/g, '-')}.jpg`;
       ctx.fillStyle = "#4cc9f0";
-      ctx.fillText(now.toLocaleString('es-MX'), margin + (width * 0.03), bannerY + (bannerHeight * 0.90));
+      ctx.font = `bold ${baseFontSize * 1.05}px sans-serif`;
+      ctx.fillText(now.toLocaleString('es-MX'), textX, bannerY + (bannerHeight * 0.93));
 
-      // 3. Abrir visor de previsualización
+      // Mostrar Previsualización
       document.getElementById('preview-img').src = canvas.toDataURL('image/jpeg', 0.95);
       document.getElementById('preview-modal').style.display = 'flex';
     }
