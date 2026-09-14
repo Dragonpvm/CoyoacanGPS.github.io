@@ -39,107 +39,102 @@
       object-fit: cover; 
     }
     
-    /* CAJA SOBREPUESTA IDÉNTICA A LA PLANTILLA DE REFERENCIA */
-    .gps-overlay-box {
+    /* CAJA NEGRA SEMI-TRANSPARENTE CON MARCO DELGADO */
+    .gps-box {
       position: absolute; 
       bottom: 16px; 
       left: 12px; 
       right: 12px;
-      background: rgba(55, 61, 67, 0.92); 
-      border: 1px solid rgba(255, 255, 255, 0.75);
-      padding: 10px;
+      background: rgba(0, 0, 0, 0.78); /* Negro transparente */
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 8px;
+      padding: 10px 12px;
       display: flex;
       gap: 12px;
-      align-items: flex-start;
+      align-items: center;
       z-index: 10;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
     }
 
-    /* MAPA CON PIN (IZQUIERDA) */
-    .map-container {
-      width: 88px;
-      height: 88px;
-      min-width: 88px;
+    /* CUADRO DEL MAPA EN LA IZQUIERDA */
+    .map-square {
+      width: 90px;
+      height: 90px;
+      min-width: 90px;
       background: #ffffff;
-      border-radius: 2px;
+      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
-      align-self: stroke;
     }
 
-    .map-pin-icon {
-      width: 34px;
-      height: 48px;
+    .map-pin {
+      font-size: 45px;
+      line-height: 1;
     }
 
-    /* COLUMNA DE DATOS (DERECHA) */
-    .data-container {
+    /* COLUMNA DE TEXTOS ORDENADOS EN JERARQUÍA STRICTA */
+    .info-column {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2px; /* Letras un poco más pegadas */
       color: #ffffff;
+    }
+
+    /* 1. Marca de agua (logo) Coyoacán GPS */
+    .watermark-text {
       font-size: 11px;
-      line-height: 1.25;
-    }
-
-    /* FILA SUPERIOR: MARCA Y CIUDAD */
-    .header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2px;
-    }
-
-    .brand-title {
-      font-weight: 700;
-      color: #ffffff;
-      font-size: 12px;
+      font-weight: 600;
+      color: #b0b0b0;
       display: flex;
       align-items: center;
       gap: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
 
-    .brand-square {
-      width: 12px;
-      height: 12px;
+    .yellow-icon {
+      width: 10px;
+      height: 10px;
       background: #fbc02d;
       border-radius: 2px;
       display: inline-block;
     }
 
-    .city-title {
-      font-weight: 700;
+    /* 2. Título, ciudad, País (Grande) */
+    .city-title-large {
+      font-size: 15px;
+      font-weight: 800;
       color: #ffffff;
+      line-height: 1.15;
+      margin-bottom: 1px;
+    }
+
+    /* 3. Dirección */
+    .address-text {
       font-size: 12px;
-      text-align: right;
-    }
-
-    .address-line {
+      font-weight: 500;
       color: #e0e0e0;
-      font-size: 11px;
+      line-height: 1.15;
     }
 
-    .coords-line {
+    /* 4. Coordenadas */
+    .coords-text {
+      font-size: 11px;
       color: #cccccc;
-      font-size: 11px;
-      margin-top: 1px;
     }
 
-    .datetime-line {
+    /* 5. Fecha y hora */
+    .datetime-text {
+      font-size: 12px;
       font-weight: 700;
       color: #ffffff;
-      font-size: 11.5px;
       margin-top: 1px;
     }
 
-    .footer-line {
-      color: #aaaaaa;
-      font-size: 10px;
-    }
-
-    /* PANEL DE CAPTURA INFERIOR */
+    /* CONTROLES INFERIORES */
     .controls-panel { 
       height: 95px; 
       min-height: 95px;
@@ -202,33 +197,37 @@
     <div class="camera-container">
       <video id="video-stream" autoplay playsinline muted></video>
       
-      <!-- CONTENEDOR FLOTANTE EN CAMARA -->
-      <div class="gps-overlay-box">
-        <div class="map-container">
-          <svg class="map-pin-icon" viewBox="0 0 100 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50 0C22.4 0 0 22.4 0 50C0 87.5 50 140 50 140C50 140 100 87.5 100 50C100 22.4 77.6 0 50 0Z" fill="#EA4335"/>
-            <ellipse cx="50" cy="45" rx="20" ry="20" fill="#B31412"/>
-            <path d="M50 140 L45 95 L55 95 Z" fill="#4285F4" opacity="0.4"/>
-            <rect x="47" y="90" width="6" height="40" fill="#78909C" />
-          </svg>
+      <!-- CUADRO NEGRO CON ESTRUCTURA CORREGIDA -->
+      <div class="gps-box">
+        <!-- Mapa en lado izquierdo -->
+        <div class="map-square">
+          <span class="map-pin">📍</span>
         </div>
 
-        <div class="data-container">
-          <div class="header-row">
-            <span class="brand-title"><span class="brand-square"></span> Coyoacan GPS</span>
-            <span class="city-title">CMDX, Ciudad de Mexico, Mexico</span>
+        <!-- Textos en columna derecha -->
+        <div class="info-column">
+          <!-- 1. Marca de Agua -->
+          <div class="watermark-text">
+            <span class="yellow-icon"></span> Coyoacan GPS
           </div>
-          <div class="address-line">Calle Centenario 123, Del Carmen,</div>
-          <div class="address-line">Coyoacan</div>
-          <div class="coords-line">Lat 19.351234, Long -99.165678</div>
-          <div class="datetime-line" id="live-clock">14/09/2026 08:40 a.m.</div>
-          <div class="footer-line">Foto tomada por Coyoacan GPS</div>
+
+          <!-- 2. Título Grande de Ciudad -->
+          <div class="city-title-large">CDMX, Ciudad de México, México</div>
+
+          <!-- 3. Dirección -->
+          <div class="address-text">Calle Centenario 123, Del Carmen, Coyoacán</div>
+
+          <!-- 4. Coordenadas -->
+          <div class="coords-text">Lat 19.351234, Long -99.165678</div>
+
+          <!-- 5. Fecha y Hora -->
+          <div class="datetime-text" id="live-clock">14/9/2026, 9:25:17 a.m.</div>
         </div>
       </div>
     </div>
 
     <div class="controls-panel">
-      <button class="btn-side" onclick="alert('Opción de video')">📹 Video</button>
+      <button class="btn-side" onclick="alert('Modo video')">📹 Video</button>
       <button class="btn-capture" onclick="takeSnapshot()"></button>
       <button class="btn-side" onclick="alert('Galería')">🖼️ Galería</button>
     </div>
@@ -251,9 +250,7 @@
 
     function updateClock() {
       const now = new Date();
-      const dateStr = now.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      const timeStr = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
-      clockEl.innerText = `${dateStr} ${timeStr}`;
+      clockEl.innerText = now.toLocaleString('es-MX');
     }
     setInterval(updateClock, 1000);
     updateClock();
@@ -276,99 +273,74 @@
       canvas.width = w;
       canvas.height = h;
 
-      // 1. Imagen de fondo
+      // 1. Dibujar Foto original
       ctx.drawImage(video, 0, 0, w, h);
 
-      // 2. Proporciones de la caja
-      const margin = w * 0.035;
-      const cardW = w - (margin * 2);
-      const cardH = h * 0.20;
-      const cardY = h - cardH - margin;
+      // 2. Dibujar Caja Negra Semi-transparente
+      const margin = w * 0.03;
+      const boxW = w - (margin * 2);
+      const boxH = h * 0.20;
+      const boxY = h - boxH - margin;
 
-      // Fondo Gris
-      ctx.fillStyle = "rgba(55, 61, 67, 0.94)";
-      ctx.fillRect(margin, cardY, cardW, cardH);
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(margin, cardY, cardW, cardH);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.78)";
+      ctx.fillRect(margin, boxY, boxW, boxH);
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(margin, boxY, boxW, boxH);
 
-      // 3. Cuadro blanco mapa
-      const mapW = cardH * 0.76;
+      // 3. Cuadro blanco del Mapa (Izquierda)
+      const mapW = boxH * 0.75;
       const mapX = margin + 12;
-      const mapY = cardY + (cardH - mapW) / 2;
+      const mapY = boxY + (boxH - mapW) / 2;
 
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(mapX, mapY, mapW, mapW);
 
-      // Dibujar Pin Rojo exacto en Canvas
-      const centerX = mapX + (mapW / 2);
-      const centerY = mapY + (mapW * 0.38);
-      const radius = mapW * 0.22;
+      // Pin
+      ctx.fillStyle = "#e63946";
+      ctx.font = `${mapW * 0.65}px sans-serif`;
+      ctx.fillText("📍", mapX + (mapW * 0.18), mapY + (mapW * 0.78));
 
-      ctx.fillStyle = "#EA4335";
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.moveTo(centerX - radius, centerY + 3);
-      ctx.lineTo(centerX, mapY + (mapW * 0.75));
-      ctx.lineTo(centerX + radius, centerY + 3);
-      ctx.fill();
-
-      // Palo del pin
-      ctx.fillStyle = "#78909C";
-      ctx.fillRect(centerX - 2, mapY + (mapW * 0.70), 4, mapW * 0.22);
-
-      // 4. Textos alineados
+      // 4. Renderizar Textos en el MISMO ORDEN que la pantalla
       const textX = mapX + mapW + 14;
-      const fontSize = w * 0.021;
-      let lineY = mapY + (mapW * 0.16);
+      const baseFontSize = w * 0.022;
 
-      // Fila 1: Marca y Ciudad
+      // Línea 1: Marca de Agua
+      let currentY = mapY + (mapW * 0.16);
       ctx.fillStyle = "#fbc02d";
-      ctx.fillRect(textX, lineY - 10, 10, 10);
-      
+      ctx.fillRect(textX, currentY - (baseFontSize * 0.6), baseFontSize * 0.6, baseFontSize * 0.6);
+
+      ctx.fillStyle = "#b0b0b0";
+      ctx.font = `bold ${baseFontSize * 0.8}px sans-serif`;
+      ctx.fillText("COYOACÁN GPS", textX + (baseFontSize * 0.8), currentY);
+
+      // Línea 2: Título Ciudad (Grande)
+      currentY += (mapW * 0.22);
       ctx.fillStyle = "#ffffff";
-      ctx.font = `bold ${fontSize * 1.05}px sans-serif`;
-      ctx.fillText("Coyoacan GPS", textX + 14, lineY);
+      ctx.font = `bold ${baseFontSize * 1.3}px sans-serif`;
+      ctx.fillText("CDMX, Ciudad de México, México", textX, currentY);
 
-      ctx.textAlign = "right";
-      ctx.fillText("CMDX, Ciudad de Mexico, Mexico", margin + cardW - 12, lineY);
-      ctx.textAlign = "left";
-
-      // Dirección
-      lineY += (mapW * 0.20);
-      ctx.font = `${fontSize}px sans-serif`;
+      // Línea 3: Dirección
+      currentY += (mapW * 0.20);
       ctx.fillStyle = "#e0e0e0";
-      ctx.fillText("Calle Centenario 123, Del Carmen,", textX, lineY);
-      
-      lineY += (mapW * 0.18);
-      ctx.fillText("Coyoacan", textX, lineY);
+      ctx.font = `${baseFontSize * 0.95}px sans-serif`;
+      ctx.fillText("Calle Centenario 123, Del Carmen, Coyoacán", textX, currentY);
 
-      // Coordenadas
-      lineY += (mapW * 0.18);
+      // Línea 4: Coordenadas
+      currentY += (mapW * 0.18);
       ctx.fillStyle = "#cccccc";
-      ctx.fillText("Lat 19.351234, Long -99.165678", textX, lineY);
+      ctx.font = `${baseFontSize * 0.85}px sans-serif`;
+      ctx.fillText("Lat 19.351234, Long -99.165678", textX, currentY);
 
-      // Fecha y Hora
-      lineY += (mapW * 0.20);
+      // Línea 5: Fecha y Hora
+      currentY += (mapW * 0.20);
       const now = new Date();
       fileName = `Evidencia_${now.toISOString().replace(/[:.]/g, '-')}.jpg`;
-      const dateStr = now.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      const timeStr = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
-      
-      ctx.font = `bold ${fontSize * 1.05}px sans-serif`;
       ctx.fillStyle = "#ffffff";
-      ctx.fillText(`${dateStr} ${timeStr}`, textX, lineY);
+      ctx.font = `bold ${baseFontSize * 0.95}px sans-serif`;
+      ctx.fillText(now.toLocaleString('es-MX'), textX, currentY);
 
-      // Pie
-      lineY += (mapW * 0.16);
-      ctx.font = `${fontSize * 0.9}px sans-serif`;
-      ctx.fillStyle = "#aaaaaa";
-      ctx.fillText("Foto tomada por Coyoacan GPS", textX, lineY);
-
-      // Mostrar modal de vista previa
+      // Abrir modal
       document.getElementById('preview-img').src = canvas.toDataURL('image/jpeg', 0.95);
       document.getElementById('preview-modal').style.display = 'flex';
     }
