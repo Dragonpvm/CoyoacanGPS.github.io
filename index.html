@@ -39,92 +39,125 @@
       object-fit: cover; 
     }
     
-    /* BANNER ESTILO GPS MAP CAMERA (Semi-transparente + Mapa a la Izq) */
-    .gps-banner {
+    /* CAJA PRINCIPAL CON MARCO DE REFERENCIA */
+    .gps-banner-card {
       position: absolute; 
-      bottom: 12px; 
-      left: 10px; 
-      right: 10px;
-      background: rgba(0, 0, 0, 0.68); /* Caja negra semi-transparente */
-      border-radius: 12px; 
-      padding: 12px;
-      display: flex; 
-      align-items: center; 
-      gap: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(6px);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      bottom: 15px; 
+      left: 12px; 
+      right: 12px;
+      background: rgba(70, 75, 80, 0.85); /* Gris semi-transparente de la referencia */
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
       z-index: 10;
     }
     
-    /* Mapa simulado en lado izquierdo */
-    .gps-map-box { 
-      width: 85px; 
-      height: 85px; 
-      background: #2a3a40 url('https://tile.openstreetmap.org/19/146865/241852.png') center/cover no-repeat;
-      border-radius: 8px; 
-      border: 2px solid #ffffff;
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      flex-shrink: 0; 
-      position: relative;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    }
-    .gps-map-pin {
-      font-size: 24px;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
-    }
-    
-    /* Contenedor de Textos Pegados y Legibles */
-    .gps-info { 
-      color: #fff; 
-      display: flex;
-      flex-direction: column;
-      gap: 2px; /* Textos más pegados */
-      flex: 1;
-    }
-
-    .brand-tag {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #ddd;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    /* Fila 1: Logo + Marca de Agua + Título Ciudad */
+    .banner-header {
       display: flex;
       align-items: center;
-      gap: 4px;
-    }
-    
-    .city-title { 
-      font-size: 1.15rem; 
-      font-weight: 800; 
-      color: #ffffff; 
-      line-height: 1.15;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      padding-bottom: 6px;
     }
 
-    .address-text {
-      font-size: 0.82rem;
-      color: #e0e0e0;
-      line-height: 1.15;
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .coords-text {
-      font-size: 0.8rem;
-      color: #cccccc;
-      font-weight: 500;
+    .brand-icon {
+      width: 24px;
+      height: 24px;
+      background: #d4af37;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4);
     }
 
-    .clock-text {
-      color: #4cc9f0;
-      font-weight: 700;
+    .brand-title {
       font-size: 0.85rem;
+      font-weight: 700;
+      color: #ffffff;
+      white-space: nowrap;
     }
-    
+
+    .city-title-header {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-align: right;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Fila 2: Mapa Izquierdo + Lista de Datos Derecha */
+    .banner-body {
+      display: flex;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .map-square {
+      width: 90px;
+      height: 90px;
+      background: #ffffff;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .map-pin-img {
+      font-size: 45px;
+      line-height: 1;
+    }
+
+    .data-list {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #ffffff;
+      font-size: 0.78rem;
+      line-height: 1.2;
+    }
+
+    .data-address {
+      font-weight: 500;
+      color: #f0f0f0;
+    }
+
+    .data-coords {
+      color: #e0e0e0;
+    }
+
+    .data-time {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .data-footer {
+      color: #d0d0d0;
+      font-size: 0.72rem;
+    }
+
     /* Controles Inferiores */
     .controls-panel { 
-      height: 105px; 
-      min-height: 105px;
+      height: 100px; 
+      min-height: 100px;
       background: #0d0d0d; 
       display: flex; 
       justify-content: space-evenly; 
@@ -146,8 +179,8 @@
     }
     
     .btn-capture { 
-      width: 72px; 
-      height: 72px; 
+      width: 70px; 
+      height: 70px; 
       border-radius: 50%; 
       background: #ffffff; 
       border: 5px solid #e63946; 
@@ -172,7 +205,7 @@
     }
     
     .preview-actions { 
-      height: 95px; 
+      height: 90px; 
       background: #0d0d0d; 
       display: flex; 
       justify-content: space-evenly; 
@@ -187,20 +220,28 @@
     <div class="camera-container">
       <video id="video-stream" autoplay playsinline muted></video>
       
-      <!-- BANNER ACTUALIZADO CON ESTRUCTURA EXACTA -->
-      <div class="gps-banner">
-        <!-- Mapa Izquierdo -->
-        <div class="gps-map-box">
-          <span class="gps-map-pin">📍</span>
+      <!-- DISEÑO IGUAL A TU PLANTILLA DE REFERENCIA -->
+      <div class="gps-banner-card">
+        <!-- Cabecera: Logo + Marca + Ciudad -->
+        <div class="banner-header">
+          <div class="brand-box">
+            <div class="brand-icon">🌞</div>
+            <span class="brand-title">Coyoacan GPS</span>
+          </div>
+          <div class="city-title-header">CMDX, Ciudad de Mexico, Mexico</div>
         </div>
 
-        <!-- Textos Ordenados -->
-        <div class="gps-info">
-          <div class="brand-tag">📷 Coyoacán GPS</div>
-          <div class="city-title">CDMX, Ciudad de México, México</div>
-          <div class="address-text">Calle Centenario 123, Del Carmen, Coyoacán</div>
-          <div class="coords-text">Lat 19.351234, Long -99.165678</div>
-          <div class="clock-text" id="live-clock">Cargando...</div>
+        <!-- Cuerpo: Mapa + Datos -->
+        <div class="banner-body">
+          <div class="map-square">
+            <span class="map-pin-img">📍</span>
+          </div>
+          <div class="data-list">
+            <div class="data-address">Calle Centenario 123, Del Carmen,<br>Coyoacan</div>
+            <div class="data-coords">Lat 19.351234, Long -99.165678</div>
+            <div class="data-time" id="live-clock">14/09/2026 08:20 a.m.</div>
+            <div class="data-footer">Foto tomada por Coyoacan GPS</div>
+          </div>
         </div>
       </div>
     </div>
@@ -213,7 +254,7 @@
   </div>
 
   <div id="preview-modal">
-    <img id="preview-img" alt="Vista previa">
+    <img id="preview-img" alt="Evidencia">
     <div class="preview-actions">
       <button class="btn-side" style="background: #2a2a2a;" onclick="discardPhoto()">❌ Descartar</button>
       <button class="btn-side" style="background: #e63946; border: none; font-size: 0.95rem;" onclick="downloadPhoto()">💾 Guardar Evidencia</button>
@@ -229,7 +270,9 @@
 
     function updateClock() {
       const now = new Date();
-      clockEl.innerText = now.toLocaleString('es-MX');
+      const dateStr = now.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const timeStr = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
+      clockEl.innerText = `${dateStr} ${timeStr}`;
     }
     setInterval(updateClock, 1000);
     updateClock();
@@ -255,69 +298,87 @@
       // 1. Dibujar Foto de fondo
       ctx.drawImage(video, 0, 0, width, height);
 
-      // 2. Dibujar Caja Negra Semi-transparente
-      const margin = width * 0.025;
-      const bannerHeight = height * 0.24;
+      // 2. Banner Gris con Marco (Idéntico a la plantilla)
+      const margin = width * 0.03;
+      const bannerHeight = height * 0.22;
       const bannerWidth = width - (margin * 2);
       const bannerY = height - bannerHeight - margin;
 
-      ctx.fillStyle = "rgba(0, 0, 0, 0.70)";
-      ctx.roundRect(margin, bannerY, bannerWidth, bannerHeight, 14);
-      ctx.fill();
-
-      // 3. Dibujar Cuadro del Mapa (Izquierda)
-      const mapSize = bannerHeight * 0.75;
-      const mapX = margin + 15;
-      const mapY = bannerY + (bannerHeight - mapSize) / 2;
-
-      ctx.fillStyle = "#2a3a40";
-      ctx.roundRect(mapX, mapY, mapSize, mapSize, 8);
-      ctx.fill();
-      ctx.strokeStyle = "#ffffff";
+      // Fondo Gris Semi-transparente
+      ctx.fillStyle = "rgba(70, 75, 80, 0.88)";
+      ctx.fillRect(margin, bannerY, bannerWidth, bannerHeight);
+      
+      // Borde del Banner
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
       ctx.lineWidth = 2;
+      ctx.strokeRect(margin, bannerY, bannerWidth, bannerHeight);
+
+      // 3. Fila Superior: Logo + Titulo Ciudad
+      const headY = bannerY + (bannerHeight * 0.20);
+      
+      // Icono Dorado
+      ctx.fillStyle = "#d4af37";
+      ctx.fillRect(margin + 12, bannerY + 10, 24, 24);
+      ctx.fillStyle = "#000000";
+      ctx.font = "14px sans-serif";
+      ctx.fillText("🌞", margin + 15, bannerY + 27);
+
+      // Marca Coyoacan GPS
+      ctx.fillStyle = "#ffffff";
+      ctx.font = `bold ${width * 0.024}px sans-serif`;
+      ctx.fillText("Coyoacan GPS", margin + 44, headY);
+
+      // Título Ciudad Derecha
+      ctx.font = `bold ${width * 0.028}px sans-serif`;
+      ctx.textAlign = "right";
+      ctx.fillText("CMDX, Ciudad de Mexico, Mexico", margin + bannerWidth - 12, headY);
+      ctx.textAlign = "left"; // Reset alineación
+
+      // Línea divisoria horizontal
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(margin + 10, bannerY + (bannerHeight * 0.26));
+      ctx.lineTo(margin + bannerWidth - 10, bannerY + (bannerHeight * 0.26));
       ctx.stroke();
 
-      // Pin del Mapa
-      ctx.fillStyle = "#e63946";
-      ctx.font = `${mapSize * 0.4}px sans-serif`;
-      ctx.fillText("📍", mapX + (mapSize * 0.28), mapY + (mapSize * 0.65));
+      // 4. Cuadro Blanco del Mapa (Izquierda)
+      const mapSize = bannerHeight * 0.62;
+      const mapX = margin + 12;
+      const mapY = bannerY + (bannerHeight * 0.32);
 
-      // 4. Dibujar Textos Ordenados
-      const textX = mapX + mapSize + 18;
-      let currentY = bannerY + (bannerHeight * 0.20);
-
-      // Marca de agua
-      ctx.fillStyle = "#cccccc";
-      ctx.font = `bold ${width * 0.022}px sans-serif`;
-      ctx.fillText("📷 COYOACÁN GPS", textX, currentY);
-
-      // Título Ciudad (Grande)
-      currentY += (bannerHeight * 0.20);
       ctx.fillStyle = "#ffffff";
-      ctx.font = `bold ${width * 0.032}px sans-serif`;
-      ctx.fillText("CDMX, Ciudad de México, México", textX, currentY);
+      ctx.fillRect(mapX, mapY, mapSize, mapSize);
 
-      // Dirección
-      currentY += (bannerHeight * 0.18);
-      ctx.fillStyle = "#dddddd";
-      ctx.font = `${width * 0.024}px sans-serif`;
-      ctx.fillText("Calle Centenario 123, Del Carmen, Coyoacán", textX, currentY);
+      // Pin Rojo grande
+      ctx.fillStyle = "#e63946";
+      ctx.font = `${mapSize * 0.65}px sans-serif`;
+      ctx.fillText("📍", mapX + (mapSize * 0.18), mapY + (mapSize * 0.78));
 
-      // Coordenadas
-      currentY += (bannerHeight * 0.17);
-      ctx.fillStyle = "#bbbbbb";
-      ctx.font = `${width * 0.023}px sans-serif`;
-      ctx.fillText("Lat 19.351234, Long -99.165678", textX, currentY);
+      // 5. Lista de Textos Derecha
+      const textX = mapX + mapSize + 15;
+      const fontSize = width * 0.022;
+      ctx.font = `${fontSize}px sans-serif`;
+      ctx.fillStyle = "#ffffff";
 
-      // Fecha y Hora
-      currentY += (bannerHeight * 0.18);
+      ctx.fillText("Calle Centenario 123, Del Carmen,", textX, mapY + (mapSize * 0.20));
+      ctx.fillText("Coyoacan", textX, mapY + (mapSize * 0.40));
+      
+      ctx.fillText("Lat 19.351234, Long -99.165678", textX, mapY + (mapSize * 0.62));
+
       const now = new Date();
       fileName = `Evidencia_${now.toISOString().replace(/[:.]/g, '-')}.jpg`;
-      ctx.fillStyle = "#4cc9f0";
-      ctx.font = `bold ${width * 0.025}px sans-serif`;
-      ctx.fillText(now.toLocaleString('es-MX'), textX, currentY);
+      const dateStr = now.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const timeStr = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
+      
+      ctx.font = `bold ${fontSize}px sans-serif`;
+      ctx.fillText(`${dateStr} ${timeStr}`, textX, mapY + (mapSize * 0.82));
+      
+      ctx.font = `${fontSize * 0.9}px sans-serif`;
+      ctx.fillStyle = "#e0e0e0";
+      ctx.fillText("Foto tomada por Coyoacan GPS", textX, mapY + (mapSize * 0.98));
 
-      // Mostrar Vista Previa
+      // 6. Vista Previa
       document.getElementById('preview-img').src = canvas.toDataURL('image/jpeg', 0.95);
       document.getElementById('preview-modal').style.display = 'flex';
     }
