@@ -39,106 +39,92 @@
       object-fit: cover; 
     }
     
-    /* BANNER SEMI-TRANSPARENTE */
+    /* BANNER ESTILO GPS MAP CAMERA (Semi-transparente + Mapa a la Izq) */
     .gps-banner {
       position: absolute; 
       bottom: 12px; 
-      left: 12px; 
-      right: 12px;
-      background: rgba(0, 0, 0, 0.65); 
-      border-radius: 16px; 
-      padding: 12px 14px;
+      left: 10px; 
+      right: 10px;
+      background: rgba(0, 0, 0, 0.68); /* Caja negra semi-transparente */
+      border-radius: 12px; 
+      padding: 12px;
       display: flex; 
       align-items: center; 
       gap: 12px;
       border: 1px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
       z-index: 10;
     }
-
-    /* MINIMAPA LADO IZQUIERDO */
-    .map-box {
-      width: 80px;
-      height: 80px;
-      border-radius: 12px;
-      background: #2a3a2a;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+    
+    /* Mapa simulado en lado izquierdo */
+    .gps-map-box { 
+      width: 85px; 
+      height: 85px; 
+      background: #2a3a40 url('https://tile.openstreetmap.org/19/146865/241852.png') center/cover no-repeat;
+      border-radius: 8px; 
+      border: 2px solid #ffffff;
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      flex-shrink: 0; 
       position: relative;
-      flex-shrink: 0;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
-
-    /* Simulación de cuadrícula de mapa */
-    .map-box::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: 
-        linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px);
-      background-size: 16px 16px;
-    }
-
-    .map-pin {
+    .gps-map-pin {
       font-size: 24px;
-      z-index: 2;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
     }
     
-    /* TEXTOS COMPACTOS Y LEGIBLES */
+    /* Contenedor de Textos Pegados y Legibles */
     .gps-info { 
       color: #fff; 
-      font-size: 0.82rem; 
-      line-height: 1.25; 
+      display: flex;
+      flex-direction: column;
+      gap: 2px; /* Textos más pegados */
       flex: 1;
     }
-    
-    .watermark { 
-      font-size: 0.75rem; 
-      color: #e63946; 
-      font-weight: 800; 
+
+    .brand-tag {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #ddd;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 2px;
       display: flex;
       align-items: center;
       gap: 4px;
     }
-
-    .city-title {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: #ffffff;
-      margin-bottom: 2px;
+    
+    .city-title { 
+      font-size: 1.15rem; 
+      font-weight: 800; 
+      color: #ffffff; 
+      line-height: 1.15;
     }
 
-    .address {
-      color: #dddddd;
+    .address-text {
+      font-size: 0.82rem;
+      color: #e0e0e0;
+      line-height: 1.15;
+    }
+
+    .coords-text {
       font-size: 0.8rem;
-      margin-bottom: 1px;
+      color: #cccccc;
+      font-weight: 500;
     }
 
-    .coords {
-      color: #bbbbbb;
-      font-size: 0.78rem;
-      margin-bottom: 2px;
-    }
-
-    .clock {
+    .clock-text {
       color: #4cc9f0;
       font-weight: 700;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
     }
     
-    /* PANEL DE CONTROLES INFERIOR */
+    /* Controles Inferiores */
     .controls-panel { 
-      height: 110px; 
-      min-height: 110px;
+      height: 105px; 
+      min-height: 105px;
       background: #0d0d0d; 
       display: flex; 
       justify-content: space-evenly; 
@@ -152,19 +138,19 @@
       background: #1f1f1f; 
       color: #fff; 
       border: 1px solid #333; 
-      padding: 12px 18px; 
-      border-radius: 12px; 
+      padding: 10px 16px; 
+      border-radius: 10px; 
       font-size: 0.85rem; 
       font-weight: 600; 
       cursor: pointer;
     }
     
     .btn-capture { 
-      width: 74px; 
-      height: 74px; 
+      width: 72px; 
+      height: 72px; 
       border-radius: 50%; 
       background: #ffffff; 
-      border: 6px solid #e63946; 
+      border: 5px solid #e63946; 
       cursor: pointer; 
       box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
     }
@@ -186,7 +172,7 @@
     }
     
     .preview-actions { 
-      height: 100px; 
+      height: 95px; 
       background: #0d0d0d; 
       display: flex; 
       justify-content: space-evenly; 
@@ -201,19 +187,20 @@
     <div class="camera-container">
       <video id="video-stream" autoplay playsinline muted></video>
       
+      <!-- BANNER ACTUALIZADO CON ESTRUCTURA EXACTA -->
       <div class="gps-banner">
-        <!-- Mapa Izquierda -->
-        <div class="map-box">
-          <span class="map-pin">📍</span>
+        <!-- Mapa Izquierdo -->
+        <div class="gps-map-box">
+          <span class="gps-map-pin">📍</span>
         </div>
 
-        <!-- Información Ordenada -->
+        <!-- Textos Ordenados -->
         <div class="gps-info">
-          <div class="watermark">📍 Coyoacán GPS</div>
+          <div class="brand-tag">📷 Coyoacán GPS</div>
           <div class="city-title">CDMX, Ciudad de México, México</div>
-          <div class="address">Calle Centenario 123, Del Carmen, Coyoacán</div>
-          <div class="coords">Lat 19.351234, Long -99.165678</div>
-          <div class="clock" id="live-clock">Sincronizando reloj...</div>
+          <div class="address-text">Calle Centenario 123, Del Carmen, Coyoacán</div>
+          <div class="coords-text">Lat 19.351234, Long -99.165678</div>
+          <div class="clock-text" id="live-clock">Cargando...</div>
         </div>
       </div>
     </div>
@@ -229,7 +216,7 @@
     <img id="preview-img" alt="Vista previa">
     <div class="preview-actions">
       <button class="btn-side" style="background: #2a2a2a;" onclick="discardPhoto()">❌ Descartar</button>
-      <button class="btn-side" style="background: #e63946; border: none;" onclick="downloadPhoto()">💾 Guardar Evidencia</button>
+      <button class="btn-side" style="background: #e63946; border: none; font-size: 0.95rem;" onclick="downloadPhoto()">💾 Guardar Evidencia</button>
     </div>
   </div>
 
@@ -265,76 +252,72 @@
       canvas.width = width;
       canvas.height = height;
 
-      // 1. Dibujar Foto de Cámara
+      // 1. Dibujar Foto de fondo
       ctx.drawImage(video, 0, 0, width, height);
 
-      // 2. Dimensiones del Banner Semi-transparente en Canvas HD
-      const margin = width * 0.03;
+      // 2. Dibujar Caja Negra Semi-transparente
+      const margin = width * 0.025;
       const bannerHeight = height * 0.24;
       const bannerWidth = width - (margin * 2);
       const bannerY = height - bannerHeight - margin;
 
-      // Fondo transparente
-      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
-      ctx.roundRect(margin, bannerY, bannerWidth, bannerHeight, width * 0.02);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.70)";
+      ctx.roundRect(margin, bannerY, bannerWidth, bannerHeight, 14);
       ctx.fill();
 
-      // Border delgado
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+      // 3. Dibujar Cuadro del Mapa (Izquierda)
+      const mapSize = bannerHeight * 0.75;
+      const mapX = margin + 15;
+      const mapY = bannerY + (bannerHeight - mapSize) / 2;
+
+      ctx.fillStyle = "#2a3a40";
+      ctx.roundRect(mapX, mapY, mapSize, mapSize, 8);
+      ctx.fill();
+      ctx.strokeStyle = "#ffffff";
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // 3. Dibujar Cuadro del Mapa
-      const mapSize = bannerHeight * 0.75;
-      const mapX = margin + (bannerHeight * 0.12);
-      const mapY = bannerY + (bannerHeight * 0.12);
+      // Pin del Mapa
+      ctx.fillStyle = "#e63946";
+      ctx.font = `${mapSize * 0.4}px sans-serif`;
+      ctx.fillText("📍", mapX + (mapSize * 0.28), mapY + (mapSize * 0.65));
 
-      ctx.fillStyle = "#2a3a2a";
-      ctx.roundRect(mapX, mapY, mapSize, mapSize, mapSize * 0.15);
-      ctx.fill();
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
-      ctx.stroke();
-
-      // Pin sobre el minimapa
-      ctx.font = `${mapSize * 0.45}px sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("📍", mapX + (mapSize / 2), mapY + (mapSize / 2));
-
-      // 4. Textos con la Nueva Estructura
-      ctx.textAlign = "left";
-      ctx.textBaseline = "alphabetic";
-      const textX = mapX + mapSize + (margin * 0.8);
-      const baseFontSize = width * 0.024;
+      // 4. Dibujar Textos Ordenados
+      const textX = mapX + mapSize + 18;
+      let currentY = bannerY + (bannerHeight * 0.20);
 
       // Marca de agua
-      ctx.fillStyle = "#e63946";
-      ctx.font = `bold ${baseFontSize * 0.9}px sans-serif`;
-      ctx.fillText("📍 COYOACÁN GPS", textX, bannerY + (bannerHeight * 0.22));
+      ctx.fillStyle = "#cccccc";
+      ctx.font = `bold ${width * 0.022}px sans-serif`;
+      ctx.fillText("📷 COYOACÁN GPS", textX, currentY);
 
-      // Título Ciudad / País
+      // Título Ciudad (Grande)
+      currentY += (bannerHeight * 0.20);
       ctx.fillStyle = "#ffffff";
-      ctx.font = `bold ${baseFontSize * 1.35}px sans-serif`;
-      ctx.fillText("CDMX, Ciudad de México, México", textX, bannerY + (bannerHeight * 0.42));
+      ctx.font = `bold ${width * 0.032}px sans-serif`;
+      ctx.fillText("CDMX, Ciudad de México, México", textX, currentY);
 
       // Dirección
+      currentY += (bannerHeight * 0.18);
       ctx.fillStyle = "#dddddd";
-      ctx.font = `${baseFontSize}px sans-serif`;
-      ctx.fillText("Calle Centenario 123, Del Carmen, Coyoacán", textX, bannerY + (bannerHeight * 0.60));
+      ctx.font = `${width * 0.024}px sans-serif`;
+      ctx.fillText("Calle Centenario 123, Del Carmen, Coyoacán", textX, currentY);
 
       // Coordenadas
+      currentY += (bannerHeight * 0.17);
       ctx.fillStyle = "#bbbbbb";
-      ctx.font = `${baseFontSize * 0.95}px sans-serif`;
-      ctx.fillText("Lat 19.351234, Long -99.165678", textX, bannerY + (bannerHeight * 0.77));
+      ctx.font = `${width * 0.023}px sans-serif`;
+      ctx.fillText("Lat 19.351234, Long -99.165678", textX, currentY);
 
       // Fecha y Hora
+      currentY += (bannerHeight * 0.18);
       const now = new Date();
       fileName = `Evidencia_${now.toISOString().replace(/[:.]/g, '-')}.jpg`;
       ctx.fillStyle = "#4cc9f0";
-      ctx.font = `bold ${baseFontSize * 1.05}px sans-serif`;
-      ctx.fillText(now.toLocaleString('es-MX'), textX, bannerY + (bannerHeight * 0.93));
+      ctx.font = `bold ${width * 0.025}px sans-serif`;
+      ctx.fillText(now.toLocaleString('es-MX'), textX, currentY);
 
-      // Mostrar Previsualización
+      // Mostrar Vista Previa
       document.getElementById('preview-img').src = canvas.toDataURL('image/jpeg', 0.95);
       document.getElementById('preview-modal').style.display = 'flex';
     }
