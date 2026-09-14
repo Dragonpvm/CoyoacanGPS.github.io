@@ -1,1290 +1,1242 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
+  <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width,
-               initial-scale=1.0,
-               maximum-scale=1.0,
-               user-scalable=no,
-               viewport-fit=cover">
+  <meta
+    name="viewport"
+    content="width=device-width,
+             initial-scale=1.0,
+             maximum-scale=1.0,
+             user-scalable=no,
+             viewport-fit=cover"
+  >
 
-<title>Coyoacan GPS</title>
+  <title>Coyoacán GPS</title>
 
-<style>
+  <style>
 
-/* =========================================================
-   BASE
-   ========================================================= */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    -webkit-tap-highlight-color: transparent;
-}
-
-html,
-body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-
-    background: #000;
-
-    font-family:
-        Arial,
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
         Helvetica,
+        Arial,
         sans-serif;
-}
+      overflow: hidden;
+    }
 
+    /* =========================================================
+       APLICACIÓN
+       ========================================================= */
 
-/* =========================================================
-   APP
-   ========================================================= */
+    .app-viewport {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100dvh;
+    }
 
-.app {
-    position: relative;
+    /* =========================================================
+       CÁMARA
+       ========================================================= */
 
-    width: 100%;
-    height: 100dvh;
+    .camera-container {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      background: #000;
+      overflow: hidden;
 
-    overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-    background: #000;
-}
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
+    /* =========================================================
+       RECUADRO GPS SOBRE LA CÁMARA
+       ========================================================= */
 
-/* =========================================================
-   CÁMARA
-   ========================================================= */
+    .gps-overlay-box {
+      position: absolute;
 
-#video-stream {
+      bottom: 20px;
+      left: 3.5%;
+      right: 3.5%;
 
-    position: absolute;
+      background: rgba(55, 61, 67, 0.92);
 
-    inset: 0;
+      border: 1px solid rgba(255, 255, 255, 0.75);
 
-    width: 100%;
-    height: 100%;
+      padding: 10px;
 
-    object-fit: cover;
+      display: flex;
+      gap: 12px;
 
-    background: #111;
+      align-items: flex-start;
 
-    z-index: 1;
-}
+      z-index: 10;
 
+      box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.6);
+    }
 
-/* =========================================================
-   TARJETA GPS
-   ========================================================= */
+    /* =========================================================
+       CUADRO BLANCO DEL PIN
+       ========================================================= */
 
-.gps-overlay-box {
+    .map-container {
+      width: 105px;
+      height: 105px;
 
-    position: absolute;
+      min-width: 105px;
 
-    z-index: 10;
+      background: #ffffff;
 
-    left: 3%;
-    right: 3%;
+      border-radius: 1px;
 
-    bottom: 1.7%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-    height: 22%;
+      overflow: hidden;
+    }
 
-    min-height: 190px;
+    .map-pin-icon {
+      width: 60px;
+      height: 82px;
+    }
 
-    background: rgba(67, 73, 78, 0.93);
+    /* =========================================================
+       INFORMACIÓN
+       ========================================================= */
 
-    border: 1px solid rgba(255,255,255,0.65);
+    .data-container {
+      flex: 1;
 
-    box-shadow:
-        0 2px 8px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
 
-    display: flex;
+      gap: 2px;
 
-    flex-direction: column;
+      color: #ffffff;
 
-    color: #fff;
+      font-size: 14px;
 
-    overflow: hidden;
-}
+      line-height: 1.25;
 
+      min-width: 0;
+    }
 
-/* =========================================================
-   ENCABEZADO
-   ========================================================= */
+    /* =========================================================
+       ENCABEZADO
+       ========================================================= */
 
-.header-row {
+    .header-row {
+      display: flex;
 
-    height: 27%;
+      justify-content: space-between;
 
-    min-height: 54px;
+      align-items: center;
 
-    width: 100%;
+      margin-bottom: 2px;
 
-    display: flex;
+      gap: 10px;
+    }
 
-    align-items: center;
+    .brand-title {
+      font-weight: 700;
 
-    padding: 0 10px;
+      color: #ffffff;
 
-    border-bottom:
-        1px solid rgba(255,255,255,0.12);
+      font-size: 14px;
 
-    white-space: nowrap;
-}
+      display: flex;
 
+      align-items: center;
 
-/* =========================================================
-   MARCA
-   ========================================================= */
+      gap: 4px;
 
-.brand-title {
+      white-space: nowrap;
+    }
 
-    display: flex;
+    .brand-square {
+      width: 13px;
+      height: 13px;
 
-    align-items: center;
+      background: #fbc02d;
 
-    color: #fff;
+      border-radius: 2px;
 
-    font-size: clamp(12px, 2.2vw, 17px);
+      display: inline-block;
 
-    font-weight: 700;
+      flex-shrink: 0;
+    }
 
-    flex-shrink: 0;
-}
+    .city-title {
+      font-weight: 700;
 
+      color: #ffffff;
 
-.brand-square {
+      font-size: 14px;
 
-    width: 18px;
-    height: 18px;
+      text-align: right;
 
-    margin-right: 6px;
+      white-space: nowrap;
+    }
 
-    background: #fbc02d;
+    /* =========================================================
+       DATOS
+       ========================================================= */
 
-    border-radius: 2px;
+    .address-line {
+      color: #e0e0e0;
 
-    display: inline-flex;
+      font-size: 14px;
+    }
 
-    align-items: center;
-    justify-content: center;
+    .coords-line {
+      color: #cccccc;
 
-    color: #fff;
+      font-size: 14px;
 
-    font-size: 10px;
-}
+      margin-top: 1px;
+    }
 
+    .datetime-line {
+      font-weight: 700;
 
-/* =========================================================
-   CIUDAD
-   ========================================================= */
+      color: #ffffff;
 
-.city-title {
+      font-size: 14px;
 
-    margin-left: auto;
+      margin-top: 1px;
+    }
 
-    color: #fff;
+    .footer-line {
+      color: #aaaaaa;
 
-    font-size: clamp(16px, 3vw, 24px);
+      font-size: 13px;
+    }
 
-    font-weight: 700;
+    /* =========================================================
+       CONTROLES
+       ========================================================= */
 
-    text-align: right;
+    .controls-panel {
+      height: 95px;
 
-    white-space: nowrap;
-}
+      min-height: 95px;
 
+      background: #0a0a0a;
 
-/* =========================================================
-   CONTENIDO
-   ========================================================= */
+      display: flex;
 
-.content-row {
+      justify-content: space-evenly;
 
-    flex: 1;
+      align-items: center;
 
-    display: flex;
+      border-top: 1px solid #222;
 
-    align-items: center;
+      z-index: 20;
+    }
 
-    padding: 10px 8px;
+    .btn-side {
+      background: #1a1a1a;
 
-    gap: 10px;
+      color: #fff;
 
-    min-height: 0;
-}
+      border: 1px solid #333;
 
+      padding: 9px 15px;
 
-/* =========================================================
-   CUADRO BLANCO
-   ========================================================= */
+      border-radius: 8px;
 
-.map-container {
+      font-size: 0.8rem;
 
-    width: 26%;
+      font-weight: 600;
+    }
 
-    max-width: 176px;
+    .btn-capture {
+      width: 66px;
 
-    aspect-ratio: 1 / 1;
+      height: 66px;
 
-    min-width: 120px;
+      border-radius: 50%;
 
-    background: #fff;
+      background: #ffffff;
 
-    flex-shrink: 0;
+      border: 4px solid #e63946;
 
-    display: flex;
+      cursor: pointer;
+    }
 
-    align-items: center;
+    /* =========================================================
+       VISTA PREVIA
+       ========================================================= */
 
-    justify-content: center;
+    #preview-modal {
+      display: none;
 
-    overflow: hidden;
-}
+      position: fixed;
 
+      inset: 0;
 
-/* =========================================================
-   PIN
-   ========================================================= */
+      background: #000;
 
-.map-pin {
+      z-index: 100;
 
-    position: relative;
+      flex-direction: column;
 
-    width: 57%;
+      align-items: center;
 
-    height: 72%;
-}
+      justify-content: center;
+    }
 
+    #preview-img {
+      width: 100%;
 
-/*
-   Círculo rojo
-*/
+      height: calc(100% - 85px);
 
-.map-pin::before {
+      object-fit: contain;
 
-    content: "";
+      background: #000;
+    }
 
-    position: absolute;
+    .preview-actions {
+      width: 100%;
 
-    left: 0;
-    top: 0;
+      height: 85px;
 
-    width: 100%;
-    height: 70%;
+      background: #0a0a0a;
 
-    background: #ea4335;
+      display: flex;
 
-    border-radius: 50%;
-}
+      justify-content: space-evenly;
 
+      align-items: center;
+    }
 
-/*
-   Punta del pin
-*/
-
-.map-pin::after {
-
-    content: "";
-
-    position: absolute;
-
-    left: 18%;
-
-    top: 48%;
-
-    width: 64%;
-    height: 52%;
-
-    background: #78909c;
-
-    clip-path: polygon(
-        35% 0,
-        65% 0,
-        50% 100%
-    );
-}
-
-
-/*
-   Centro blanco
-*/
-
-.pin-center {
-
-    position: absolute;
-
-    z-index: 2;
-
-    width: 38%;
-
-    aspect-ratio: 1;
-
-    left: 31%;
-
-    top: 16%;
-
-    background: #fff;
-
-    border-radius: 50%;
-}
-
-
-/* =========================================================
-   DATOS
-   ========================================================= */
-
-.data-container {
-
-    flex: 1;
-
-    height: 100%;
-
-    min-width: 0;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: center;
-
-    gap: 3px;
-
-    overflow: hidden;
-}
-
-
-/* Dirección */
-
-.address-line {
-
-    color: #eeeeee;
-
-    font-size: clamp(12px, 2.1vw, 17px);
-
-    line-height: 1.25;
-
-    white-space: nowrap;
-}
-
-
-/* Coordenadas */
-
-.coords-line {
-
-    color: #dddddd;
-
-    font-size: clamp(12px, 2vw, 16px);
-
-    line-height: 1.3;
-
-    margin-top: 4px;
-
-    white-space: nowrap;
-}
-
-
-/* Fecha */
-
-.datetime-line {
-
-    color: #fff;
-
-    font-size: clamp(12px, 2vw, 16px);
-
-    line-height: 1.3;
-
-    font-weight: 700;
-
-    margin-top: 4px;
-
-    white-space: nowrap;
-}
-
-
-/* Pie */
-
-.footer-line {
-
-    color: #dddddd;
-
-    font-size: clamp(11px, 1.9vw, 15px);
-
-    line-height: 1.3;
-
-    margin-top: 3px;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   BOTÓN CAPTURA
-   ========================================================= */
-
-.capture-button {
-
-    position: absolute;
-
-    z-index: 30;
-
-    bottom: 25px;
-
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    width: 70px;
-    height: 70px;
-
-    border-radius: 50%;
-
-    background: #fff;
-
-    border: 5px solid #e63946;
-
-    box-shadow:
-        0 2px 8px rgba(0,0,0,0.5);
-
-    display: none;
-}
-
-
-/* =========================================================
-   PREVIEW
-   ========================================================= */
-
-#preview-modal {
-
-    display: none;
-
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 100;
-
-    background: #000;
-
-    flex-direction: column;
-}
-
-
-#preview-img {
-
-    width: 100%;
-
-    height: calc(100% - 90px);
-
-    object-fit: contain;
-
-    background: #000;
-}
-
-
-.preview-actions {
-
-    height: 90px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 20px;
-
-    background: #0a0a0a;
-}
-
-
-.btn {
-
-    border: none;
-
-    border-radius: 8px;
-
-    padding: 12px 18px;
-
-    color: #fff;
-
-    font-size: 14px;
-
-    font-weight: 600;
-}
-
-
-.btn-discard {
-
-    background: #333;
-}
-
-
-.btn-save {
-
-    background: #e63946;
-}
-
-</style>
+  </style>
 </head>
 
 
 <body>
 
-
-<div class="app">
+  <div class="app-viewport">
 
     <!-- =====================================================
          CÁMARA
          ===================================================== -->
 
-    <video
+    <div class="camera-container">
+
+      <video
         id="video-stream"
         autoplay
         playsinline
         muted>
-    </video>
+      </video>
 
 
-    <!-- =====================================================
-         TARJETA GPS
-         ===================================================== -->
+      <!-- ===================================================
+           RECUADRO GPS
+           =================================================== -->
 
-    <div class="gps-overlay-box">
+      <div class="gps-overlay-box">
+
+        <!-- PIN -->
+        <div class="map-container">
+
+          <svg
+            class="map-pin-icon"
+            viewBox="0 0 100 140"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+
+            <!-- Cabeza del pin -->
+            <path
+              d="
+                M50 0
+                C22.4 0 0 22.4 0 50
+                C0 87.5 50 140 50 140
+                C50 140 100 87.5 100 50
+                C100 22.4 77.6 0 50 0Z
+              "
+              fill="#EA4335"
+            />
+
+            <!-- Centro -->
+            <ellipse
+              cx="50"
+              cy="45"
+              rx="20"
+              ry="20"
+              fill="#ffffff"
+            />
+
+          </svg>
+
+        </div>
 
 
-        <!-- ENCABEZADO -->
+        <!-- =================================================
+             DATOS
+             ================================================= -->
 
-        <div class="header-row">
+        <div class="data-container">
 
-            <div class="brand-title">
+          <div class="header-row">
 
-                <span class="brand-square">
-                    ★
-                </span>
+            <span class="brand-title">
 
-                Coyoacan GPS
+              <span class="brand-square"></span>
 
-            </div>
+              Coyoacan GPS
+
+            </span>
 
 
-            <div class="city-title">
+            <span class="city-title">
 
-                CMDX, Ciudad de Mexico, Mexico
+              CMDX, Ciudad de Mexico, Mexico
 
-            </div>
+            </span>
+
+          </div>
+
+
+          <div class="address-line">
+
+            Calle Centenario 123, Del Carmen,
+
+          </div>
+
+
+          <div class="address-line">
+
+            Coyoacan
+
+          </div>
+
+
+          <div class="coords-line">
+
+            Lat 19.351234, Long -99.165678
+
+          </div>
+
+
+          <div
+            class="datetime-line"
+            id="live-clock"
+          >
+
+            14/09/2026 08:20 a.m.
+
+          </div>
+
+
+          <div class="footer-line">
+
+            Foto tomada por Coyoacan GPS
+
+          </div>
 
         </div>
 
-
-        <!-- CONTENIDO -->
-
-        <div class="content-row">
-
-
-            <!-- MAPA -->
-
-            <div class="map-container">
-
-                <div class="map-pin">
-
-                    <div class="pin-center"></div>
-
-                </div>
-
-            </div>
-
-
-            <!-- INFORMACIÓN -->
-
-            <div class="data-container">
-
-                <div class="address-line">
-
-                    Calle Centenario 123, Del Carmen,
-
-                </div>
-
-
-                <div class="address-line">
-
-                    Coyoacan
-
-                </div>
-
-
-                <div class="coords-line">
-
-                    Lat 19.351234, Long -99.165678
-
-                </div>
-
-
-                <div
-                    class="datetime-line"
-                    id="live-clock">
-
-                    14/09/2026 08:40 a.m.
-
-                </div>
-
-
-                <div class="footer-line">
-
-                    Foto tomada por Coyoacan GPS
-
-                </div>
-
-            </div>
-
-        </div>
+      </div>
 
     </div>
 
 
-    <!-- BOTÓN DE CAPTURA -->
+    <!-- =====================================================
+         BOTONES
+         ===================================================== -->
 
-    <button
-        class="capture-button"
-        onclick="takeSnapshot()">
-    </button>
+    <div class="controls-panel">
 
-</div>
+      <button
+        class="btn-side"
+        onclick="alert('Opción de video')"
+      >
+        📹 Video
+      </button>
 
 
-<!-- =========================================================
-     PREVISUALIZACIÓN
-     ========================================================= -->
+      <button
+        class="btn-capture"
+        onclick="takeSnapshot()"
+      >
+      </button>
 
-<div id="preview-modal">
+
+      <button
+        class="btn-side"
+        onclick="alert('Galería')"
+      >
+        🖼️ Galería
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =======================================================
+       MODAL DE PREVISUALIZACIÓN
+       ======================================================= -->
+
+  <div id="preview-modal">
 
     <img
-        id="preview-img"
-        alt="Evidencia">
+      id="preview-img"
+      alt="Evidencia"
+    >
 
 
     <div class="preview-actions">
 
-        <button
-            class="btn btn-discard"
-            onclick="discardPhoto()">
+      <button
+        class="btn-side"
+        style="background:#222;"
+        onclick="discardPhoto()"
+      >
+        ❌ Descartar
+      </button>
 
-            ❌ Descartar
 
-        </button>
-
-
-        <button
-            class="btn btn-save"
-            onclick="downloadPhoto()">
-
-            💾 Guardar Evidencia
-
-        </button>
+      <button
+        class="btn-side"
+        style="
+          background:#e63946;
+          border:none;
+        "
+        onclick="downloadPhoto()"
+      >
+        💾 Guardar Evidencia
+      </button>
 
     </div>
 
-</div>
+  </div>
 
 
-<canvas
+  <!-- CANVAS OCULTO -->
+  <canvas
     id="canvas"
-    style="display:none">
-</canvas>
+    style="display:none;"
+  ></canvas>
 
 
-<script>
+  <script>
 
-/* =========================================================
-   ELEMENTOS
-   ========================================================= */
+    /* ========================================================
+       ELEMENTOS
+       ======================================================== */
 
-const video =
-    document.getElementById("video-stream");
+    const video =
+      document.getElementById('video-stream');
 
-const clockEl =
-    document.getElementById("live-clock");
+    const clockEl =
+      document.getElementById('live-clock');
 
-let fileName = "";
+    let fileName = '';
 
 
-/* =========================================================
-   RELOJ
-   ========================================================= */
+    /* ========================================================
+       RELOJ
+       ======================================================== */
 
-function updateClock() {
+    function updateClock() {
 
-    const now = new Date();
+      const now = new Date();
 
-    const date =
+
+      const dateStr =
         now.toLocaleDateString(
-            "es-MX",
-            {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric"
-            }
+          'es-MX',
+          {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          }
         );
 
 
-    const time =
+      const timeStr =
         now.toLocaleTimeString(
-            "es-MX",
-            {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true
-            }
+          'es-MX',
+          {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+          }
         );
 
 
-    clockEl.textContent =
-        `${date} ${time}`;
-}
+      clockEl.innerText =
+        `${dateStr} ${timeStr}`;
+
+    }
 
 
-updateClock();
+    setInterval(updateClock, 1000);
 
-setInterval(
-    updateClock,
-    1000
-);
+    updateClock();
 
 
-/* =========================================================
-   CÁMARA
-   ========================================================= */
+    /* ========================================================
+       CÁMARA
+       ======================================================== */
 
-async function startCamera() {
+    navigator.mediaDevices
+      .getUserMedia({
 
-    try {
+        video: {
 
-        const stream =
-            await navigator.mediaDevices
-            .getUserMedia({
+          facingMode: {
+            ideal: "environment"
+          },
 
-                video: {
+          width: {
+            ideal: 1920
+          },
 
-                    facingMode: {
-                        ideal: "environment"
-                    },
+          height: {
+            ideal: 1080
+          }
 
-                    width: {
-                        ideal: 1920
-                    },
+        },
 
-                    height: {
-                        ideal: 1080
-                    }
+        audio: false
 
-                },
+      })
 
-                audio: false
-
-            });
-
+      .then(stream => {
 
         video.srcObject = stream;
 
-    } catch (error) {
+      })
 
-        console.error(
-            "No se pudo abrir la cámara:",
-            error
-        );
+      .catch(() => {
 
-        try {
-
-            const stream =
-                await navigator.mediaDevices
-                .getUserMedia({
-                    video: true,
-                    audio: false
-                });
+        navigator.mediaDevices
+          .getUserMedia({
+            video: true
+          })
+          .then(stream => {
 
             video.srcObject = stream;
 
-        } catch (error2) {
+          });
 
-            console.error(
-                "Cámara no disponible:",
-                error2
-            );
-
-        }
-
-    }
-}
+      });
 
 
-startCamera();
+    /* ========================================================
+       TOMAR FOTOGRAFÍA
+       ======================================================== */
+
+    function takeSnapshot() {
+
+      const canvas =
+        document.getElementById('canvas');
+
+      const ctx =
+        canvas.getContext('2d');
 
 
-/* =========================================================
-   TOMAR FOTO
-   ========================================================= */
+      /*
+       * ======================================================
+       * FORMATO DE LA FOTO
+       *
+       * La referencia es aproximadamente 2:3.
+       *
+       * 800 x 1200
+       * ======================================================
+       */
 
-function takeSnapshot() {
+      const outputW = 800;
 
-    const canvas =
-        document.getElementById("canvas");
-
-    const ctx =
-        canvas.getContext("2d");
-
-
-    const videoWidth =
-        video.videoWidth || 720;
-
-    const videoHeight =
-        video.videoHeight || 1280;
+      const outputH = 1200;
 
 
-    canvas.width =
-        videoWidth;
+      canvas.width = outputW;
 
-    canvas.height =
-        videoHeight;
+      canvas.height = outputH;
 
 
-    /* -----------------------------------------------------
-       FONDO
-       ----------------------------------------------------- */
+      /*
+       * ======================================================
+       * DATOS DEL VIDEO
+       * ======================================================
+       */
 
-    ctx.drawImage(
+      const videoW =
+        video.videoWidth || 1920;
+
+      const videoH =
+        video.videoHeight || 1080;
+
+
+      /*
+       * ======================================================
+       * RECORTE VERTICAL
+       *
+       * El video de la cámara normalmente es horizontal.
+       * Aquí se recorta al formato 2:3.
+       * ======================================================
+       */
+
+      const targetRatio =
+        outputW / outputH;
+
+      const videoRatio =
+        videoW / videoH;
+
+
+      let sx;
+      let sy;
+      let sw;
+      let sh;
+
+
+      if (videoRatio > targetRatio) {
+
+        /*
+         * El video es más ancho.
+         * Recortamos los lados.
+         */
+
+        sh = videoH;
+
+        sw =
+          videoH * targetRatio;
+
+        sx =
+          (videoW - sw) / 2;
+
+        sy = 0;
+
+      } else {
+
+        /*
+         * El video ya es vertical.
+         */
+
+        sw = videoW;
+
+        sh =
+          videoW / targetRatio;
+
+        sx = 0;
+
+        sy =
+          (videoH - sh) / 2;
+
+      }
+
+
+      /*
+       * Dibujar fotografía
+       */
+
+      ctx.drawImage(
         video,
+        sx,
+        sy,
+        sw,
+        sh,
         0,
         0,
-        canvas.width,
-        canvas.height
-    );
+        outputW,
+        outputH
+      );
 
 
-    /* -----------------------------------------------------
-       ESCALA BASADA EN LA IMAGEN DE REFERENCIA
-       ----------------------------------------------------- */
+      /* ======================================================
+         TARJETA GPS
+         ====================================================== */
 
-    const w = canvas.width;
-    const h = canvas.height;
-
-
-    /*
-       En la referencia:
-
-       margen izquierdo ≈ 3%
-       margen derecho ≈ 3%
-       tarjeta ≈ 22% de la altura
-    */
-
-    const marginX =
-        w * 0.03;
-
-    const cardW =
-        w - marginX * 2;
-
-    const cardH =
-        h * 0.22;
-
-    const cardY =
-        h * 0.765;
+      const margin =
+        outputW * 0.035;
 
 
-    /* -----------------------------------------------------
-       TARJETA
-       ----------------------------------------------------- */
+      const cardW =
+        outputW - (margin * 2);
 
-    ctx.fillStyle =
-        "rgba(67,73,78,0.93)";
 
-    ctx.fillRect(
-        marginX,
+      /*
+       * Exactamente 20% de la fotografía,
+       * como en tu imagen de referencia.
+       */
+
+      const cardH =
+        outputH * 0.20;
+
+
+      const cardY =
+        outputH -
+        cardH -
+        margin;
+
+
+      /*
+       * Fondo gris
+       */
+
+      ctx.fillStyle =
+        "rgba(55, 61, 67, 0.92)";
+
+
+      ctx.fillRect(
+        margin,
         cardY,
         cardW,
         cardH
-    );
+      );
 
 
-    ctx.strokeStyle =
-        "rgba(255,255,255,0.65)";
+      /*
+       * Borde blanco
+       */
 
-    ctx.lineWidth = 2;
+      ctx.strokeStyle =
+        "rgba(255, 255, 255, 0.75)";
 
-    ctx.strokeRect(
-        marginX,
+
+      ctx.lineWidth = 2;
+
+
+      ctx.strokeRect(
+        margin,
         cardY,
         cardW,
         cardH
-    );
+      );
 
 
-    /* -----------------------------------------------------
-       ENCABEZADO
-       ----------------------------------------------------- */
+      /* ======================================================
+         CUADRO BLANCO DEL MAPA
+         ====================================================== */
 
-    const headerH =
-        cardH * 0.27;
-
-
-    ctx.strokeStyle =
-        "rgba(255,255,255,0.12)";
-
-    ctx.lineWidth = 1;
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        marginX,
-        cardY + headerH
-    );
-
-    ctx.lineTo(
-        marginX + cardW,
-        cardY + headerH
-    );
-
-    ctx.stroke();
+      const mapW =
+        cardH * 0.76;
 
 
-    /* -----------------------------------------------------
-       MAPA
-       ----------------------------------------------------- */
+      const mapX =
+        margin + 12;
 
-    const mapSize =
-        cardH * 0.62;
 
-    const mapX =
-        marginX + 8;
-
-    const mapY =
+      const mapY =
         cardY +
-        headerH +
-        (cardH - headerH - mapSize) / 2;
+        (cardH - mapW) / 2;
 
 
-    ctx.fillStyle = "#fff";
+      /*
+       * Fondo blanco
+       */
 
-    ctx.fillRect(
+      ctx.fillStyle =
+        "#ffffff";
+
+
+      ctx.fillRect(
         mapX,
         mapY,
-        mapSize,
-        mapSize
-    );
+        mapW,
+        mapW
+      );
 
 
-    /* -----------------------------------------------------
-       PIN
-       ----------------------------------------------------- */
+      /* ======================================================
+         PIN
+         ====================================================== */
 
-    const pinCX =
-        mapX + mapSize / 2;
-
-    const pinRadius =
-        mapSize * 0.17;
-
-    const pinCY =
-        mapY + mapSize * 0.37;
+      const centerX =
+        mapX + mapW / 2;
 
 
-    /* círculo */
+      const centerY =
+        mapY + mapW * 0.38;
 
-    ctx.fillStyle =
+
+      const radius =
+        mapW * 0.22;
+
+
+      /*
+       * Cabeza roja
+       */
+
+      ctx.fillStyle =
         "#EA4335";
 
-    ctx.beginPath();
 
-    ctx.arc(
-        pinCX,
-        pinCY,
-        pinRadius,
+      ctx.beginPath();
+
+      ctx.arc(
+        centerX,
+        centerY,
+        radius,
         0,
         Math.PI * 2
-    );
+      );
 
-    ctx.fill();
-
-
-    /* punta */
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        pinCX - pinRadius,
-        pinCY + pinRadius * 0.25
-    );
-
-    ctx.lineTo(
-        pinCX,
-        mapY + mapSize * 0.80
-    );
-
-    ctx.lineTo(
-        pinCX + pinRadius,
-        pinCY + pinRadius * 0.25
-    );
-
-    ctx.closePath();
-
-    ctx.fill();
+      ctx.fill();
 
 
-    /* centro blanco */
+      /*
+       * Punta
+       */
 
-    ctx.fillStyle =
-        "#fff";
+      ctx.beginPath();
 
-    ctx.beginPath();
+      ctx.moveTo(
+        centerX - radius,
+        centerY + 3
+      );
 
-    ctx.arc(
-        pinCX,
-        pinCY,
-        pinRadius * 0.43,
+      ctx.lineTo(
+        centerX,
+        mapY + mapW * 0.75
+      );
+
+      ctx.lineTo(
+        centerX + radius,
+        centerY + 3
+      );
+
+      ctx.closePath();
+
+      ctx.fill();
+
+
+      /*
+       * Centro blanco
+       */
+
+      ctx.fillStyle =
+        "#ffffff";
+
+
+      ctx.beginPath();
+
+      ctx.arc(
+        centerX,
+        centerY,
+        radius * 0.45,
         0,
         Math.PI * 2
-    );
+      );
 
-    ctx.fill();
-
-
-    /* -----------------------------------------------------
-       TEXTOS
-       ----------------------------------------------------- */
-
-    const textX =
-        mapX + mapSize + 12;
-
-    const fontSize =
-        w * 0.021;
+      ctx.fill();
 
 
-    let y =
-        cardY + headerH * 0.63;
+      /* ======================================================
+         TEXTO
+         ====================================================== */
+
+      const textX =
+        mapX +
+        mapW +
+        14;
 
 
-    /* marca */
+      /*
+       * Tamaños
+       */
 
-    ctx.fillStyle =
+      const fontSize =
+        outputW * 0.021;
+
+
+      let lineY =
+        mapY +
+        mapW * 0.16;
+
+
+      /* ======================================================
+         CABECERA
+         ====================================================== */
+
+      /*
+       * Cuadro amarillo
+       */
+
+      ctx.fillStyle =
         "#fbc02d";
 
-    ctx.fillRect(
-        marginX + 9,
-        cardY + 9,
-        16,
-        16
-    );
+
+      ctx.fillRect(
+        textX,
+        lineY - 10,
+        10,
+        10
+      );
 
 
-    ctx.fillStyle =
-        "#fff";
+      /*
+       * Coyoacan GPS
+       */
 
-    ctx.font =
-        `bold ${fontSize * 0.95}px Arial`;
-
-    ctx.fillText(
-        "Coyoacan GPS",
-        marginX + 32,
-        cardY + 21
-    );
+      ctx.fillStyle =
+        "#ffffff";
 
 
-    /* ciudad */
-
-    ctx.textAlign =
-        "right";
-
-    ctx.font =
-        `bold ${fontSize * 1.25}px Arial`;
-
-    ctx.fillText(
-        "CMDX, Ciudad de Mexico, Mexico",
-        marginX + cardW - 10,
-        cardY + 22
-    );
+      ctx.font =
+        `bold ${fontSize * 1.05}px Arial, sans-serif`;
 
 
-    ctx.textAlign =
+      ctx.textAlign =
         "left";
 
 
-    /* dirección */
-
-    ctx.font =
-        `${fontSize}px Arial`;
-
-    ctx.fillStyle =
-        "#eeeeee";
+      ctx.fillText(
+        "Coyoacan GPS",
+        textX + 14,
+        lineY
+      );
 
 
-    y =
-        mapY + mapSize * 0.20;
+      /*
+       * Ciudad
+       */
+
+      ctx.textAlign =
+        "right";
 
 
-    ctx.fillText(
+      ctx.fillText(
+        "CMDX, Ciudad de Mexico, Mexico",
+        margin + cardW - 12,
+        lineY
+      );
+
+
+      ctx.textAlign =
+        "left";
+
+
+      /* ======================================================
+         DIRECCIÓN
+         ====================================================== */
+
+      lineY +=
+        mapW * 0.20;
+
+
+      ctx.font =
+        `${fontSize}px Arial, sans-serif`;
+
+
+      ctx.fillStyle =
+        "#e0e0e0";
+
+
+      ctx.fillText(
         "Calle Centenario 123, Del Carmen,",
         textX,
-        y
-    );
+        lineY
+      );
 
 
-    y +=
-        mapSize * 0.19;
+      lineY +=
+        mapW * 0.18;
 
 
-    ctx.fillText(
+      ctx.fillText(
         "Coyoacan",
         textX,
-        y
-    );
+        lineY
+      );
 
 
-    /* coordenadas */
+      /* ======================================================
+         COORDENADAS
+         ====================================================== */
 
-    y +=
-        mapSize * 0.20;
+      lineY +=
+        mapW * 0.18;
 
-    ctx.fillStyle =
-        "#dddddd";
 
-    ctx.fillText(
+      ctx.fillStyle =
+        "#cccccc";
+
+
+      ctx.fillText(
         "Lat 19.351234, Long -99.165678",
         textX,
-        y
-    );
+        lineY
+      );
 
 
-    /* fecha */
+      /* ======================================================
+         FECHA Y HORA
+         ====================================================== */
 
-    y +=
-        mapSize * 0.21;
+      lineY +=
+        mapW * 0.20;
 
-    ctx.fillStyle =
-        "#fff";
 
-    ctx.font =
-        `bold ${fontSize}px Arial`;
-
-    const now =
+      const now =
         new Date();
 
 
-    const date =
+      /*
+       * Nombre del archivo
+       */
+
+      fileName =
+        `Evidencia_${now
+          .toISOString()
+          .replace(/[:.]/g, '-')}.jpg`;
+
+
+      const dateStr =
         now.toLocaleDateString(
-            "es-MX",
-            {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric"
-            }
+          'es-MX',
+          {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          }
         );
 
 
-    const time =
+      const timeStr =
         now.toLocaleTimeString(
-            "es-MX",
-            {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true
-            }
+          'es-MX',
+          {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+          }
         );
 
 
-    ctx.fillText(
-        `${date} ${time}`,
+      ctx.font =
+        `bold ${fontSize * 1.05}px Arial, sans-serif`;
+
+
+      ctx.fillStyle =
+        "#ffffff";
+
+
+      ctx.fillText(
+        `${dateStr} ${timeStr}`,
         textX,
-        y
-    );
+        lineY
+      );
 
 
-    /* pie */
+      /* ======================================================
+         PIE
+         ====================================================== */
 
-    y +=
-        mapSize * 0.17;
+      lineY +=
+        mapW * 0.16;
 
-    ctx.font =
-        `${fontSize * 0.90}px Arial`;
 
-    ctx.fillStyle =
-        "#dddddd";
+      ctx.font =
+        `${fontSize * 0.9}px Arial, sans-serif`;
 
-    ctx.fillText(
+
+      ctx.fillStyle =
+        "#aaaaaa";
+
+
+      ctx.fillText(
         "Foto tomada por Coyoacan GPS",
         textX,
-        y
-    );
+        lineY
+      );
 
 
-    /* -----------------------------------------------------
-       NOMBRE DEL ARCHIVO
-       ----------------------------------------------------- */
+      /* ======================================================
+         MOSTRAR PREVISUALIZACIÓN
+         ====================================================== */
 
-    fileName =
-        `Evidencia_${now
-            .toISOString()
-            .replace(/[:.]/g, "-")
-        }.jpg`;
-
-
-    /* -----------------------------------------------------
-       MOSTRAR FOTO
-       ----------------------------------------------------- */
-
-    document
-        .getElementById("preview-img")
+      document
+        .getElementById('preview-img')
         .src =
         canvas.toDataURL(
-            "image/jpeg",
-            0.95
+          'image/jpeg',
+          0.95
         );
 
 
-    document
-        .getElementById("preview-modal")
+      document
+        .getElementById('preview-modal')
         .style.display =
-        "flex";
-}
+        'flex';
+
+    }
 
 
-/* =========================================================
-   DESCARTAR
-   ========================================================= */
+    /* ========================================================
+       DESCARTAR
+       ======================================================== */
 
-function discardPhoto() {
+    function discardPhoto() {
 
-    document
-        .getElementById("preview-modal")
+      document
+        .getElementById('preview-modal')
         .style.display =
-        "none";
-}
+        'none';
+
+    }
 
 
-/* =========================================================
-   GUARDAR
-   ========================================================= */
+    /* ========================================================
+       GUARDAR
+       ======================================================== */
 
-function downloadPhoto() {
+    function downloadPhoto() {
 
-    const a =
-        document.createElement("a");
+      const a =
+        document.createElement('a');
 
-    a.href =
+
+      a.href =
         document
-        .getElementById("preview-img")
-        .src;
+          .getElementById('preview-img')
+          .src;
 
-    a.download =
+
+      a.download =
         fileName;
 
-    a.click();
 
-    discardPhoto();
-}
+      a.click();
 
-</script>
+
+      discardPhoto();
+
+    }
+
+  </script>
 
 </body>
 </html>
