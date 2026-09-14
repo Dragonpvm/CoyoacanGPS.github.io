@@ -3,600 +3,622 @@
 
 <head>
 
-<meta charset="UTF-8">
+  <meta charset="UTF-8">
 
-<meta
-  name="viewport"
-  content="width=device-width,
-           initial-scale=1.0,
-           maximum-scale=1.0,
-           user-scalable=no,
-           viewport-fit=cover"
->
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+  >
 
-<title>Coyoacán GPS</title>
+  <title>Coyoacán GPS</title>
 
 
-<style>
+  <!-- =====================================================
+       HTML2CANVAS
+       Se utiliza para capturar la misma tarjeta HTML
+       que se está mostrando en pantalla.
+       ===================================================== -->
 
-/* =========================================================
-   RESET
-   ========================================================= */
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 
-  -webkit-tap-highlight-color: transparent;
-}
+  <style>
 
+    /* =====================================================
+       RESET
+       ===================================================== */
 
-html,
-body {
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
 
-  width: 100%;
-  height: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-  background: #000;
 
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Helvetica,
-    Arial,
-    sans-serif;
+    /* =====================================================
+       HTML / BODY
+       ===================================================== */
 
-  overflow: hidden;
-}
+    html,
+    body {
 
+      width: 100%;
+      height: 100%;
 
-/* =========================================================
-   APP
-   ========================================================= */
+      background: #000;
 
-.app-viewport {
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
 
-  width: 100%;
-  height: 100dvh;
+      overflow: hidden;
+    }
 
-  display: flex;
-  flex-direction: column;
 
-  background: #000;
-}
+    /* =====================================================
+       APP
+       ===================================================== */
 
+    .app-viewport {
 
-/* =========================================================
-   CÁMARA
-   ========================================================= */
+      width: 100%;
+      height: 100dvh;
 
-.camera-container {
+      display: flex;
+      flex-direction: column;
 
-  position: relative;
+      background: #000;
+    }
 
-  width: 100%;
 
-  flex: 1;
-  min-height: 0;
+    /* =====================================================
+       CONTENEDOR DE CÁMARA
+       ===================================================== */
 
-  background: #000;
+    .camera-container {
 
-  overflow: hidden;
-}
+      position: relative;
 
+      width: 100%;
 
-video {
+      flex: 1;
+      min-height: 0;
 
-  width: 100%;
-  height: 100%;
+      background: #000;
 
-  display: block;
+      overflow: hidden;
 
-  object-fit: cover;
-}
+      display: flex;
 
+      align-items: center;
+      justify-content: center;
+    }
 
-/* =========================================================
-   TARJETA GPS
-   ========================================================= */
 
-.gps-box {
+    /* =====================================================
+       VIDEO
+       ===================================================== */
 
-  position: absolute;
+    #video-stream {
 
-  left: 3%;
-  right: 3%;
+      position: absolute;
 
-  bottom: 2%;
+      inset: 0;
 
-  width: 94%;
+      width: 100%;
+      height: 100%;
 
-  height: 20%;
+      object-fit: cover;
 
-  background:
-    rgba(0, 0, 0, 0.78);
+      display: block;
 
-  border:
-    1px solid
-    rgba(255, 255, 255, 0.4);
+      z-index: 1;
+    }
 
-  border-radius: 8px;
 
-  padding: 2%;
+    /* =====================================================
+       TARJETA GPS
 
-  display: flex;
+       ESTA ES LA ÚNICA TARJETA QUE EXISTE.
 
-  gap: 2.5%;
+       La misma tarjeta que se ve antes de tomar la foto
+       será la que se capture después.
+       ===================================================== */
 
-  align-items: stretch;
+    .gps-box {
 
-  z-index: 10;
+      position: absolute;
 
-  backdrop-filter: blur(6px);
+      left: 12px;
+      right: 12px;
 
-  box-shadow:
-    0 4px 20px
-    rgba(0,0,0,0.6);
-}
+      bottom: 16px;
 
+      background:
+        rgba(0, 0, 0, 0.78);
 
-/* =========================================================
-   COLUMNA IZQUIERDA
-   ========================================================= */
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.40);
 
-.gps-left {
+      border-radius: 8px;
 
-  width: 25%;
+      padding: 10px 12px;
 
-  min-width: 0;
+      display: flex;
 
-  display: flex;
+      gap: 12px;
 
-  flex-direction: column;
+      align-items: center;
 
-  align-items: stretch;
-}
+      z-index: 10;
 
+      box-shadow:
+        0 4px 20px
+        rgba(0, 0, 0, 0.60);
 
-/* =========================================================
-   LOGO + COYOACAN GPS
-   ========================================================= */
+      /*
+       * Muy importante:
+       * la tarjeta conserva exactamente sus dimensiones
+       * independientemente del tamaño del teléfono.
+       */
+    }
 
-.gps-brand {
 
-  width: 100%;
+    /* =====================================================
+       MAPA / PIN
+       ===================================================== */
 
-  height: 27%;
+    .map-square {
 
-  display: flex;
+      width: 90px;
+      height: 90px;
 
-  align-items: center;
+      min-width: 90px;
 
-  margin-bottom: 5%;
-}
+      background: #ffffff;
 
+      border-radius: 4px;
 
-/* =========================================================
-   LOGO
-   ========================================================= */
+      display: flex;
 
-.gps-logo {
+      align-items: center;
+      justify-content: center;
 
-  height: 100%;
+      overflow: hidden;
+    }
 
-  aspect-ratio: 1 / 1;
 
-  background: #fff;
+    /* =====================================================
+       PIN SVG
 
-  display: flex;
+       Usamos SVG en lugar de emoji para que el navegador
+       no cambie su aspecto entre pantalla y fotografía.
+       ===================================================== */
 
-  align-items: center;
+    .map-pin-svg {
 
-  justify-content: center;
+      width: 48px;
+      height: 68px;
 
-  overflow: hidden;
+      display: block;
+    }
 
-  flex-shrink: 0;
-}
 
+    /* =====================================================
+       COLUMNA DE INFORMACIÓN
+       ===================================================== */
 
-/*
-   Aquí puedes poner tu logo real:
+    .info-column {
 
-   <img src="logo.png">
+      flex: 1;
 
-   Por ahora usamos el símbolo.
-*/
+      min-width: 0;
 
-.gps-logo span {
+      display: flex;
 
-  font-size: 55%;
+      flex-direction: column;
 
-  color: #c79b38;
+      gap: 2px;
 
-  line-height: 1;
-}
+      color: #ffffff;
+    }
 
 
-/* =========================================================
-   COYOACAN GPS
-   ========================================================= */
+    /* =====================================================
+       MARCA
+       ===================================================== */
 
-.brand-title {
+    .watermark-text {
 
-  height: 100%;
+      font-size: 11px;
 
-  flex: 1;
+      font-weight: 600;
 
-  min-width: 0;
+      color: #b0b0b0;
 
-  background: #000;
+      display: flex;
 
-  color: #fff;
+      align-items: center;
 
-  display: flex;
+      gap: 4px;
 
-  align-items: center;
+      text-transform: uppercase;
 
-  padding: 0 5%;
+      letter-spacing: 0.3px;
+    }
 
-  font-size: clamp(10px, 2.8vw, 24px);
 
-  font-weight: 700;
+    /* =====================================================
+       CUADRO AMARILLO
+       ===================================================== */
 
-  white-space: nowrap;
+    .yellow-icon {
 
-  overflow: hidden;
-}
+      width: 10px;
+      height: 10px;
 
+      background: #fbc02d;
 
-/* =========================================================
-   MAPA
-   ========================================================= */
+      border-radius: 2px;
 
-.map-square {
+      display: inline-block;
 
-  width: 100%;
+      flex-shrink: 0;
+    }
 
-  flex: 1;
 
-  min-height: 0;
+    /* =====================================================
+       CIUDAD
+       ===================================================== */
 
-  background: #fff;
+    .city-title-large {
 
-  border-radius: 4px;
+      font-size: 15px;
 
-  display: flex;
+      font-weight: 800;
 
-  align-items: center;
+      color: #ffffff;
 
-  justify-content: center;
+      line-height: 1.15;
 
-  overflow: hidden;
-}
+      margin-bottom: 1px;
 
+      white-space: nowrap;
 
-/* =========================================================
-   PIN
-   ========================================================= */
+      overflow: hidden;
 
-.map-pin {
+      text-overflow: ellipsis;
+    }
 
-  font-size: clamp(45px, 14vw, 130px);
 
-  line-height: 1;
-}
+    /* =====================================================
+       DIRECCIÓN
+       ===================================================== */
 
+    .address-text {
 
-/* =========================================================
-   COLUMNA DERECHA
-   ========================================================= */
+      font-size: 12px;
 
-.info-column {
+      font-weight: 500;
 
-  flex: 1;
+      color: #e0e0e0;
 
-  min-width: 0;
+      line-height: 1.15;
+    }
 
-  display: flex;
 
-  flex-direction: column;
+    /* =====================================================
+       COORDENADAS
+       ===================================================== */
 
-  gap: 2px;
+    .coords-text {
 
-  color: #fff;
-}
+      font-size: 11px;
 
+      color: #cccccc;
 
-/* =========================================================
-   CIUDAD
-   ========================================================= */
+      line-height: 1.15;
+    }
 
-.city-title-large {
 
-  width: 100%;
+    /* =====================================================
+       FECHA Y HORA
+       ===================================================== */
 
-  background: #000;
+    .datetime-text {
 
-  color: #fff;
+      font-size: 12px;
 
-  padding: 1% 2%;
+      font-weight: 700;
 
-  font-size:
-    clamp(13px, 3.8vw, 30px);
+      color: #ffffff;
 
-  font-weight: 800;
+      margin-top: 1px;
 
-  line-height: 1.15;
+      line-height: 1.15;
+    }
 
-  white-space: nowrap;
 
-  overflow: hidden;
+    /* =====================================================
+       CONTROLES
+       ===================================================== */
 
-  text-overflow: ellipsis;
-}
+    .controls-panel {
 
+      width: 100%;
 
-/* =========================================================
-   INFORMACIÓN
-   ========================================================= */
+      height: 95px;
 
-.address-text {
+      min-height: 95px;
 
-  margin-top: 2%;
+      background: #0a0a0a;
 
-  background: #000;
+      display: flex;
 
-  color: #fff;
+      justify-content: space-evenly;
 
-  padding: 1% 2%;
+      align-items: center;
 
-  font-size:
-    clamp(10px, 3vw, 23px);
+      border-top: 1px solid #222;
 
-  font-weight: 500;
+      z-index: 20;
+    }
 
-  line-height: 1.2;
-}
 
+    /* =====================================================
+       BOTONES LATERALES
+       ===================================================== */
 
-.coords-text {
+    .btn-side {
 
-  background: #000;
+      background: #1a1a1a;
 
-  color: #ccc;
+      color: #fff;
 
-  padding: 0 2%;
+      border: 1px solid #333;
 
-  font-size:
-    clamp(9px, 2.7vw, 21px);
+      padding: 9px 15px;
 
-  line-height: 1.2;
-}
+      border-radius: 8px;
 
+      font-size: 0.8rem;
 
-.datetime-text {
+      font-weight: 600;
 
-  background: #000;
+      cursor: pointer;
+    }
 
-  color: #fff;
 
-  padding: 0 2%;
+    /* =====================================================
+       BOTÓN DE CAPTURA
+       ===================================================== */
 
-  font-size:
-    clamp(10px, 2.9vw, 22px);
+    .btn-capture {
 
-  font-weight: 700;
+      width: 66px;
+      height: 66px;
 
-  line-height: 1.2;
-}
+      border-radius: 50%;
 
+      background: #ffffff;
 
-.watermark-text {
+      border: 4px solid #e63946;
 
-  position: absolute;
+      cursor: pointer;
+    }
 
-  opacity: 0;
 
-  pointer-events: none;
-}
+    /* =====================================================
+       MODAL DE PREVISUALIZACIÓN
+       ===================================================== */
 
+    #preview-modal {
 
-/* =========================================================
-   BOTONES
-   ========================================================= */
+      display: none;
 
-.controls-panel {
+      position: fixed;
 
-  width: 100%;
+      inset: 0;
 
-  height: 95px;
+      background: #000;
 
-  min-height: 95px;
+      z-index: 100;
 
-  background: #0a0a0a;
+      flex-direction: column;
+    }
 
-  display: flex;
 
-  justify-content: space-evenly;
+    /* =====================================================
+       FOTO DE PREVISUALIZACIÓN
+       ===================================================== */
 
-  align-items: center;
+    #preview-img {
 
-  border-top: 1px solid #222;
+      width: 100%;
 
-  z-index: 20;
-}
+      height: auto;
 
+      flex: 1;
 
-.btn-side {
+      min-height: 0;
 
-  background: #1a1a1a;
+      object-fit: contain;
 
-  color: #fff;
+      background: #000;
 
-  border: 1px solid #333;
+      display: block;
+    }
 
-  padding: 9px 15px;
 
-  border-radius: 8px;
+    /* =====================================================
+       BOTONES DEL PREVIEW
+       ===================================================== */
 
-  font-size: 0.8rem;
+    .preview-actions {
 
-  font-weight: 600;
+      width: 100%;
 
-  cursor: pointer;
-}
+      height: 85px;
 
+      min-height: 85px;
 
-.btn-capture {
+      background: #0a0a0a;
 
-  width: 66px;
+      display: flex;
 
-  height: 66px;
+      justify-content: space-evenly;
 
-  border-radius: 50%;
+      align-items: center;
+    }
 
-  background: #fff;
 
-  border: 4px solid #e63946;
+    /* =====================================================
+       TELÉFONOS PEQUEÑOS
+       ===================================================== */
 
-  cursor: pointer;
-}
+    @media (max-width: 380px) {
 
+      .gps-box {
 
-/* =========================================================
-   PREVIEW
-   ========================================================= */
+        left: 8px;
+        right: 8px;
 
-#preview-modal {
+        bottom: 12px;
 
-  display: none;
+        padding: 8px 9px;
 
-  position: fixed;
+        gap: 8px;
+      }
 
-  inset: 0;
 
-  background: #000;
+      .map-square {
 
-  z-index: 100;
+        width: 78px;
+        height: 78px;
 
-  flex-direction: column;
-}
+        min-width: 78px;
+      }
 
 
-#preview-img {
+      .map-pin-svg {
 
-  width: 100%;
+        width: 42px;
+        height: 60px;
+      }
 
-  height: auto;
 
-  flex: 1;
+      .watermark-text {
 
-  min-height: 0;
+        font-size: 9px;
+      }
 
-  object-fit: contain;
 
-  background: #000;
-}
+      .yellow-icon {
 
+        width: 8px;
+        height: 8px;
+      }
 
-.preview-actions {
 
-  width: 100%;
+      .city-title-large {
 
-  height: 85px;
+        font-size: 13px;
+      }
 
-  min-height: 85px;
 
-  background: #0a0a0a;
+      .address-text {
 
-  display: flex;
+        font-size: 10px;
+      }
 
-  justify-content: space-evenly;
 
-  align-items: center;
-}
+      .coords-text {
 
+        font-size: 9px;
+      }
 
-/* =========================================================
-   TELÉFONOS PEQUEÑOS
-   ========================================================= */
 
-@media (max-width: 380px) {
+      .datetime-text {
 
-  .gps-box {
+        font-size: 10px;
+      }
 
-    left: 3%;
-    right: 3%;
+    }
 
-    padding: 2%;
 
-    gap: 2%;
-  }
+    /* =====================================================
+       TELÉFONOS GRANDES
+       ===================================================== */
 
-  .gps-left {
+    @media (min-width: 600px) {
 
-    width: 27%;
-  }
+      .gps-box {
 
-  .brand-title {
+        left: 20px;
+        right: 20px;
 
-    font-size: 10px;
+        bottom: 20px;
 
-    padding-left: 4%;
-  }
+        padding: 12px 14px;
+      }
 
-  .city-title-large {
 
-    font-size: 13px;
-  }
+      .map-square {
 
-  .address-text {
+        width: 110px;
+        height: 110px;
 
-    font-size: 10px;
-  }
+        min-width: 110px;
+      }
 
-  .coords-text {
 
-    font-size: 9px;
-  }
+      .map-pin-svg {
 
-  .datetime-text {
+        width: 58px;
+        height: 82px;
+      }
 
-    font-size: 10px;
-  }
-}
 
+      .watermark-text {
 
-/* =========================================================
-   TELÉFONOS GRANDES
-   ========================================================= */
+        font-size: 13px;
+      }
 
-@media (min-width: 600px) {
 
-  .gps-box {
+      .city-title-large {
 
-    left: 20px;
-    right: 20px;
+        font-size: 19px;
+      }
 
-    width: auto;
 
-    height: 190px;
+      .address-text {
 
-    bottom: 20px;
-  }
+        font-size: 15px;
+      }
 
-  .gps-left {
 
-    width: 170px;
-  }
+      .coords-text {
 
-}
+        font-size: 13px;
+      }
 
-</style>
+
+      .datetime-text {
+
+        font-size: 14px;
+      }
+
+    }
+
+  </style>
 
 </head>
 
@@ -604,119 +626,183 @@ video {
 <body>
 
 
-<!-- =========================================================
-     APP
-     ========================================================= -->
+  <!-- =====================================================
+       APLICACIÓN
+       ===================================================== -->
 
-<div class="app-viewport">
-
-
-  <!-- =======================================================
-       CÁMARA
-       ======================================================= -->
-
-  <div class="camera-container">
+  <div class="app-viewport">
 
 
-    <video
-      id="video-stream"
-      autoplay
-      playsinline
-      muted>
-    </video>
+    <!-- ===================================================
+         CÁMARA
+         =================================================== -->
+
+    <div
+      class="camera-container"
+      id="camera-container"
+    >
 
 
-    <!-- =====================================================
-         GPS
-         ESTA ES LA ESTRUCTURA ÚNICA
-         ===================================================== -->
+      <!-- ===============================================
+           VIDEO
+           =============================================== -->
 
-    <div class="gps-box">
-
-
-      <!-- =================================================
-           IZQUIERDA
-           ================================================= -->
-
-      <div class="gps-left">
+      <video
+        id="video-stream"
+        autoplay
+        playsinline
+        muted
+      ></video>
 
 
-        <!-- LOGO + COYOACAN GPS -->
+      <!-- ===============================================
+           TARJETA GPS
 
-        <div class="gps-brand">
+           ESTA MISMA TARJETA SE VE EN PANTALLA
+           Y SE CAPTURA EN LA FOTOGRAFÍA.
+           =============================================== -->
 
-
-          <div class="gps-logo">
-
-            <span>☀</span>
-
-          </div>
+      <div class="gps-box">
 
 
-          <div class="brand-title">
+        <!-- =============================================
+             IZQUIERDA
+             ============================================= -->
+
+        <div class="map-square">
+
+
+          <!-- ===========================================
+               PIN
+               =========================================== -->
+
+          <svg
+            class="map-pin-svg"
+            viewBox="0 0 100 140"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+
+            <!-- Cuerpo rojo -->
+
+            <path
+              d="
+                M50 0
+                C22.4 0 0 22.4 0 50
+                C0 87.5 50 140 50 140
+                C50 140 100 87.5 100 50
+                C100 22.4 77.6 0 50 0
+                Z
+              "
+              fill="#EA4335"
+            />
+
+
+            <!-- Centro blanco -->
+
+            <ellipse
+              cx="50"
+              cy="45"
+              rx="20"
+              ry="20"
+              fill="#ffffff"
+            />
+
+
+            <!-- Palo -->
+
+            <rect
+              x="47"
+              y="90"
+              width="6"
+              height="40"
+              fill="#78909C"
+            />
+
+
+            <!-- Punta -->
+
+            <path
+              d="
+                M50 140
+                L45 95
+                L55 95
+                Z
+              "
+              fill="#78909C"
+            />
+
+          </svg>
+
+
+        </div>
+
+
+        <!-- =============================================
+             DERECHA
+             ============================================= -->
+
+        <div class="info-column">
+
+
+          <!-- ===========================================
+               COYOACAN GPS
+               =========================================== -->
+
+          <div class="watermark-text">
+
+            <span class="yellow-icon"></span>
 
             Coyoacan GPS
 
           </div>
 
 
-        </div>
+          <!-- ===========================================
+               CIUDAD
+               =========================================== -->
+
+          <div class="city-title-large">
+
+            CDMX, Ciudad de México, México
+
+          </div>
 
 
-        <!-- MAPA -->
+          <!-- ===========================================
+               DIRECCIÓN
+               =========================================== -->
 
-        <div class="map-square">
+          <div class="address-text">
 
-          <span class="map-pin">📍</span>
+            Calle Centenario 123, Del Carmen, Coyoacán
 
-        </div>
-
-
-      </div>
-
-
-      <!-- =================================================
-           DERECHA
-           ================================================= -->
-
-      <div class="info-column">
+          </div>
 
 
-        <!-- CIUDAD -->
+          <!-- ===========================================
+               COORDENADAS
+               =========================================== -->
 
-        <div class="city-title-large">
+          <div class="coords-text">
 
-          CDMX, Ciudad de México, México
+            Lat 19.351234, Long -99.165678
 
-        </div>
-
-
-        <!-- DIRECCIÓN -->
-
-        <div class="address-text">
-
-          Calle Centenario 123, Del Carmen, Coyoacán
-
-        </div>
+          </div>
 
 
-        <!-- COORDENADAS -->
+          <!-- ===========================================
+               FECHA
+               =========================================== -->
 
-        <div class="coords-text">
+          <div
+            class="datetime-text"
+            id="live-clock"
+          >
 
-          Lat 19.351234, Long -99.165678
+            14/09/2026, 9:25:17 a.m.
 
-        </div>
+          </div>
 
-
-        <!-- FECHA -->
-
-        <div
-          class="datetime-text"
-          id="live-clock"
-        >
-
-          14/09/2026, 9:25:17 a.m.
 
         </div>
 
@@ -727,957 +813,871 @@ video {
     </div>
 
 
+    <!-- ===================================================
+         CONTROLES
+         =================================================== -->
+
+    <div class="controls-panel">
+
+
+      <button
+        class="btn-side"
+        onclick="alert('Modo video')"
+      >
+
+        📹 Video
+
+      </button>
+
+
+      <!-- ===============================================
+           CAPTURAR
+           =============================================== -->
+
+      <button
+        class="btn-capture"
+        onclick="takeSnapshot()"
+        aria-label="Tomar fotografía"
+      >
+      </button>
+
+
+      <button
+        class="btn-side"
+        onclick="alert('Galería')"
+      >
+
+        🖼️ Galería
+
+      </button>
+
+
+    </div>
+
+
   </div>
 
 
-  <!-- =======================================================
-       CONTROLES
-       ======================================================= -->
+  <!-- =====================================================
+       PREVIEW
+       ===================================================== -->
 
-  <div class="controls-panel">
-
-
-    <button
-      class="btn-side"
-      onclick="alert('Modo video')"
-    >
-      📹 Video
-    </button>
-
-
-    <button
-      class="btn-capture"
-      onclick="takeSnapshot()"
-    >
-    </button>
-
-
-    <button
-      class="btn-side"
-      onclick="alert('Galería')"
-    >
-      🖼️ Galería
-    </button>
-
-
-  </div>
-
-
-</div>
-
-
-<!-- =========================================================
-     PREVIEW
-     ========================================================= -->
-
-<div id="preview-modal">
-
-
-  <img
-    id="preview-img"
-    alt="Evidencia"
+  <div
+    id="preview-modal"
   >
 
 
-  <div class="preview-actions">
-
-
-    <button
-      class="btn-side"
-      style="background:#222;"
-      onclick="discardPhoto()"
+    <img
+      id="preview-img"
+      alt="Evidencia"
     >
-      ❌ Descartar
-    </button>
 
 
-    <button
-      class="btn-side"
-      style="
-        background:#e63946;
-        border:none;
-      "
-      onclick="downloadPhoto()"
-    >
-      💾 Guardar Evidencia
-    </button>
+    <div class="preview-actions">
+
+
+      <button
+        class="btn-side"
+        style="background:#222;"
+        onclick="discardPhoto()"
+      >
+
+        ❌ Descartar
+
+      </button>
+
+
+      <button
+        class="btn-side"
+        style="
+          background:#e63946;
+          border:none;
+        "
+        onclick="downloadPhoto()"
+      >
+
+        💾 Guardar Evidencia
+
+      </button>
+
+
+    </div>
 
 
   </div>
 
 
-</div>
+  <!-- =====================================================
+       CANVAS OCULTO
+       Se utiliza únicamente para capturar el frame
+       de la cámara.
+       ===================================================== -->
+
+  <canvas
+    id="video-canvas"
+    style="display:none;"
+  ></canvas>
 
 
-<canvas
-  id="canvas"
-  style="display:none;"
-></canvas>
+  <script>
+
+    /* =====================================================
+       ELEMENTOS
+       ===================================================== */
+
+    const video =
+      document.getElementById(
+        'video-stream'
+      );
 
 
-<script>
-
-/* =========================================================
-   ELEMENTOS
-   ========================================================= */
-
-const video =
-  document.getElementById("video-stream");
-
-const clockEl =
-  document.getElementById("live-clock");
-
-let fileName = "";
+    const clockEl =
+      document.getElementById(
+        'live-clock'
+      );
 
 
-/* =========================================================
-   RELOJ
-   ========================================================= */
-
-function updateClock() {
-
-  const now = new Date();
-
-  clockEl.innerText =
-    now.toLocaleString(
-      "es-MX",
-      {
-        day: "numeric",
-        month: "numeric",
-        year: "numeric",
-
-        hour: "numeric",
-        minute: "2-digit",
-        second: "2-digit",
-
-        hour12: true
-      }
-    );
-}
+    const cameraContainer =
+      document.getElementById(
+        'camera-container'
+      );
 
 
-setInterval(
-  updateClock,
-  1000
-);
-
-updateClock();
+    const previewModal =
+      document.getElementById(
+        'preview-modal'
+      );
 
 
-/* =========================================================
-   CÁMARA
-   ========================================================= */
+    const previewImg =
+      document.getElementById(
+        'preview-img'
+      );
 
-navigator.mediaDevices
-  .getUserMedia({
 
-    video: {
+    const videoCanvas =
+      document.getElementById(
+        'video-canvas'
+      );
 
-      facingMode: {
-        ideal: "environment"
-      },
 
-      width: {
-        ideal: 1920
-      },
+    let fileName = '';
 
-      height: {
-        ideal: 1080
-      }
 
-    },
+    /* =====================================================
+       RELOJ
+       ===================================================== */
 
-    audio: false
+    function updateClock() {
 
-  })
+      const now =
+        new Date();
 
-  .then(
-    stream => {
 
-      video.srcObject =
-        stream;
-
-    }
-  )
-
-  .catch(
-    () => {
-
-      navigator.mediaDevices
-        .getUserMedia({
-          video: true
-        })
-        .then(
-          stream => {
-
-            video.srcObject =
-              stream;
-
+      const date =
+        now.toLocaleDateString(
+          'es-MX',
+          {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
           }
         );
 
+
+      const time =
+        now.toLocaleTimeString(
+          'es-MX',
+          {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+          }
+        );
+
+
+      clockEl.innerText =
+        `${date}, ${time}`;
+
     }
-  );
 
 
-/* =========================================================
-   TOMAR FOTO
-   ========================================================= */
-
-function takeSnapshot() {
-
-
-  const canvas =
-    document.getElementById("canvas");
-
-  const ctx =
-    canvas.getContext("2d");
-
-
-  /* =======================================================
-     FOTO VERTICAL
-     
-     IMPORTANTE:
-     La imagen final tiene la misma proporción
-     vertical que la pantalla del teléfono.
-     ======================================================= */
-
-  const outputW = 1080;
-
-  const outputH = 1920;
-
-
-  canvas.width =
-    outputW;
-
-  canvas.height =
-    outputH;
-
-
-  /* =======================================================
-     VIDEO ORIGINAL
-     ======================================================= */
-
-  const videoW =
-    video.videoWidth || 1920;
-
-  const videoH =
-    video.videoHeight || 1080;
-
-
-  /*
-   * Queremos exactamente el mismo formato
-   * que vemos en el teléfono: 9:16.
-   */
-
-  const targetRatio =
-    outputW / outputH;
-
-  const videoRatio =
-    videoW / videoH;
-
-
-  let sx = 0;
-  let sy = 0;
-  let sw = videoW;
-  let sh = videoH;
-
-
-  /* =======================================================
-     RECORTE IGUAL A object-fit: cover
-     ======================================================= */
-
-  if (videoRatio > targetRatio) {
-
-    /*
-     * El video es demasiado ancho.
-     */
-
-    sh = videoH;
-
-    sw =
-      videoH * targetRatio;
-
-    sx =
-      (videoW - sw) / 2;
-
-    sy = 0;
-
-  }
-  else {
-
-    /*
-     * El video es demasiado alto.
-     */
-
-    sw = videoW;
-
-    sh =
-      videoW / targetRatio;
-
-    sx = 0;
-
-    sy =
-      (videoH - sh) / 2;
-  }
-
-
-  /* =======================================================
-     DIBUJAR FOTO
-     ======================================================= */
-
-  ctx.drawImage(
-
-    video,
-
-    sx,
-    sy,
-    sw,
-    sh,
-
-    0,
-    0,
-    outputW,
-    outputH
-
-  );
-
-
-  /* =======================================================
-     GPS
-     
-     AQUÍ USAMOS EXACTAMENTE LAS MISMAS
-     PROPORCIONES QUE LA VISTA DE PANTALLA.
-     ======================================================= */
-
-  drawGpsOverlay(
-    ctx,
-    outputW,
-    outputH
-  );
-
-
-  /* =======================================================
-     NOMBRE DEL ARCHIVO
-     ======================================================= */
-
-  const now =
-    new Date();
-
-
-  fileName =
-    "Evidencia_" +
-    now
-      .toISOString()
-      .replace(/[:.]/g, "-") +
-    ".jpg";
-
-
-  /* =======================================================
-     MOSTRAR PREVIEW
-     ======================================================= */
-
-  document
-    .getElementById("preview-img")
-    .src =
-    canvas.toDataURL(
-      "image/jpeg",
-      0.95
+    setInterval(
+      updateClock,
+      1000
     );
 
 
-  document
-    .getElementById("preview-modal")
-    .style.display =
-    "flex";
-}
+    updateClock();
 
 
-/* =========================================================
-   DIBUJAR GPS
-   ========================================================= */
+    /* =====================================================
+       INICIAR CÁMARA
+       ===================================================== */
 
-function drawGpsOverlay(
-  ctx,
-  w,
-  h
-) {
+    async function startCamera() {
 
+      try {
 
-  /* =======================================================
-     DIMENSIONES
-     ======================================================= */
+        const stream =
+          await navigator
+            .mediaDevices
+            .getUserMedia({
 
-  const margin =
-    w * 0.03;
+              video: {
 
+                facingMode: {
+                  ideal: 'environment'
+                },
 
-  const boxW =
-    w * 0.94;
+                width: {
+                  ideal: 1920
+                },
 
+                height: {
+                  ideal: 1080
+                }
 
-  const boxH =
-    h * 0.20;
+              },
 
+              audio: false
 
-  const boxX =
-    margin;
+            });
 
 
-  const boxY =
-    h -
-    boxH -
-    h * 0.02;
+        video.srcObject =
+          stream;
 
 
-  /* =======================================================
-     CAJA PRINCIPAL
-     ======================================================= */
+      } catch (error) {
 
-  ctx.fillStyle =
-    "rgba(0,0,0,0.78)";
+        console.error(
+          'Error al acceder a la cámara:',
+          error
+        );
 
 
-  ctx.fillRect(
-    boxX,
-    boxY,
-    boxW,
-    boxH
-  );
+        try {
 
+          const stream =
+            await navigator
+              .mediaDevices
+              .getUserMedia({
 
-  ctx.strokeStyle =
-    "rgba(255,255,255,0.4)";
+                video: true,
 
+                audio: false
 
-  ctx.lineWidth =
-    2;
+              });
 
 
-  ctx.strokeRect(
-    boxX,
-    boxY,
-    boxW,
-    boxH
-  );
+          video.srcObject =
+            stream;
 
 
-  /* =======================================================
-     PADDING
-     ======================================================= */
+        } catch (fallbackError) {
 
-  const padding =
-    boxW * 0.02;
+          console.error(
+            'No fue posible abrir la cámara:',
+            fallbackError
+          );
 
 
-  /* =======================================================
-     COLUMNA IZQUIERDA
-     ======================================================= */
+          alert(
+            'No fue posible acceder a la cámara.'
+          );
 
-  const leftX =
-    boxX + padding;
+        }
 
-
-  const leftW =
-    boxW * 0.25;
-
-
-  const gap =
-    boxW * 0.025;
-
-
-  /* =======================================================
-     LOGO
-     ======================================================= */
-
-  const brandH =
-    boxH * 0.27;
-
-
-  const logoSize =
-    brandH;
-
-
-  ctx.fillStyle =
-    "#ffffff";
-
-
-  ctx.fillRect(
-    leftX,
-    boxY + padding,
-    logoSize,
-    logoSize
-  );
-
-
-  /* =======================================================
-     LOGO PROVISIONAL
-     ======================================================= */
-
-  ctx.fillStyle =
-    "#c79b38";
-
-
-  ctx.font =
-    `${logoSize * 0.55}px Arial`;
-
-
-  ctx.textAlign =
-    "center";
-
-
-  ctx.textBaseline =
-    "middle";
-
-
-  ctx.fillText(
-
-    "☀",
-
-    leftX +
-      logoSize / 2,
-
-    boxY +
-      padding +
-      logoSize / 2
-
-  );
-
-
-  /* =======================================================
-     COYOACAN GPS
-     ======================================================= */
-
-  const brandX =
-    leftX + logoSize;
-
-
-  const brandW =
-    leftW - logoSize;
-
-
-  ctx.fillStyle =
-    "#000000";
-
-
-  ctx.fillRect(
-
-    brandX,
-
-    boxY + padding,
-
-    brandW,
-
-    brandH
-
-  );
-
-
-  ctx.fillStyle =
-    "#ffffff";
-
-
-  ctx.font =
-    `bold ${w * 0.028}px Arial`;
-
-
-  ctx.textAlign =
-    "left";
-
-
-  ctx.textBaseline =
-    "middle";
-
-
-  ctx.fillText(
-
-    "Coyoacan GPS",
-
-    brandX + brandW * 0.05,
-
-    boxY +
-      padding +
-      brandH / 2
-
-  );
-
-
-  /* =======================================================
-     MAPA
-     ======================================================= */
-
-  const mapX =
-    leftX;
-
-
-  const mapY =
-    boxY +
-    padding +
-    brandH +
-    boxH * 0.05;
-
-
-  const mapW =
-    leftW;
-
-
-  const mapH =
-    boxY +
-    boxH -
-    padding -
-    mapY;
-
-
-  ctx.fillStyle =
-    "#ffffff";
-
-
-  ctx.fillRect(
-    mapX,
-    mapY,
-    mapW,
-    mapH
-  );
-
-
-  /* =======================================================
-     PIN
-     ======================================================= */
-
-  const pinX =
-    mapX +
-    mapW / 2;
-
-
-  const pinY =
-    mapY +
-    mapH * 0.38;
-
-
-  const pinRadius =
-    Math.min(
-      mapW,
-      mapH
-    ) * 0.22;
-
-
-  ctx.fillStyle =
-    "#e63946";
-
-
-  ctx.beginPath();
-
-  ctx.arc(
-
-    pinX,
-    pinY,
-
-    pinRadius,
-
-    0,
-    Math.PI * 2
-
-  );
-
-  ctx.fill();
-
-
-  /* Punta */
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-
-    pinX -
-      pinRadius,
-
-    pinY +
-      pinRadius * 0.35
-
-  );
-
-
-  ctx.lineTo(
-
-    pinX,
-
-    mapY +
-      mapH * 0.82
-
-  );
-
-
-  ctx.lineTo(
-
-    pinX +
-      pinRadius,
-
-    pinY +
-      pinRadius * 0.35
-
-  );
-
-
-  ctx.closePath();
-
-  ctx.fill();
-
-
-  /* Centro */
-
-  ctx.fillStyle =
-    "#ffffff";
-
-
-  ctx.beginPath();
-
-  ctx.arc(
-
-    pinX,
-    pinY,
-
-    pinRadius * 0.45,
-
-    0,
-    Math.PI * 2
-
-  );
-
-  ctx.fill();
-
-
-  /* =======================================================
-     COLUMNA DERECHA
-     ======================================================= */
-
-  const rightX =
-    leftX +
-    leftW +
-    gap;
-
-
-  const rightW =
-    boxW -
-    leftW -
-    gap -
-    padding * 2;
-
-
-  /* =======================================================
-     CIUDAD
-     ======================================================= */
-
-  const cityH =
-    boxH * 0.27;
-
-
-  ctx.fillStyle =
-    "#000000";
-
-
-  ctx.fillRect(
-
-    rightX,
-
-    boxY + padding,
-
-    rightW,
-
-    cityH
-
-  );
-
-
-  ctx.fillStyle =
-    "#ffffff";
-
-
-  ctx.font =
-    `bold ${w * 0.038}px Arial`;
-
-
-  ctx.textAlign =
-    "left";
-
-
-  ctx.textBaseline =
-    "middle";
-
-
-  ctx.fillText(
-
-    "CDMX, Ciudad de México, México",
-
-    rightX +
-      rightW * 0.02,
-
-    boxY +
-      padding +
-      cityH / 2
-
-  );
-
-
-  /* =======================================================
-     INFORMACIÓN
-     ======================================================= */
-
-  const infoX =
-    rightX;
-
-
-  let currentY =
-    boxY +
-    padding +
-    cityH +
-    boxH * 0.08;
-
-
-  /* Dirección */
-
-  ctx.fillStyle =
-    "#ffffff";
-
-
-  ctx.font =
-    `${w * 0.030}px Arial`;
-
-
-  ctx.textBaseline =
-    "alphabetic";
-
-
-  ctx.fillText(
-
-    "Calle Centenario 123, Del Carmen, Coyoacán",
-
-    infoX +
-      rightW * 0.02,
-
-    currentY
-
-  );
-
-
-  /* Coordenadas */
-
-  currentY +=
-    boxH * 0.17;
-
-
-  ctx.fillStyle =
-    "#cccccc";
-
-
-  ctx.font =
-    `${w * 0.027}px Arial`;
-
-
-  ctx.fillText(
-
-    "Lat 19.351234, Long -99.165678",
-
-    infoX +
-      rightW * 0.02,
-
-    currentY
-
-  );
-
-
-  /* =======================================================
-     FECHA
-     ======================================================= */
-
-  currentY +=
-    boxH * 0.18;
-
-
-  const now =
-    new Date();
-
-
-  ctx.fillStyle =
-    "#ffffff";
-
-
-  ctx.font =
-    `bold ${w * 0.028}px Arial`;
-
-
-  ctx.fillText(
-
-    now.toLocaleString(
-      "es-MX",
-      {
-        day: "numeric",
-        month: "numeric",
-        year: "numeric",
-
-        hour: "numeric",
-        minute: "2-digit",
-        second: "2-digit",
-
-        hour12: true
       }
-    ),
 
-    infoX +
-      rightW * 0.02,
-
-    currentY
-
-  );
-
-}
+    }
 
 
-/* =========================================================
-   DESCARTAR
-   ========================================================= */
-
-function discardPhoto() {
-
-  document
-    .getElementById(
-      "preview-modal"
-    )
-    .style.display =
-    "none";
-
-}
+    startCamera();
 
 
-/* =========================================================
-   GUARDAR
-   ========================================================= */
+    /* =====================================================
+       ESPERAR A QUE LA CÁMARA ESTÉ LISTA
+       ===================================================== */
 
-function downloadPhoto() {
+    function waitForVideo() {
 
-  const a =
-    document.createElement("a");
+      return new Promise(
+        resolve => {
 
+          if (
+            video.readyState >= 2 &&
+            video.videoWidth > 0 &&
+            video.videoHeight > 0
+          ) {
 
-  a.href =
-    document
-      .getElementById(
-        "preview-img"
-      )
-      .src;
+            resolve();
 
+            return;
 
-  a.download =
-    fileName;
-
-
-  a.click();
+          }
 
 
-  discardPhoto();
+          const check =
+            setInterval(
+              () => {
 
-}
+                if (
+                  video.readyState >= 2 &&
+                  video.videoWidth > 0 &&
+                  video.videoHeight > 0
+                ) {
 
-</script>
+                  clearInterval(
+                    check
+                  );
+
+                  resolve();
+
+                }
+
+              },
+              50
+            );
+
+        }
+      );
+
+    }
+
+
+    /* =====================================================
+       CAPTURAR EL FRAME DEL VIDEO
+       ===================================================== */
+
+    function captureVideoFrame() {
+
+      const rect =
+        cameraContainer
+          .getBoundingClientRect();
+
+
+      const width =
+        Math.round(
+          rect.width
+        );
+
+
+      const height =
+        Math.round(
+          rect.height
+        );
+
+
+      const scale =
+        Math.min(
+          window.devicePixelRatio || 1,
+          2
+        );
+
+
+      videoCanvas.width =
+        Math.round(
+          width * scale
+        );
+
+
+      videoCanvas.height =
+        Math.round(
+          height * scale
+        );
+
+
+      const ctx =
+        videoCanvas.getContext(
+          '2d'
+        );
+
+
+      const videoWidth =
+        video.videoWidth;
+
+
+      const videoHeight =
+        video.videoHeight;
+
+
+      /*
+       * ================================================
+       * MISMO RECORTE QUE:
+       *
+       * object-fit: cover
+       * ================================================
+       */
+
+      const containerRatio =
+        width / height;
+
+
+      const videoRatio =
+        videoWidth / videoHeight;
+
+
+      let sourceX = 0;
+
+      let sourceY = 0;
+
+      let sourceWidth =
+        videoWidth;
+
+      let sourceHeight =
+        videoHeight;
+
+
+      if (
+        videoRatio >
+        containerRatio
+      ) {
+
+        /*
+         * Video demasiado ancho.
+         * Recortamos izquierda y derecha.
+         */
+
+        sourceWidth =
+          videoHeight *
+          containerRatio;
+
+
+        sourceX =
+          (
+            videoWidth -
+            sourceWidth
+          ) / 2;
+
+      }
+      else {
+
+        /*
+         * Video demasiado alto.
+         * Recortamos arriba y abajo.
+         */
+
+        sourceHeight =
+          videoWidth /
+          containerRatio;
+
+
+        sourceY =
+          (
+            videoHeight -
+            sourceHeight
+          ) / 2;
+
+      }
+
+
+      /*
+       * ================================================
+       * DIBUJAR EL VIDEO
+       * ================================================
+       */
+
+      ctx.drawImage(
+
+        video,
+
+        sourceX,
+        sourceY,
+
+        sourceWidth,
+        sourceHeight,
+
+        0,
+        0,
+
+        videoCanvas.width,
+        videoCanvas.height
+
+      );
+
+
+      return {
+
+        width,
+
+        height,
+
+        scale
+
+      };
+
+    }
+
+
+    /* =====================================================
+       TOMAR FOTO
+       ===================================================== */
+
+    async function takeSnapshot() {
+
+      try {
+
+        /*
+         * ==============================================
+         * ESPERAR A QUE EL VIDEO ESTÉ LISTO
+         * ==============================================
+         */
+
+        await waitForVideo();
+
+
+        /*
+         * ==============================================
+         * CAPTURAR FRAME DE LA CÁMARA
+         * ==============================================
+         */
+
+        const dimensions =
+          captureVideoFrame();
+
+
+        /*
+         * ==============================================
+         * OCULTAR VIDEO
+         *
+         * IMPORTANTE:
+         *
+         * NO ocultamos gps-box.
+         *
+         * gps-box seguirá visible.
+         * ==============================================
+         */
+
+        const originalVideoVisibility =
+          video.style.visibility;
+
+
+        video.style.visibility =
+          'hidden';
+
+
+        /*
+         * ==============================================
+         * COLOCAR EL FRAME CAPTURADO COMO FONDO
+         * ==============================================
+         */
+
+        const backgroundCanvas =
+          document.createElement(
+            'canvas'
+          );
+
+
+        backgroundCanvas.width =
+          videoCanvas.width;
+
+
+        backgroundCanvas.height =
+          videoCanvas.height;
+
+
+        const bgCtx =
+          backgroundCanvas.getContext(
+            '2d'
+          );
+
+
+        bgCtx.drawImage(
+          videoCanvas,
+          0,
+          0
+        );
+
+
+        /*
+         * El canvas queda detrás de la tarjeta GPS.
+         */
+
+        backgroundCanvas.style.position =
+          'absolute';
+
+
+        backgroundCanvas.style.left =
+          '0';
+
+
+        backgroundCanvas.style.top =
+          '0';
+
+
+        backgroundCanvas.style.width =
+          '100%';
+
+
+        backgroundCanvas.style.height =
+          '100%';
+
+
+        backgroundCanvas.style.zIndex =
+          '0';
+
+
+        backgroundCanvas.style.pointerEvents =
+          'none';
+
+
+        cameraContainer.insertBefore(
+
+          backgroundCanvas,
+
+          cameraContainer.firstChild
+
+        );
+
+
+        /*
+         * ==============================================
+         * ESPERAR UN FRAME DEL NAVEGADOR
+         * ==============================================
+         */
+
+        await new Promise(
+          resolve =>
+            requestAnimationFrame(
+              () => resolve()
+            )
+        );
+
+
+        /*
+         * ==============================================
+         * CAPTURAR TODO EL CONTENEDOR
+         *
+         * Aquí está la diferencia fundamental:
+         *
+         * html2canvas captura el gps-box REAL.
+         *
+         * NO dibujamos otra tarjeta.
+         * ==============================================
+         */
+
+        const finalCanvas =
+          await html2canvas(
+            cameraContainer,
+            {
+
+              /*
+               * Misma anchura visual
+               */
+
+              width:
+                dimensions.width,
+
+
+              /*
+               * Misma altura visual
+               */
+
+              height:
+                dimensions.height,
+
+
+              /*
+               * Misma escala
+               */
+
+              scale:
+                dimensions.scale,
+
+
+              backgroundColor:
+                '#000000',
+
+
+              useCORS:
+                true,
+
+
+              allowTaint:
+                true,
+
+
+              logging:
+                false,
+
+
+              /*
+               * El video ya está oculto.
+               *
+               * El canvas que pusimos detrás contiene
+               * el frame de la cámara.
+               */
+
+              ignoreElements:
+                function(element) {
+
+                  return (
+                    element === video
+                  );
+
+                }
+
+            }
+          );
+
+
+        /*
+         * ==============================================
+         * CONVERTIR A JPEG
+         * ==============================================
+         */
+
+        const imageData =
+          finalCanvas.toDataURL(
+            'image/jpeg',
+            0.95
+          );
+
+
+        /*
+         * ==============================================
+         * NOMBRE DEL ARCHIVO
+         * ==============================================
+         */
+
+        const now =
+          new Date();
+
+
+        fileName =
+          `Evidencia_${
+            now
+              .toISOString()
+              .replace(
+                /[:.]/g,
+                '-'
+              )
+          }.jpg`;
+
+
+        /*
+         * ==============================================
+         * MOSTRAR FOTO
+         * ==============================================
+         */
+
+        previewImg.src =
+          imageData;
+
+
+        previewModal.style.display =
+          'flex';
+
+
+        /*
+         * ==============================================
+         * RESTAURAR VIDEO
+         * ==============================================
+         */
+
+        video.style.visibility =
+          originalVideoVisibility;
+
+
+        /*
+         * Eliminar canvas temporal.
+         */
+
+        backgroundCanvas.remove();
+
+
+      } catch (error) {
+
+        console.error(
+          'Error al tomar la fotografía:',
+          error
+        );
+
+
+        alert(
+          'No fue posible tomar la fotografía.'
+        );
+
+
+        /*
+         * Asegurarnos de que el video
+         * vuelva a aparecer.
+         */
+
+        video.style.visibility =
+          'visible';
+
+      }
+
+    }
+
+
+    /* =====================================================
+       DESCARTAR FOTO
+       ===================================================== */
+
+    function discardPhoto() {
+
+      previewModal.style.display =
+        'none';
+
+
+      previewImg.src =
+        '';
+
+    }
+
+
+    /* =====================================================
+       GUARDAR FOTO
+       ===================================================== */
+
+    function downloadPhoto() {
+
+      if (
+        !previewImg.src
+      ) {
+
+        return;
+
+      }
+
+
+      const link =
+        document.createElement(
+          'a'
+        );
+
+
+      link.href =
+        previewImg.src;
+
+
+      link.download =
+        fileName ||
+        'Evidencia.jpg';
+
+
+      document.body.appendChild(
+        link
+      );
+
+
+      link.click();
+
+
+      link.remove();
+
+
+      discardPhoto();
+
+    }
+
+
+  </script>
 
 </body>
 
