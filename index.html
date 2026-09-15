@@ -27,11 +27,15 @@
        ===================================================== */
 
     * {
+
       box-sizing: border-box;
+
       margin: 0;
+
       padding: 0;
 
       -webkit-tap-highlight-color: transparent;
+
     }
 
 
@@ -43,6 +47,7 @@
     body {
 
       width: 100%;
+
       height: 100%;
 
       background: #000;
@@ -57,6 +62,7 @@
         sans-serif;
 
       overflow: hidden;
+
     }
 
 
@@ -67,12 +73,15 @@
     .app-viewport {
 
       width: 100%;
+
       height: 100dvh;
 
       display: flex;
+
       flex-direction: column;
 
       background: #000;
+
     }
 
 
@@ -87,6 +96,7 @@
       width: 100%;
 
       flex: 1;
+
       min-height: 0;
 
       background: #000;
@@ -96,7 +106,9 @@
       display: flex;
 
       align-items: center;
+
       justify-content: center;
+
     }
 
 
@@ -111,6 +123,7 @@
       inset: 0;
 
       width: 100%;
+
       height: 100%;
 
       object-fit: cover;
@@ -118,14 +131,12 @@
       display: block;
 
       z-index: 1;
+
     }
 
 
     /* =====================================================
        TARJETA GPS
-       
-       TODO EL CONTENIDO DE LA TARJETA SE ADAPTA
-       SEGÚN EL ANCHO REAL DE LA TARJETA.
        ===================================================== */
 
     .gps-box {
@@ -133,10 +144,10 @@
       position: absolute;
 
       left: 12px;
-      right: 12px;
-      bottom: 16px;
 
-      width: auto;
+      right: 12px;
+
+      bottom: 16px;
 
       background: rgba(0, 0, 0, 0.78);
 
@@ -144,11 +155,11 @@
 
       border-radius: 8px;
 
-      padding: clamp(6px, 1.8vw, 12px);
+      padding: 8px;
 
       display: flex;
 
-      gap: clamp(8px, 2vw, 12px);
+      gap: 10px;
 
       align-items: flex-start;
 
@@ -159,30 +170,20 @@
       box-shadow:
         0 4px 20px rgba(0, 0, 0, 0.60);
 
-      /*
-       * Permite utilizar cqw/cqh para que los elementos
-       * internos dependan del tamaño de esta tarjeta.
-       */
-      container-type: inline-size;
-
-      overflow: hidden;
     }
 
 
     /* =====================================================
        MAPA / PIN
-       
-       El cuadro blanco crece o disminuye junto con
-       la tarjeta.
        ===================================================== */
 
     .map-square {
 
-      width: clamp(105px, 28cqw, 160px);
+      width: clamp(105px, 32vw, 135px);
 
-      aspect-ratio: 1 / 0.86;
+      height: clamp(105px, 32vw, 115px);
 
-      min-width: 105px;
+      min-width: clamp(105px, 32vw, 135px);
 
       background: #ffffff;
 
@@ -199,6 +200,7 @@
       overflow: hidden;
 
       flex-shrink: 0;
+
     }
 
 
@@ -210,7 +212,7 @@
 
       width: 100%;
 
-      height: clamp(27px, 7cqw, 34px);
+      height: 32px;
 
       display: flex;
 
@@ -218,15 +220,18 @@
 
       justify-content: flex-start;
 
-      padding-left: clamp(4px, 1.2cqw, 6px);
+      padding-left: 5px;
 
-      padding-right: clamp(4px, 1.2cqw, 6px);
+      padding-right: 5px;
 
       background: #ffffff;
 
       overflow: hidden;
 
       white-space: nowrap;
+
+      flex-shrink: 0;
+
     }
 
 
@@ -236,15 +241,16 @@
 
     .map-logo {
 
-      width: clamp(23px, 7cqw, 30px);
+      width: 27px;
 
-      height: clamp(23px, 7cqw, 30px);
+      height: 27px;
 
       flex-shrink: 0;
 
       object-fit: contain;
 
       display: block;
+
     }
 
 
@@ -254,11 +260,11 @@
 
     .map-title {
 
-      margin-left: clamp(4px, 1.3cqw, 6px);
+      margin-left: 5px;
 
       color: #000000;
 
-      font-size: clamp(9px, 2.8cqw, 12px);
+      font-size: clamp(9px, 2.8vw, 11px);
 
       font-weight: 800;
 
@@ -267,6 +273,7 @@
       white-space: nowrap;
 
       flex-shrink: 0;
+
     }
 
 
@@ -297,6 +304,7 @@
       flex: 1;
 
       min-height: 0;
+
     }
 
 
@@ -306,15 +314,16 @@
 
     .map-pin-svg {
 
-      width: clamp(40px, 13cqw, 65px);
+      width: 48px;
 
-      height: auto;
+      height: 68px;
+
+      display: block;
 
       max-width: 70%;
 
       max-height: 75%;
 
-      display: block;
     }
 
 
@@ -332,23 +341,22 @@
 
       flex-direction: column;
 
-      gap: 0;
+      gap: 3px;
 
       color: #ffffff;
 
       overflow: hidden;
+
     }
 
 
     /* =====================================================
        PRIMERA LÍNEA
-       
-       ESTA ES LA ÚNICA QUE ES GRANDE Y NEGRITA.
        ===================================================== */
 
     .city-title-large {
 
-      font-size: clamp(13px, 4.2cqw, 19px);
+      font-size: clamp(13px, 3.6vw, 19px);
 
       font-weight: 800;
 
@@ -362,20 +370,11 @@
 
       word-break: normal;
 
-      margin: 0;
-
-      padding: 0;
     }
 
 
     /* =====================================================
-       TODAS LAS LÍNEAS RESTANTES
-       
-       MISMO TAMAÑO
-       MISMO PESO
-       MISMO COLOR
-       MISMA FUENTE
-       SIN SEPARACIÓN ENTRE ELLAS
+       RESTO DE INFORMACIÓN
        ===================================================== */
 
     .address-text,
@@ -383,7 +382,7 @@
     .datetime-text,
     .photo-credit {
 
-      font-size: clamp(10px, 3.2cqw, 15px);
+      font-size: clamp(10px, 3vw, 15px);
 
       font-weight: 500;
 
@@ -391,15 +390,38 @@
 
       line-height: 1.2;
 
+      margin: 0;
+
+      padding: 0;
+
       white-space: normal;
 
       overflow-wrap: break-word;
 
       word-break: normal;
 
-      margin: 0;
+    }
 
-      padding: 0;
+
+    /* =====================================================
+       FECHA
+       ===================================================== */
+
+    .datetime-text {
+
+      margin-top: 0;
+
+    }
+
+
+    /* =====================================================
+       CRÉDITO
+       ===================================================== */
+
+    .photo-credit {
+
+      margin-top: 0;
+
     }
 
 
@@ -426,6 +448,7 @@
       border-top: 1px solid #222;
 
       z-index: 20;
+
     }
 
 
@@ -450,6 +473,7 @@
       font-weight: 600;
 
       cursor: pointer;
+
     }
 
 
@@ -460,6 +484,7 @@
     .btn-capture {
 
       width: 66px;
+
       height: 66px;
 
       border-radius: 50%;
@@ -469,11 +494,14 @@
       border: 4px solid #e63946;
 
       cursor: pointer;
+
     }
 
 
     /* =====================================================
        MODAL DE PREVISUALIZACIÓN
+
+       AHORA OCUPA TODA LA PANTALLA
        ===================================================== */
 
     #preview-modal {
@@ -484,33 +512,46 @@
 
       inset: 0;
 
+      width: 100%;
+
+      height: 100dvh;
+
       background: #000;
 
       z-index: 100;
 
       flex-direction: column;
+
+      overflow: hidden;
+
     }
 
 
     /* =====================================================
-       FOTO DE PREVISUALIZACIÓN
+       ÁREA DE LA FOTO
+
+       Esta zona ocupa todo el espacio disponible
+       excepto la barra inferior.
        ===================================================== */
 
     #preview-img {
 
+      display: block;
+
       width: 100%;
 
-      height: auto;
+      height: calc(100dvh - 85px);
 
-      flex: 1;
+      flex: 1 1 auto;
 
       min-height: 0;
 
       object-fit: contain;
 
+      object-position: center;
+
       background: #000;
 
-      display: block;
     }
 
 
@@ -526,6 +567,8 @@
 
       min-height: 85px;
 
+      flex-shrink: 0;
+
       background: #0a0a0a;
 
       display: flex;
@@ -533,14 +576,14 @@
       justify-content: space-evenly;
 
       align-items: center;
+
+      border-top: 1px solid #222;
+
     }
 
 
     /* =====================================================
-       TELÉFONOS PEQUEÑOS
-       
-       Solo ajustamos la posición general de la tarjeta.
-       Los tamaños internos ahora son RESPONSIVE.
+       PANTALLAS PEQUEÑAS
        ===================================================== */
 
     @media (max-width: 380px) {
@@ -548,6 +591,7 @@
       .gps-box {
 
         left: 8px;
+
         right: 8px;
 
         bottom: 12px;
@@ -555,6 +599,34 @@
         padding: 6px;
 
         gap: 8px;
+
+      }
+
+
+      .map-pin-svg {
+
+        width: 42px;
+
+        height: 60px;
+
+      }
+
+
+      .btn-side {
+
+        padding: 8px 11px;
+
+        font-size: 0.75rem;
+
+      }
+
+
+      .btn-capture {
+
+        width: 60px;
+
+        height: 60px;
+
       }
 
     }
@@ -562,11 +634,6 @@
 
     /* =====================================================
        TABLETS Y PANTALLAS GRANDES
-       
-       NO cambiamos manualmente el tamaño del mapa
-       ni de las letras.
-       
-       Todo se adapta mediante clamp() y cqw.
        ===================================================== */
 
     @media (min-width: 600px) {
@@ -574,6 +641,7 @@
       .gps-box {
 
         left: 20px;
+
         right: 20px;
 
         bottom: 20px;
@@ -581,6 +649,128 @@
         padding: 12px 14px;
 
         gap: 12px;
+
+      }
+
+
+      .map-pin-svg {
+
+        width: 58px;
+
+        height: 82px;
+
+      }
+
+
+      .map-logo {
+
+        width: 30px;
+
+        height: 30px;
+
+      }
+
+
+      .map-header {
+
+        height: 35px;
+
+      }
+
+
+      .map-title {
+
+        font-size: clamp(10px, 1.8vw, 13px);
+
+      }
+
+
+      .map-white-area {
+
+        height: calc(100% - 39px);
+
+      }
+
+
+      .btn-side {
+
+        font-size: 0.9rem;
+
+        padding: 10px 18px;
+
+      }
+
+
+      .btn-capture {
+
+        width: 72px;
+
+        height: 72px;
+
+      }
+
+    }
+
+
+    /* =====================================================
+       PANTALLAS MUY GRANDES
+       ===================================================== */
+
+    @media (min-width: 1000px) {
+
+      .gps-box {
+
+        left: 24px;
+
+        right: 24px;
+
+        bottom: 24px;
+
+        padding: 14px 16px;
+
+        gap: 14px;
+
+      }
+
+
+      .map-square {
+
+        width: 150px;
+
+        height: 125px;
+
+        min-width: 150px;
+
+      }
+
+
+      .map-logo {
+
+        width: 32px;
+
+        height: 32px;
+
+      }
+
+
+      .map-header {
+
+        height: 37px;
+
+      }
+
+
+      .map-title {
+
+        font-size: 13px;
+
+      }
+
+
+      .map-white-area {
+
+        height: calc(100% - 41px);
+
       }
 
     }
@@ -610,9 +800,7 @@
     >
 
 
-      <!-- ===============================================
-           VIDEO
-           =============================================== -->
+      <!-- VIDEO -->
 
       <video
         id="video-stream"
@@ -622,23 +810,19 @@
       ></video>
 
 
-      <!-- ===============================================
+      <!-- =================================================
            TARJETA GPS
-           =============================================== -->
+           ================================================= -->
 
       <div class="gps-box">
 
 
-        <!-- =============================================
-             IZQUIERDA
-             ============================================= -->
+        <!-- ===============================================
+             MAPA
+             =============================================== -->
 
         <div class="map-square">
 
-
-          <!-- ===========================================
-               CABECERA
-               =========================================== -->
 
           <div class="map-header">
 
@@ -655,10 +839,6 @@
           </div>
 
 
-          <!-- ===========================================
-               MAPA
-               =========================================== -->
-
           <div class="map-white-area">
 
             <!-- AQUÍ VA TU SVG DEL PIN -->
@@ -669,16 +849,12 @@
         </div>
 
 
-        <!-- =============================================
-             DERECHA
-             ============================================= -->
+        <!-- ===============================================
+             INFORMACIÓN
+             =============================================== -->
 
         <div class="info-column">
 
-
-          <!-- ===========================================
-               PRIMERA LÍNEA
-               =========================================== -->
 
           <div class="city-title-large">
 
@@ -687,10 +863,6 @@
           </div>
 
 
-          <!-- ===========================================
-               DIRECCIÓN
-               =========================================== -->
-
           <div class="address-text">
 
             Calle Centenario 123, Del Carmen, Coyoacán
@@ -698,20 +870,12 @@
           </div>
 
 
-          <!-- ===========================================
-               COORDENADAS
-               =========================================== -->
-
           <div class="coords-text">
 
             Lat 19.351234, Long -99.165678
 
           </div>
 
-
-          <!-- ===========================================
-               FECHA Y HORA
-               =========================================== -->
 
           <div
             class="datetime-text"
@@ -722,10 +886,6 @@
 
           </div>
 
-
-          <!-- ===========================================
-               CRÉDITO
-               =========================================== -->
 
           <div class="photo-credit">
 
@@ -760,10 +920,6 @@
       </button>
 
 
-      <!-- ===============================================
-           CAPTURAR
-           =============================================== -->
-
       <button
         class="btn-capture"
         onclick="takeSnapshot()"
@@ -792,9 +948,7 @@
        PREVIEW
        ===================================================== -->
 
-  <div
-    id="preview-modal"
-  >
+  <div id="preview-modal">
 
 
     <img
@@ -1077,7 +1231,7 @@
 
 
     /* =====================================================
-       CAPTURAR EL FRAME DEL VIDEO
+       CAPTURAR FRAME DEL VIDEO
        ===================================================== */
 
     function captureVideoFrame() {
@@ -1132,10 +1286,6 @@
         video.videoHeight;
 
 
-      /* ==================================================
-         MISMO RECORTE QUE object-fit: cover
-         ================================================== */
-
       const containerRatio =
         width / height;
 
@@ -1155,6 +1305,10 @@
         videoHeight;
 
 
+      /* ==================================================
+         MISMO RECORTE QUE OBJECT-FIT: COVER
+         ================================================== */
+
       if (
         videoRatio >
         containerRatio
@@ -1172,6 +1326,7 @@
           ) / 2;
 
       }
+
       else {
 
         sourceHeight =
@@ -1230,11 +1385,12 @@
 
     async function takeSnapshot() {
 
-      try {
+      let backgroundCanvas = null;
 
-        /* ================================================
-           ESPERAR VIDEO
-           ================================================ */
+      let originalVideoVisibility = '';
+
+
+      try {
 
         await waitForVideo();
 
@@ -1251,7 +1407,7 @@
            OCULTAR VIDEO
            ================================================ */
 
-        const originalVideoVisibility =
+        originalVideoVisibility =
           video.style.visibility;
 
 
@@ -1260,10 +1416,10 @@
 
 
         /* ================================================
-           CREAR FONDO CON FRAME
+           CREAR FONDO
            ================================================ */
 
-        const backgroundCanvas =
+        backgroundCanvas =
           document.createElement(
             'canvas'
           );
@@ -1340,7 +1496,7 @@
 
 
         /* ================================================
-           CAPTURAR CONTENEDOR
+           CAPTURAR TARJETA REAL
            ================================================ */
 
         const finalCanvas =
@@ -1383,7 +1539,7 @@
 
 
         /* ================================================
-           CONVERTIR A JPEG
+           JPEG
            ================================================ */
 
         const imageData =
@@ -1394,7 +1550,7 @@
 
 
         /* ================================================
-           NOMBRE DEL ARCHIVO
+           NOMBRE
            ================================================ */
 
         const now =
@@ -1413,7 +1569,7 @@
 
 
         /* ================================================
-           MOSTRAR FOTO
+           MOSTRAR PREVIEW
            ================================================ */
 
         previewImg.src =
@@ -1433,10 +1589,13 @@
 
 
         /* ================================================
-           ELIMINAR CANVAS TEMPORAL
+           ELIMINAR CANVAS
            ================================================ */
 
         backgroundCanvas.remove();
+
+        backgroundCanvas =
+          null;
 
 
       } catch (error) {
@@ -1454,6 +1613,15 @@
 
         video.style.visibility =
           'visible';
+
+
+        if (
+          backgroundCanvas
+        ) {
+
+          backgroundCanvas.remove();
+
+        }
 
       }
 
@@ -1520,7 +1688,6 @@
       discardPhoto();
 
     }
-
 
   </script>
 
