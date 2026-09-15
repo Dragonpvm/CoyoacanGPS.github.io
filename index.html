@@ -20,6 +20,16 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 
+  <!-- =====================================================
+       LEAFLET
+       ===================================================== -->
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
+
+
   <style>
 
     /* =====================================================
@@ -27,15 +37,11 @@
        ===================================================== */
 
     * {
-
       box-sizing: border-box;
-
       margin: 0;
-
       padding: 0;
 
       -webkit-tap-highlight-color: transparent;
-
     }
 
 
@@ -47,7 +53,6 @@
     body {
 
       width: 100%;
-
       height: 100%;
 
       background: #000;
@@ -62,7 +67,6 @@
         sans-serif;
 
       overflow: hidden;
-
     }
 
 
@@ -73,15 +77,12 @@
     .app-viewport {
 
       width: 100%;
-
       height: 100dvh;
 
       display: flex;
-
       flex-direction: column;
 
       background: #000;
-
     }
 
 
@@ -96,7 +97,6 @@
       width: 100%;
 
       flex: 1;
-
       min-height: 0;
 
       background: #000;
@@ -106,9 +106,7 @@
       display: flex;
 
       align-items: center;
-
       justify-content: center;
-
     }
 
 
@@ -123,7 +121,6 @@
       inset: 0;
 
       width: 100%;
-
       height: 100%;
 
       object-fit: cover;
@@ -131,7 +128,6 @@
       display: block;
 
       z-index: 1;
-
     }
 
 
@@ -144,9 +140,7 @@
       position: absolute;
 
       left: 12px;
-
       right: 12px;
-
       bottom: 16px;
 
       background: rgba(0, 0, 0, 0.78);
@@ -169,12 +163,11 @@
 
       box-shadow:
         0 4px 20px rgba(0, 0, 0, 0.60);
-
     }
 
 
     /* =====================================================
-       MAPA / PIN
+       MAPA
        ===================================================== */
 
     .map-square {
@@ -200,7 +193,6 @@
       overflow: hidden;
 
       flex-shrink: 0;
-
     }
 
 
@@ -221,17 +213,15 @@
       justify-content: flex-start;
 
       padding-left: 5px;
-
       padding-right: 5px;
+
+      box-sizing: border-box;
 
       background: #ffffff;
 
       overflow: hidden;
 
       white-space: nowrap;
-
-      flex-shrink: 0;
-
     }
 
 
@@ -242,7 +232,6 @@
     .map-logo {
 
       width: 27px;
-
       height: 27px;
 
       flex-shrink: 0;
@@ -250,7 +239,6 @@
       object-fit: contain;
 
       display: block;
-
     }
 
 
@@ -273,12 +261,11 @@
       white-space: nowrap;
 
       flex-shrink: 0;
-
     }
 
 
     /* =====================================================
-       ÁREA BLANCA DEL MAPA
+       ÁREA DEL MAPA
        ===================================================== */
 
     .map-white-area {
@@ -294,7 +281,6 @@
       display: flex;
 
       align-items: center;
-
       justify-content: center;
 
       border-radius: 3px;
@@ -305,25 +291,21 @@
 
       min-height: 0;
 
+      position: relative;
     }
 
 
     /* =====================================================
-       PIN SVG
+       MAPA LEAFLET
        ===================================================== */
 
-    .map-pin-svg {
+    #gps-map {
 
-      width: 48px;
+      width: 100%;
+      height: 100%;
 
-      height: 68px;
-
-      display: block;
-
-      max-width: 70%;
-
-      max-height: 75%;
-
+      min-width: 0;
+      min-height: 0;
     }
 
 
@@ -346,17 +328,17 @@
       color: #ffffff;
 
       overflow: hidden;
-
     }
 
 
     /* =====================================================
        PRIMERA LÍNEA
+       CIUDAD / ESTADO / PAÍS
        ===================================================== */
 
     .city-title-large {
 
-      font-size: clamp(13px, 3.6vw, 19px);
+      font-size: 15px;
 
       font-weight: 800;
 
@@ -369,20 +351,16 @@
       overflow-wrap: break-word;
 
       word-break: normal;
-
     }
 
 
     /* =====================================================
-       RESTO DE INFORMACIÓN
+       DIRECCIÓN
        ===================================================== */
 
-    .address-text,
-    .coords-text,
-    .datetime-text,
-    .photo-credit {
+    .address-text {
 
-      font-size: clamp(10px, 3vw, 15px);
+      font-size: 12px;
 
       font-weight: 500;
 
@@ -390,27 +368,53 @@
 
       line-height: 1.2;
 
-      margin: 0;
-
-      padding: 0;
-
       white-space: normal;
 
       overflow-wrap: break-word;
 
       word-break: normal;
-
     }
 
 
     /* =====================================================
-       FECHA
+       COORDENADAS
+       ===================================================== */
+
+    .coords-text {
+
+      font-size: 12px;
+
+      font-weight: 500;
+
+      color: #e0e0e0;
+
+      line-height: 1.2;
+
+      white-space: normal;
+
+      overflow-wrap: break-word;
+    }
+
+
+    /* =====================================================
+       FECHA Y HORA
        ===================================================== */
 
     .datetime-text {
 
-      margin-top: 0;
+      font-size: 12px;
 
+      font-weight: 500;
+
+      color: #e0e0e0;
+
+      margin-top: 1px;
+
+      line-height: 1.2;
+
+      white-space: normal;
+
+      overflow-wrap: break-word;
     }
 
 
@@ -420,8 +424,17 @@
 
     .photo-credit {
 
-      margin-top: 0;
+      font-size: 12px;
 
+      font-weight: 500;
+
+      color: #e0e0e0;
+
+      line-height: 1.2;
+
+      white-space: normal;
+
+      overflow-wrap: break-word;
     }
 
 
@@ -448,7 +461,6 @@
       border-top: 1px solid #222;
 
       z-index: 20;
-
     }
 
 
@@ -473,7 +485,6 @@
       font-weight: 600;
 
       cursor: pointer;
-
     }
 
 
@@ -484,7 +495,6 @@
     .btn-capture {
 
       width: 66px;
-
       height: 66px;
 
       border-radius: 50%;
@@ -494,14 +504,11 @@
       border: 4px solid #e63946;
 
       cursor: pointer;
-
     }
 
 
     /* =====================================================
        MODAL DE PREVISUALIZACIÓN
-
-       AHORA OCUPA TODA LA PANTALLA
        ===================================================== */
 
     #preview-modal {
@@ -512,46 +519,33 @@
 
       inset: 0;
 
-      width: 100%;
-
-      height: 100dvh;
-
       background: #000;
 
       z-index: 100;
 
       flex-direction: column;
-
-      overflow: hidden;
-
     }
 
 
     /* =====================================================
-       ÁREA DE LA FOTO
-
-       Esta zona ocupa todo el espacio disponible
-       excepto la barra inferior.
+       FOTO DE PREVISUALIZACIÓN
        ===================================================== */
 
     #preview-img {
 
-      display: block;
-
       width: 100%;
 
-      height: calc(100dvh - 85px);
+      height: auto;
 
-      flex: 1 1 auto;
+      flex: 1;
 
       min-height: 0;
 
       object-fit: contain;
 
-      object-position: center;
-
       background: #000;
 
+      display: block;
     }
 
 
@@ -567,8 +561,6 @@
 
       min-height: 85px;
 
-      flex-shrink: 0;
-
       background: #0a0a0a;
 
       display: flex;
@@ -576,14 +568,11 @@
       justify-content: space-evenly;
 
       align-items: center;
-
-      border-top: 1px solid #222;
-
     }
 
 
     /* =====================================================
-       PANTALLAS PEQUEÑAS
+       TELÉFONOS PEQUEÑOS
        ===================================================== */
 
     @media (max-width: 380px) {
@@ -591,7 +580,6 @@
       .gps-box {
 
         left: 8px;
-
         right: 8px;
 
         bottom: 12px;
@@ -599,41 +587,43 @@
         padding: 6px;
 
         gap: 8px;
-
       }
 
 
-      .map-pin-svg {
+      .city-title-large {
 
-        width: 42px;
-
-        height: 60px;
-
+        font-size: 13px;
       }
 
 
-      .btn-side {
+      .address-text {
 
-        padding: 8px 11px;
-
-        font-size: 0.75rem;
-
+        font-size: 10px;
       }
 
 
-      .btn-capture {
+      .coords-text {
 
-        width: 60px;
+        font-size: 9px;
+      }
 
-        height: 60px;
 
+      .datetime-text {
+
+        font-size: 10px;
+      }
+
+
+      .photo-credit {
+
+        font-size: 10px;
       }
 
     }
 
 
     /* =====================================================
-       TABLETS Y PANTALLAS GRANDES
+       TABLETS / PANTALLAS GRANDES
        ===================================================== */
 
     @media (min-width: 600px) {
@@ -641,7 +631,6 @@
       .gps-box {
 
         left: 20px;
-
         right: 20px;
 
         bottom: 20px;
@@ -649,128 +638,6 @@
         padding: 12px 14px;
 
         gap: 12px;
-
-      }
-
-
-      .map-pin-svg {
-
-        width: 58px;
-
-        height: 82px;
-
-      }
-
-
-      .map-logo {
-
-        width: 30px;
-
-        height: 30px;
-
-      }
-
-
-      .map-header {
-
-        height: 35px;
-
-      }
-
-
-      .map-title {
-
-        font-size: clamp(10px, 1.8vw, 13px);
-
-      }
-
-
-      .map-white-area {
-
-        height: calc(100% - 39px);
-
-      }
-
-
-      .btn-side {
-
-        font-size: 0.9rem;
-
-        padding: 10px 18px;
-
-      }
-
-
-      .btn-capture {
-
-        width: 72px;
-
-        height: 72px;
-
-      }
-
-    }
-
-
-    /* =====================================================
-       PANTALLAS MUY GRANDES
-       ===================================================== */
-
-    @media (min-width: 1000px) {
-
-      .gps-box {
-
-        left: 24px;
-
-        right: 24px;
-
-        bottom: 24px;
-
-        padding: 14px 16px;
-
-        gap: 14px;
-
-      }
-
-
-      .map-square {
-
-        width: 150px;
-
-        height: 125px;
-
-        min-width: 150px;
-
-      }
-
-
-      .map-logo {
-
-        width: 32px;
-
-        height: 32px;
-
-      }
-
-
-      .map-header {
-
-        height: 37px;
-
-      }
-
-
-      .map-title {
-
-        font-size: 13px;
-
-      }
-
-
-      .map-white-area {
-
-        height: calc(100% - 41px);
-
       }
 
     }
@@ -800,7 +667,9 @@
     >
 
 
-      <!-- VIDEO -->
+      <!-- ===============================================
+           VIDEO
+           =============================================== -->
 
       <video
         id="video-stream"
@@ -810,19 +679,23 @@
       ></video>
 
 
-      <!-- =================================================
+      <!-- ===============================================
            TARJETA GPS
-           ================================================= -->
+           =============================================== -->
 
       <div class="gps-box">
 
 
-        <!-- ===============================================
+        <!-- =============================================
              MAPA
-             =============================================== -->
+             ============================================= -->
 
         <div class="map-square">
 
+
+          <!-- ===========================================
+               CABECERA
+               =========================================== -->
 
           <div class="map-header">
 
@@ -839,9 +712,13 @@
           </div>
 
 
+          <!-- ===========================================
+               MAPA LEAFLET
+               =========================================== -->
+
           <div class="map-white-area">
 
-            <!-- AQUÍ VA TU SVG DEL PIN -->
+            <div id="gps-map"></div>
 
           </div>
 
@@ -849,43 +726,72 @@
         </div>
 
 
-        <!-- ===============================================
+        <!-- =============================================
              INFORMACIÓN
-             =============================================== -->
+             ============================================= -->
 
         <div class="info-column">
 
 
-          <div class="city-title-large">
+          <!-- ===========================================
+               CIUDAD / ESTADO / PAÍS
+               =========================================== -->
 
-            CDMX, Ciudad de México, México
+          <div
+            class="city-title-large"
+            id="location-title"
+          >
+
+            Obteniendo ubicación...
+
+          </div>
+
+
+          <!-- ===========================================
+               DIRECCIÓN
+               =========================================== -->
+
+          <div
+            class="address-text"
+            id="location-address"
+          >
+
+            Obteniendo dirección...
 
           </div>
 
 
-          <div class="address-text">
+          <!-- ===========================================
+               COORDENADAS
+               =========================================== -->
 
-            Calle Centenario 123, Del Carmen, Coyoacán
+          <div
+            class="coords-text"
+            id="location-coordinates"
+          >
+
+            Lat --, Long --
 
           </div>
 
 
-          <div class="coords-text">
-
-            Lat 19.351234, Long -99.165678
-
-          </div>
-
+          <!-- ===========================================
+               FECHA
+               =========================================== -->
 
           <div
             class="datetime-text"
             id="live-clock"
           >
 
-            14/09/2026, 9:25:17 a.m.
+            Obteniendo fecha y hora...
 
           </div>
 
+
+          <!-- ===========================================
+               CRÉDITO FIJO
+               =========================================== -->
 
           <div class="photo-credit">
 
@@ -920,6 +826,10 @@
       </button>
 
 
+      <!-- ===============================================
+           CAPTURAR
+           =============================================== -->
+
       <button
         class="btn-capture"
         onclick="takeSnapshot()"
@@ -948,7 +858,9 @@
        PREVIEW
        ===================================================== -->
 
-  <div id="preview-modal">
+  <div
+    id="preview-modal"
+  >
 
 
     <img
@@ -1001,6 +913,13 @@
   ></canvas>
 
 
+  <!-- =====================================================
+       LEAFLET JS
+       ===================================================== -->
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
   <script>
 
     /* =====================================================
@@ -1042,6 +961,37 @@
         'video-canvas'
       );
 
+
+    const locationTitle =
+      document.getElementById(
+        'location-title'
+      );
+
+
+    const locationAddress =
+      document.getElementById(
+        'location-address'
+      );
+
+
+    const locationCoordinates =
+      document.getElementById(
+        'location-coordinates'
+      );
+
+
+    /* =====================================================
+       VARIABLES DEL MAPA
+       ===================================================== */
+
+    let gpsMap = null;
+
+    let gpsMarker = null;
+
+
+    /* =====================================================
+       NOMBRE DEL ARCHIVO
+       ===================================================== */
 
     let fileName = '';
 
@@ -1092,6 +1042,155 @@
 
 
     updateClock();
+
+
+    /* =====================================================
+       INICIALIZAR / ACTUALIZAR MAPA
+       ===================================================== */
+
+    function actualizarMapa(
+      latitud,
+      longitud
+    ) {
+
+      try {
+
+        /* ==============================================
+           CREAR MAPA POR PRIMERA VEZ
+           ============================================== */
+
+        if (!gpsMap) {
+
+          gpsMap =
+            L.map(
+              'gps-map',
+              {
+
+                zoomControl: false,
+
+                attributionControl: true
+
+              }
+            ).setView(
+
+              [
+                latitud,
+                longitud
+              ],
+
+              17
+
+            );
+
+
+          /* ============================================
+             CAPA OPENSTREETMAP
+             ============================================ */
+
+          L.tileLayer(
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+
+              maxZoom: 19,
+
+              attribution:
+                '&copy; OpenStreetMap'
+
+            }
+          ).addTo(
+            gpsMap
+          );
+
+
+          /* ============================================
+             MARCADOR
+             ============================================ */
+
+          gpsMarker =
+            L.marker(
+              [
+                latitud,
+                longitud
+              ]
+            ).addTo(
+              gpsMap
+            );
+
+
+        }
+        else {
+
+          /* ============================================
+             ACTUALIZAR POSICIÓN DEL MAPA
+             ============================================ */
+
+          gpsMap.setView(
+
+            [
+              latitud,
+              longitud
+            ],
+
+            17
+
+          );
+
+
+          /* ============================================
+             ACTUALIZAR MARCADOR
+             ============================================ */
+
+          if (gpsMarker) {
+
+            gpsMarker.setLatLng(
+
+              [
+                latitud,
+                longitud
+              ]
+
+            );
+
+          }
+
+        }
+
+
+        /* ==============================================
+           ASEGURAR QUE LEAFLET RECALCULE EL TAMAÑO
+           ============================================== */
+
+        setTimeout(
+          function() {
+
+            if (gpsMap) {
+
+              gpsMap.invalidateSize();
+
+            }
+
+          },
+          150
+        );
+
+
+        console.log(
+          'Mapa actualizado:',
+          latitud,
+          longitud
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          'Error al actualizar el mapa:',
+          error
+        );
+
+      }
+
+    }
 
 
     /* =====================================================
@@ -1181,6 +1280,401 @@
 
 
     /* =====================================================
+       GPS REAL
+       ===================================================== */
+
+    function obtenerUbicacionGPS() {
+
+      if (!navigator.geolocation) {
+
+        console.error(
+          'Este dispositivo no soporta geolocalización.'
+        );
+
+
+        locationTitle.innerText =
+          'Ubicación no disponible';
+
+
+        locationAddress.innerText =
+          'Este dispositivo no soporta GPS';
+
+
+        locationCoordinates.innerText =
+          'Lat --, Long --';
+
+
+        return;
+
+      }
+
+
+      navigator.geolocation.getCurrentPosition(
+
+        async function(position) {
+
+          const latitud =
+            position.coords.latitude;
+
+          const longitud =
+            position.coords.longitude;
+
+          const precision =
+            position.coords.accuracy;
+
+
+          /* ==============================================
+             MOSTRAR COORDENADAS REALES
+             ============================================== */
+
+          locationCoordinates.innerText =
+            `Lat ${latitud.toFixed(6)}, Long ${longitud.toFixed(6)}`;
+
+
+          console.log(
+            'GPS - Latitud:',
+            latitud
+          );
+
+
+          console.log(
+            'GPS - Longitud:',
+            longitud
+          );
+
+
+          console.log(
+            'GPS - Precisión:',
+            precision,
+            'metros'
+          );
+
+
+          /* ==============================================
+             ACTUALIZAR MAPA
+             ============================================== */
+
+          actualizarMapa(
+            latitud,
+            longitud
+          );
+
+
+          /* ==============================================
+             OBTENER DIRECCIÓN
+             ============================================== */
+
+          await obtenerDireccion(
+            latitud,
+            longitud
+          );
+
+        },
+
+
+        function(error) {
+
+          console.error(
+            'No se pudo obtener la ubicación GPS:',
+            error
+          );
+
+
+          locationTitle.innerText =
+            'Ubicación no disponible';
+
+
+          locationAddress.innerText =
+            'No fue posible obtener la dirección';
+
+
+          locationCoordinates.innerText =
+            'Lat --, Long --';
+
+        },
+
+
+        {
+
+          enableHighAccuracy: true,
+
+          timeout: 15000,
+
+          maximumAge: 0
+
+        }
+
+      );
+
+    }
+
+
+    /* =====================================================
+       OBTENER DIRECCIÓN A PARTIR DEL GPS
+       ===================================================== */
+
+    async function obtenerDireccion(
+      latitud,
+      longitud
+    ) {
+
+      try {
+
+        /*
+         * Servicio de geocodificación inversa
+         *
+         * Convierte:
+         *
+         * Latitud + Longitud
+         *
+         * en:
+         *
+         * Calle + ciudad + estado + país
+         */
+
+        const url =
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&lat=${encodeURIComponent(latitud)}&lon=${encodeURIComponent(longitud)}`;
+
+
+        const response =
+          await fetch(
+            url,
+            {
+              method: 'GET'
+            }
+          );
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            `Error HTTP ${response.status}`
+          );
+
+        }
+
+
+        const data =
+          await response.json();
+
+
+        console.log(
+          'Respuesta de dirección:',
+          data
+        );
+
+
+        if (
+          !data ||
+          !data.address
+        ) {
+
+          throw new Error(
+            'No se encontró información de dirección.'
+          );
+
+        }
+
+
+        const address =
+          data.address;
+
+
+        /* ==============================================
+           PAÍS
+           ============================================== */
+
+        const pais =
+          address.country ||
+          '';
+
+
+        /* ==============================================
+           ESTADO
+           ============================================== */
+
+        const estado =
+          address.state ||
+          '';
+
+
+        /* ==============================================
+           CIUDAD / MUNICIPIO
+           ============================================== */
+
+        const ciudad =
+          address.city ||
+          address.town ||
+          address.village ||
+          address.municipality ||
+          address.county ||
+          '';
+
+
+        /* ==============================================
+           CONSTRUIR PRIMERA LÍNEA
+           ============================================== */
+
+        const partesUbicacion = [];
+
+
+        if (ciudad) {
+
+          partesUbicacion.push(
+            ciudad
+          );
+
+        }
+
+
+        if (
+          estado &&
+          estado !== ciudad
+        ) {
+
+          partesUbicacion.push(
+            estado
+          );
+
+        }
+
+
+        if (
+          pais &&
+          pais !== estado
+        ) {
+
+          partesUbicacion.push(
+            pais
+          );
+
+        }
+
+
+        const tituloUbicacion =
+          partesUbicacion.join(
+            ', '
+          );
+
+
+        locationTitle.innerText =
+          tituloUbicacion ||
+          'Ubicación desconocida';
+
+
+        /* ==============================================
+           CALLE
+           ============================================== */
+
+        const calle =
+          address.road ||
+          address.pedestrian ||
+          address.footway ||
+          address.path ||
+          '';
+
+
+        /* ==============================================
+           NÚMERO
+           ============================================== */
+
+        const numero =
+          address.house_number ||
+          '';
+
+
+        let direccionFinal =
+          '';
+
+
+        if (
+          calle &&
+          numero
+        ) {
+
+          direccionFinal =
+            `${calle} ${numero}`;
+
+        }
+        else if (calle) {
+
+          direccionFinal =
+            calle;
+
+        }
+        else if (
+          address.suburb
+        ) {
+
+          direccionFinal =
+            address.suburb;
+
+        }
+        else if (
+          address.neighbourhood
+        ) {
+
+          direccionFinal =
+            address.neighbourhood;
+
+        }
+        else {
+
+          direccionFinal =
+            'Dirección no disponible';
+
+        }
+
+
+        locationAddress.innerText =
+          direccionFinal;
+
+
+        console.log(
+          'Ubicación:',
+          tituloUbicacion
+        );
+
+
+        console.log(
+          'Dirección:',
+          direccionFinal
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          'No fue posible obtener la dirección:',
+          error
+        );
+
+
+        /*
+         * Si falla la dirección,
+         * conservamos las coordenadas reales.
+         */
+
+        locationTitle.innerText =
+          'Ubicación GPS';
+
+
+        locationAddress.innerText =
+          'Dirección no disponible';
+
+      }
+
+    }
+
+
+    /* =====================================================
+       INICIAR GPS
+       ===================================================== */
+
+    obtenerUbicacionGPS();
+
+
+    /* =====================================================
        ESPERAR A QUE LA CÁMARA ESTÉ LISTA
        ===================================================== */
 
@@ -1231,7 +1725,7 @@
 
 
     /* =====================================================
-       CAPTURAR FRAME DEL VIDEO
+       CAPTURAR EL FRAME DEL VIDEO
        ===================================================== */
 
     function captureVideoFrame() {
@@ -1286,6 +1780,10 @@
         video.videoHeight;
 
 
+      /* ================================================
+         MISMO RECORTE QUE OBJECT-FIT: COVER
+         ================================================ */
+
       const containerRatio =
         width / height;
 
@@ -1305,10 +1803,6 @@
         videoHeight;
 
 
-      /* ==================================================
-         MISMO RECORTE QUE OBJECT-FIT: COVER
-         ================================================== */
-
       if (
         videoRatio >
         containerRatio
@@ -1326,7 +1820,6 @@
           ) / 2;
 
       }
-
       else {
 
         sourceHeight =
@@ -1343,9 +1836,9 @@
       }
 
 
-      /* ==================================================
+      /* ================================================
          DIBUJAR VIDEO
-         ================================================== */
+         ================================================ */
 
       ctx.drawImage(
 
@@ -1385,29 +1878,20 @@
 
     async function takeSnapshot() {
 
-      let backgroundCanvas = null;
-
-      let originalVideoVisibility = '';
-
-
       try {
 
         await waitForVideo();
 
 
-        /* ================================================
-           CAPTURAR FRAME
-           ================================================ */
-
         const dimensions =
           captureVideoFrame();
 
 
-        /* ================================================
+        /* ==============================================
            OCULTAR VIDEO
-           ================================================ */
+           ============================================== */
 
-        originalVideoVisibility =
+        const originalVideoVisibility =
           video.style.visibility;
 
 
@@ -1415,11 +1899,11 @@
           'hidden';
 
 
-        /* ================================================
-           CREAR FONDO
-           ================================================ */
+        /* ==============================================
+           CANVAS DEL FRAME
+           ============================================== */
 
-        backgroundCanvas =
+        const backgroundCanvas =
           document.createElement(
             'canvas'
           );
@@ -1483,9 +1967,9 @@
         );
 
 
-        /* ================================================
-           ESPERAR RENDER
-           ================================================ */
+        /* ==============================================
+           ESPERAR UN FRAME
+           ============================================== */
 
         await new Promise(
           resolve =>
@@ -1495,9 +1979,9 @@
         );
 
 
-        /* ================================================
-           CAPTURAR TARJETA REAL
-           ================================================ */
+        /* ==============================================
+           CAPTURAR CONTENEDOR COMPLETO
+           ============================================== */
 
         const finalCanvas =
           await html2canvas(
@@ -1538,9 +2022,9 @@
           );
 
 
-        /* ================================================
-           JPEG
-           ================================================ */
+        /* ==============================================
+           CONVERTIR A JPEG
+           ============================================== */
 
         const imageData =
           finalCanvas.toDataURL(
@@ -1549,9 +2033,9 @@
           );
 
 
-        /* ================================================
-           NOMBRE
-           ================================================ */
+        /* ==============================================
+           NOMBRE DEL ARCHIVO
+           ============================================== */
 
         const now =
           new Date();
@@ -1568,9 +2052,9 @@
           }.jpg`;
 
 
-        /* ================================================
-           MOSTRAR PREVIEW
-           ================================================ */
+        /* ==============================================
+           MOSTRAR FOTO
+           ============================================== */
 
         previewImg.src =
           imageData;
@@ -1580,22 +2064,15 @@
           'flex';
 
 
-        /* ================================================
+        /* ==============================================
            RESTAURAR VIDEO
-           ================================================ */
+           ============================================== */
 
         video.style.visibility =
           originalVideoVisibility;
 
 
-        /* ================================================
-           ELIMINAR CANVAS
-           ================================================ */
-
         backgroundCanvas.remove();
-
-        backgroundCanvas =
-          null;
 
 
       } catch (error) {
@@ -1613,15 +2090,6 @@
 
         video.style.visibility =
           'visible';
-
-
-        if (
-          backgroundCanvas
-        ) {
-
-          backgroundCanvas.remove();
-
-        }
 
       }
 
@@ -1688,6 +2156,7 @@
       discardPhoto();
 
     }
+
 
   </script>
 
