@@ -123,6 +123,9 @@
 
     /* =====================================================
        TARJETA GPS
+       
+       TODO EL CONTENIDO DE LA TARJETA SE ADAPTA
+       SEGÚN EL ANCHO REAL DE LA TARJETA.
        ===================================================== */
 
     .gps-box {
@@ -133,17 +136,19 @@
       right: 12px;
       bottom: 16px;
 
+      width: auto;
+
       background: rgba(0, 0, 0, 0.78);
 
       border: 1px solid rgba(255, 255, 255, 0.40);
 
       border-radius: 8px;
 
-      padding: 8px;
+      padding: clamp(6px, 1.8vw, 12px);
 
       display: flex;
 
-      gap: 10px;
+      gap: clamp(8px, 2vw, 12px);
 
       align-items: flex-start;
 
@@ -153,20 +158,31 @@
 
       box-shadow:
         0 4px 20px rgba(0, 0, 0, 0.60);
+
+      /*
+       * Permite utilizar cqw/cqh para que los elementos
+       * internos dependan del tamaño de esta tarjeta.
+       */
+      container-type: inline-size;
+
+      overflow: hidden;
     }
 
 
     /* =====================================================
        MAPA / PIN
+       
+       El cuadro blanco crece o disminuye junto con
+       la tarjeta.
        ===================================================== */
 
     .map-square {
 
-      width: clamp(105px, 32vw, 135px);
+      width: clamp(105px, 28cqw, 160px);
 
-      height: clamp(105px, 32vw, 115px);
+      aspect-ratio: 1 / 0.86;
 
-      min-width: clamp(105px, 32vw, 135px);
+      min-width: 105px;
 
       background: #ffffff;
 
@@ -194,7 +210,7 @@
 
       width: 100%;
 
-      height: 32px;
+      height: clamp(27px, 7cqw, 34px);
 
       display: flex;
 
@@ -202,10 +218,9 @@
 
       justify-content: flex-start;
 
-      padding-left: 5px;
-      padding-right: 5px;
+      padding-left: clamp(4px, 1.2cqw, 6px);
 
-      box-sizing: border-box;
+      padding-right: clamp(4px, 1.2cqw, 6px);
 
       background: #ffffff;
 
@@ -221,8 +236,9 @@
 
     .map-logo {
 
-      width: 27px;
-      height: 27px;
+      width: clamp(23px, 7cqw, 30px);
+
+      height: clamp(23px, 7cqw, 30px);
 
       flex-shrink: 0;
 
@@ -238,11 +254,11 @@
 
     .map-title {
 
-      margin-left: 5px;
+      margin-left: clamp(4px, 1.3cqw, 6px);
 
       color: #000000;
 
-      font-size: clamp(9px, 2.8vw, 11px);
+      font-size: clamp(9px, 2.8cqw, 12px);
 
       font-weight: 800;
 
@@ -290,21 +306,20 @@
 
     .map-pin-svg {
 
-      width: 48px;
-      height: 68px;
+      width: clamp(40px, 13cqw, 65px);
 
-      display: block;
+      height: auto;
 
       max-width: 70%;
+
       max-height: 75%;
+
+      display: block;
     }
 
 
     /* =====================================================
        COLUMNA DE INFORMACIÓN
-       
-       TODAS LAS LÍNEAS ESTÁN JUNTAS.
-       NO HAY GAP ENTRE ELLAS.
        ===================================================== */
 
     .info-column {
@@ -328,47 +343,47 @@
     /* =====================================================
        PRIMERA LÍNEA
        
-       ÚNICA QUE ES DIFERENTE:
-       GRANDE + NEGRITA
+       ESTA ES LA ÚNICA QUE ES GRANDE Y NEGRITA.
        ===================================================== */
 
     .city-title-large {
 
-      font-size: 15px;
+      font-size: clamp(13px, 4.2cqw, 19px);
 
       font-weight: 800;
 
       color: #ffffff;
 
-      line-height: 1.2;
-
-      margin: 0;
-
-      padding: 0;
+      line-height: 1.15;
 
       white-space: normal;
 
       overflow-wrap: break-word;
 
       word-break: normal;
+
+      margin: 0;
+
+      padding: 0;
     }
 
 
     /* =====================================================
-       TODAS LAS DEMÁS LÍNEAS
+       TODAS LAS LÍNEAS RESTANTES
        
-       EXACTAMENTE EL MISMO:
-       - TAMAÑO
-       - PESO
-       - COLOR
-       - FUENTE
-       - INTERLINEADO
-       - SIN SEPARACIÓN
+       MISMO TAMAÑO
+       MISMO PESO
+       MISMO COLOR
+       MISMA FUENTE
+       SIN SEPARACIÓN ENTRE ELLAS
        ===================================================== */
 
-    .info-line {
+    .address-text,
+    .coords-text,
+    .datetime-text,
+    .photo-credit {
 
-      font-size: 12px;
+      font-size: clamp(10px, 3.2cqw, 15px);
 
       font-weight: 500;
 
@@ -376,15 +391,15 @@
 
       line-height: 1.2;
 
-      margin: 0;
-
-      padding: 0;
-
       white-space: normal;
 
       overflow-wrap: break-word;
 
       word-break: normal;
+
+      margin: 0;
+
+      padding: 0;
     }
 
 
@@ -524,8 +539,8 @@
     /* =====================================================
        TELÉFONOS PEQUEÑOS
        
-       SOLO AJUSTAMOS LA TARJETA.
-       NO TOCAMOS LOS TEXTOS.
+       Solo ajustamos la posición general de la tarjeta.
+       Los tamaños internos ahora son RESPONSIVE.
        ===================================================== */
 
     @media (max-width: 380px) {
@@ -542,21 +557,16 @@
         gap: 8px;
       }
 
-
-      .map-pin-svg {
-
-        width: 42px;
-        height: 60px;
-      }
-
     }
 
 
     /* =====================================================
-       TABLETS / PANTALLAS GRANDES
+       TABLETS Y PANTALLAS GRANDES
        
-       SOLO AJUSTAMOS LA TARJETA.
-       NO TOCAMOS LOS TEXTOS.
+       NO cambiamos manualmente el tamaño del mapa
+       ni de las letras.
+       
+       Todo se adapta mediante clamp() y cqw.
        ===================================================== */
 
     @media (min-width: 600px) {
@@ -571,13 +581,6 @@
         padding: 12px 14px;
 
         gap: 12px;
-      }
-
-
-      .map-pin-svg {
-
-        width: 58px;
-        height: 82px;
       }
 
     }
@@ -688,7 +691,7 @@
                DIRECCIÓN
                =========================================== -->
 
-          <div class="info-line">
+          <div class="address-text">
 
             Calle Centenario 123, Del Carmen, Coyoacán
 
@@ -699,7 +702,7 @@
                COORDENADAS
                =========================================== -->
 
-          <div class="info-line">
+          <div class="coords-text">
 
             Lat 19.351234, Long -99.165678
 
@@ -711,7 +714,7 @@
                =========================================== -->
 
           <div
-            class="info-line"
+            class="datetime-text"
             id="live-clock"
           >
 
@@ -724,7 +727,7 @@
                CRÉDITO
                =========================================== -->
 
-          <div class="info-line">
+          <div class="photo-credit">
 
             Foto tomada por Coyoacan GPS
 
@@ -1129,9 +1132,9 @@
         video.videoHeight;
 
 
-      /* =================================================
-         MISMO RECORTE QUE OBJECT-FIT: COVER
-         ================================================= */
+      /* ==================================================
+         MISMO RECORTE QUE object-fit: cover
+         ================================================== */
 
       const containerRatio =
         width / height;
@@ -1185,9 +1188,9 @@
       }
 
 
-      /* =================================================
-         DIBUJAR EL VIDEO
-         ================================================= */
+      /* ==================================================
+         DIBUJAR VIDEO
+         ================================================== */
 
       ctx.drawImage(
 
@@ -1229,24 +1232,24 @@
 
       try {
 
-        /* ==============================================
-           ESPERAR A QUE EL VIDEO ESTÉ LISTO
-           ============================================== */
+        /* ================================================
+           ESPERAR VIDEO
+           ================================================ */
 
         await waitForVideo();
 
 
-        /* ==============================================
-           CAPTURAR FRAME DE LA CÁMARA
-           ============================================== */
+        /* ================================================
+           CAPTURAR FRAME
+           ================================================ */
 
         const dimensions =
           captureVideoFrame();
 
 
-        /* ==============================================
+        /* ================================================
            OCULTAR VIDEO
-           ============================================== */
+           ================================================ */
 
         const originalVideoVisibility =
           video.style.visibility;
@@ -1256,9 +1259,9 @@
           'hidden';
 
 
-        /* ==============================================
-           COLOCAR EL FRAME COMO FONDO
-           ============================================== */
+        /* ================================================
+           CREAR FONDO CON FRAME
+           ================================================ */
 
         const backgroundCanvas =
           document.createElement(
@@ -1324,9 +1327,9 @@
         );
 
 
-        /* ==============================================
-           ESPERAR UN FRAME DEL NAVEGADOR
-           ============================================== */
+        /* ================================================
+           ESPERAR RENDER
+           ================================================ */
 
         await new Promise(
           resolve =>
@@ -1336,9 +1339,9 @@
         );
 
 
-        /* ==============================================
-           CAPTURAR TODO EL CONTENEDOR
-           ============================================== */
+        /* ================================================
+           CAPTURAR CONTENEDOR
+           ================================================ */
 
         const finalCanvas =
           await html2canvas(
@@ -1379,9 +1382,9 @@
           );
 
 
-        /* ==============================================
+        /* ================================================
            CONVERTIR A JPEG
-           ============================================== */
+           ================================================ */
 
         const imageData =
           finalCanvas.toDataURL(
@@ -1390,9 +1393,9 @@
           );
 
 
-        /* ==============================================
+        /* ================================================
            NOMBRE DEL ARCHIVO
-           ============================================== */
+           ================================================ */
 
         const now =
           new Date();
@@ -1409,9 +1412,9 @@
           }.jpg`;
 
 
-        /* ==============================================
+        /* ================================================
            MOSTRAR FOTO
-           ============================================== */
+           ================================================ */
 
         previewImg.src =
           imageData;
@@ -1421,17 +1424,17 @@
           'flex';
 
 
-        /* ==============================================
+        /* ================================================
            RESTAURAR VIDEO
-           ============================================== */
+           ================================================ */
 
         video.style.visibility =
           originalVideoVisibility;
 
 
-        /* ==============================================
+        /* ================================================
            ELIMINAR CANVAS TEMPORAL
-           ============================================== */
+           ================================================ */
 
         backgroundCanvas.remove();
 
