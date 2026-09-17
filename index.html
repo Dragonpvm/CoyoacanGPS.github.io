@@ -419,6 +419,49 @@
 
 
     /* =====================================================
+       ESTADO DE LA HORA
+       ===================================================== */
+
+    .time-status-dot {
+
+      position: absolute;
+
+      top: 8px;
+
+      right: 8px;
+
+      width: 10px;
+
+      height: 10px;
+
+      border-radius: 50%;
+
+      background: #f1c40f;
+
+      box-shadow: 0 0 7px rgba(241, 196, 15, 0.85);
+
+      z-index: 30;
+
+      border: 1px solid rgba(255,255,255,0.55);
+    }
+
+    .time-status-dot.status-green {
+      background: #2ecc71;
+      box-shadow: 0 0 7px rgba(46, 204, 113, 0.85);
+    }
+
+    .time-status-dot.status-yellow {
+      background: #f1c40f;
+      box-shadow: 0 0 7px rgba(241, 196, 15, 0.85);
+    }
+
+    .time-status-dot.status-red {
+      background: #e74c3c;
+      box-shadow: 0 0 7px rgba(231, 76, 60, 0.85);
+    }
+
+
+    /* =====================================================
        CRÉDITO
        ===================================================== */
 
@@ -684,6 +727,13 @@
            =============================================== -->
 
       <div class="gps-box">
+
+        <div
+          class="time-status-dot status-red"
+          id="time-status-dot"
+          aria-label="Sin sincronización de hora"
+          title="Sin sincronización de hora"
+        ></div>
 
 
         <!-- =============================================
@@ -980,6 +1030,12 @@
       );
 
 
+    const timeStatusDotEl =
+      document.getElementById(
+        'time-status-dot'
+      );
+
+
     /* =====================================================
        VARIABLES DEL MAPA
        ===================================================== */
@@ -997,51 +1053,630 @@
 
 
     /* =====================================================
-       RELOJ
+       HORA DE CONFIANZA
        ===================================================== */
 
-    function updateClock() {
+    /*
+     * La hora NO se obtiene directamente de new Date()
+     * para mostrarla en la evidencia.
+     *
+     * Cuando hay Internet:
+     *   1. Se consulta la hora de un servidor externo.
+     *   2. Se guarda esa hora como referencia.
+     *   3. Se usa performance.now() para avanzar el reloj.
+     *
+     * performance.now() es un reloj monotónico durante la
+     * sesión y no cambia porque el usuario modifique la hora
+     * del teléfono.
+     *
+     * Cuando se pierde Internet, el reloj continúa desde la
+     * última sincronización mientras la página siga abierta.
+     */
 
-      const now =
-        new Date();
+    /*
+     * La zona horaria se determina automáticamente a partir
+     * de las coordenadas GPS. No está fijada a México.
+     *
+     * Ejemplos:
+     *   Coyoacán -> America/Mexico_City
+     *   Nueva York -> America/New_York
+     *   Londres -> Europe/London
+     *   Tokio -> Asia/Tokyo
+     */
+
+    let TIME_ZONE = null;
+
+    let currentGpsLatitude = null;
+
+    let currentGpsLongitude = null;
+
+    let trustedServerTimeMs = null;
+
+    let trustedMonotonicMs = null;
+
+    let lastSuccessfulTimeSyncMs = null;
+
+    let timeSyncInProgress = false;
 
 
-      const date =
-        now.toLocaleDateString(
-          'es-MX',
+    async function obtenerZonaHorariaMundial(
+      latitud,
+      longitud
+    ) {
+
+      /*
+       * TimeAPI permite consultar la zona IANA correspondiente
+       * a unas coordenadas geográficas.
+       */
+
+      const url =
+        'https://timeapi.io/api/timezone/coordinate?latitude=' +
+        encodeURIComponent(latitud) +
+        '&longitude=' +
+        encodeURIComponent(longitud);
+
+
+      const response =
+        await fetch(
+          url,
           {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
+            method: 'GET',
+            cache: 'no-store'
           }
         );
 
 
-      const time =
-        now.toLocaleTimeString(
+      if (!response.ok) {
+
+        throw new Error(
+          `No fue posible obtener la zona horaria. HTTP ${response.status}`
+        );
+
+      }
+
+
+      const data =
+        await response.json();
+
+
+      const zona =
+        data &&
+        (
+          data.timeZone ||
+          data.timezone ||
+          data.id
+        );
+
+
+      if (!zona) {
+
+        throw new Error(
+          'El servicio no devolvió una zona horaria válida.'
+        );
+
+      }
+
+
+      return zona;
+
+    }
+
+
+    function nombreZonaHoraria(
+      zona
+    ) {
+
+      if (!zona) {
+
+        return '';
+
+      }
+
+
+      /*
+       * Se muestra el identificador IANA porque es preciso
+       * y funciona en cualquier país.
+       */
+
+      return zona;
+
+    }
+
+
+    function getTrustedNowMs() {
+
+      if (
+        trustedServerTimeMs === null ||
+        trustedMonotonicMs === null
+      ) {
+
+        return null;
+
+      }
+
+
+      return (
+        trustedServerTimeMs +
+        (
+          performance.now() -
+          trustedMonotonicMs
+        )
+      );
+
+    }
+
+
+    function formatTrustedDateTime(timestampMs) {
+
+      if (!TIME_ZONE) {
+
+        return 'Sin zona horaria';
+
+      }
+
+
+      const date =
+        new Date(timestampMs);
+
+
+      const dateText =
+        new Intl.DateTimeFormat(
           'es-MX',
           {
+            timeZone: TIME_ZONE,
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          }
+        ).format(date);
+
+
+      const timeText =
+        new Intl.DateTimeFormat(
+          'es-MX',
+          {
+            timeZone: TIME_ZONE,
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
             hour12: true
           }
-        );
+        ).format(date);
 
 
-      clockEl.innerText =
-        `${date}, ${time}`;
+      return `${dateText}, ${timeText}`;
 
     }
 
 
+    function updateTrustedClockDisplay() {
+
+      const nowMs =
+        getTrustedNowMs();
+
+
+      if (nowMs === null) {
+
+        clockEl.innerText =
+          'Hora no disponible';
+
+        return;
+
+      }
+
+
+      clockEl.innerText =
+        formatTrustedDateTime(nowMs);
+
+    }
+
+
+    function setTimeStatus(status) {
+
+      if (!timeStatusDotEl) {
+        return;
+      }
+
+      timeStatusDotEl.classList.remove(
+        'status-green',
+        'status-yellow',
+        'status-red'
+      );
+
+      if (status === 'green') {
+        timeStatusDotEl.classList.add('status-green');
+        timeStatusDotEl.title =
+          'Hora sincronizada por Internet';
+        timeStatusDotEl.setAttribute(
+          'aria-label',
+          'Hora sincronizada por Internet'
+        );
+      } else if (status === 'red') {
+        timeStatusDotEl.classList.add('status-red');
+        timeStatusDotEl.title =
+          'Sin sincronización de hora';
+        timeStatusDotEl.setAttribute(
+          'aria-label',
+          'Sin sincronización de hora'
+        );
+      } else {
+        timeStatusDotEl.classList.add('status-yellow');
+        timeStatusDotEl.title =
+          'Sincronizando hora';
+        timeStatusDotEl.setAttribute(
+          'aria-label',
+          'Sincronizando hora'
+        );
+      }
+
+    }
+
+
+    async function synchronizeTrustedTime() {
+
+      if (timeSyncInProgress) {
+
+        return false;
+
+      }
+
+
+      /*
+       * Para una hora mundial fiable necesitamos las
+       * coordenadas GPS actuales.
+       */
+
+      if (
+        currentGpsLatitude === null ||
+        currentGpsLongitude === null
+      ) {
+
+        setTimeStatus('yellow');
+
+
+        return false;
+
+      }
+
+
+      timeSyncInProgress = true;
+
+      setTimeStatus('yellow');
+
+      try {
+
+        /*
+         * PASO 1:
+         * Determinar la zona horaria del lugar donde está
+         * físicamente el dispositivo.
+         */
+
+        const zona =
+          await obtenerZonaHorariaMundial(
+            currentGpsLatitude,
+            currentGpsLongitude
+          );
+
+
+        TIME_ZONE =
+          zona;
+
+
+        /*
+         * PASO 2:
+         * Consultar la hora actual de esa zona al servidor.
+         *
+         * Se usa un parámetro anti-caché y cache:no-store.
+         */
+
+        const timeApiUrl =
+          'https://timeapi.io/api/time/current/zone?timeZone=' +
+          encodeURIComponent(TIME_ZONE) +
+          '&_=' +
+          Date.now();
+
+
+        const requestStarted =
+          performance.now();
+
+
+        const response =
+          await fetch(
+            timeApiUrl,
+            {
+              method: 'GET',
+              cache: 'no-store'
+            }
+          );
+
+
+        const requestFinished =
+          performance.now();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            `Error HTTP ${response.status}`
+          );
+
+        }
+
+
+        const data =
+          await response.json();
+
+
+        if (!data || !data.dateTime) {
+
+          throw new Error(
+            'La respuesta del servidor no contiene dateTime.'
+          );
+
+        }
+
+
+        /*
+         * IMPORTANTE:
+         * data.dateTime es la hora LOCAL de la zona consultada.
+         * NO se puede hacer new Date(data.dateTime), porque el
+         * navegador podría interpretarla usando la zona horaria
+         * configurada en el dispositivo. Eso provocaba errores
+         * como mostrar 02:00 cuando la hora real era 14:00.
+         *
+         * Primero intentamos usar utcDateTime si la API lo entrega.
+         * Si no existe, convertimos explícitamente los componentes
+         * de la hora local de TIME_ZONE a un instante UTC usando
+         * las reglas IANA de Intl.
+         */
+
+        function convertirHoraLocalZonaAUtcMs(
+          dateTimeLocal,
+          timeZone
+        ) {
+
+          const match = String(dateTimeLocal).match(
+            /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?/
+          );
+
+          if (!match) {
+            throw new Error('Formato dateTime no reconocido.');
+          }
+
+          const year = Number(match[1]);
+          const month = Number(match[2]);
+          const day = Number(match[3]);
+          const hour = Number(match[4]);
+          const minute = Number(match[5]);
+          const second = Number(match[6]);
+          const millisecond = Number(
+            ((match[7] || '0') + '000').slice(0, 3)
+          );
+
+          const targetAsUtc = Date.UTC(
+            year, month - 1, day,
+            hour, minute, second, millisecond
+          );
+
+          let candidate = targetAsUtc;
+
+          const formatter = new Intl.DateTimeFormat(
+            'en-CA',
+            {
+              timeZone,
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              hourCycle: 'h23'
+            }
+          );
+
+          for (let i = 0; i < 4; i++) {
+
+            const parts = {};
+
+            formatter.formatToParts(
+              new Date(candidate)
+            ).forEach(part => {
+              if (part.type !== 'literal') {
+                parts[part.type] = Number(part.value);
+              }
+            });
+
+            const shownAsUtc = Date.UTC(
+              parts.year,
+              parts.month - 1,
+              parts.day,
+              parts.hour,
+              parts.minute,
+              parts.second,
+              0
+            );
+
+            const difference =
+              targetAsUtc - shownAsUtc;
+
+            candidate += difference;
+
+            if (Math.abs(difference) < 1000) {
+              break;
+            }
+          }
+
+          return candidate;
+        }
+
+        let serverMs = null;
+
+        if (data.utcDateTime) {
+          serverMs = Date.parse(data.utcDateTime);
+        }
+
+        if (!Number.isFinite(serverMs)) {
+          serverMs = convertirHoraLocalZonaAUtcMs(
+            data.dateTime,
+            TIME_ZONE
+          );
+        }
+
+
+        if (
+          !Number.isFinite(serverMs)
+        ) {
+
+          throw new Error(
+            'La hora recibida del servidor no es válida.'
+          );
+
+        }
+
+
+        const roundTripMs =
+          requestFinished -
+          requestStarted;
+
+
+        trustedServerTimeMs =
+          serverMs +
+          (
+            roundTripMs / 2
+          );
+
+
+        trustedMonotonicMs =
+          requestFinished;
+
+
+        lastSuccessfulTimeSyncMs =
+          trustedServerTimeMs;
+
+
+        updateTrustedClockDisplay();
+
+
+        setTimeStatus('green');
+
+
+        console.log(
+          'Zona horaria:',
+          TIME_ZONE
+        );
+
+
+        console.log(
+          'Hora sincronizada:',
+          formatTrustedDateTime(
+            trustedServerTimeMs
+          ),
+          'RTT:',
+          Math.round(roundTripMs),
+          'ms'
+        );
+
+
+        return true;
+
+      } catch (error) {
+
+        console.error(
+          'No fue posible sincronizar la hora:',
+          error
+        );
+
+
+        /*
+         * Si ya había una sincronización válida, continuamos
+         * offline con ella.
+         */
+
+        if (
+          getTrustedNowMs() !== null
+        ) {
+
+          updateTrustedClockDisplay();
+
+
+          setTimeStatus('yellow');
+
+
+          return true;
+
+        }
+
+
+        clockEl.innerText =
+          'Hora no disponible';
+
+
+        setTimeStatus('red');
+
+
+        return false;
+
+      } finally {
+
+        timeSyncInProgress =
+          false;
+
+      }
+
+    }
+
+
+    /*
+     * Actualizar visualmente cada segundo.
+     * NO consulta la hora del teléfono.
+     */
+
     setInterval(
-      updateClock,
+      updateTrustedClockDisplay,
       1000
     );
 
 
-    updateClock();
+    /*
+     * Si vuelve Internet, intentamos sincronizar otra vez.
+     */
+
+    window.addEventListener(
+      'online',
+      function() {
+
+        synchronizeTrustedTime();
+
+      }
+    );
+
+
+    /*
+     * Sincronización periódica mientras haya Internet.
+     * Cinco minutos reduce el consumo y mantiene la referencia fresca.
+     */
+
+    setInterval(
+      function() {
+
+        if (navigator.onLine) {
+
+          synchronizeTrustedTime();
+
+        }
+
+      },
+      5 * 60 * 1000
+    );
+
+
+    /*
+     * La primera sincronización se realiza después de obtener
+     * las coordenadas GPS, porque la zona horaria depende del
+     * lugar donde se toma la fotografía.
+     */
+
+
 
 
     /* =====================================================
@@ -1323,6 +1958,18 @@
             position.coords.accuracy;
 
 
+          /*
+           * Guardar la ubicación actual para determinar
+           * automáticamente la zona horaria mundial.
+           */
+
+          currentGpsLatitude =
+            latitud;
+
+          currentGpsLongitude =
+            longitud;
+
+
           /* ==============================================
              MOSTRAR COORDENADAS REALES
              ============================================== */
@@ -1369,6 +2016,14 @@
             longitud
           );
 
+
+          /*
+           * Ahora que tenemos GPS, determinamos la zona
+           * horaria del lugar y sincronizamos la hora real.
+           */
+
+          await synchronizeTrustedTime();
+
         },
 
 
@@ -1407,6 +2062,172 @@
       );
 
     }
+
+
+    /* =====================================================
+       ACTUALIZACIÓN GPS MUNDIAL
+       ===================================================== */
+
+    let lastTimeZoneGpsRefreshLat =
+      null;
+
+    let lastTimeZoneGpsRefreshLon =
+      null;
+
+
+    function distanciaAproximadaMetros(
+      lat1,
+      lon1,
+      lat2,
+      lon2
+    ) {
+
+      const R =
+        6371000;
+
+
+      const rad =
+        Math.PI / 180;
+
+
+      const dLat =
+        (
+          lat2 -
+          lat1
+        ) * rad;
+
+
+      const dLon =
+        (
+          lon2 -
+          lon1
+        ) * rad;
+
+
+      const a =
+        Math.sin(dLat / 2) *
+        Math.sin(dLat / 2) +
+        Math.cos(lat1 * rad) *
+        Math.cos(lat2 * rad) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+
+      return (
+        2 *
+        R *
+        Math.atan2(
+          Math.sqrt(a),
+          Math.sqrt(1 - a)
+        )
+      );
+
+    }
+
+
+    function iniciarSeguimientoGPS() {
+
+      if (
+        !navigator.geolocation
+      ) {
+
+        return;
+
+      }
+
+
+      navigator.geolocation.watchPosition(
+        async function(position) {
+
+          const latitud =
+            position.coords.latitude;
+
+          const longitud =
+            position.coords.longitude;
+
+
+          const distancia =
+            (
+              lastTimeZoneGpsRefreshLat === null ||
+              lastTimeZoneGpsRefreshLon === null
+            )
+              ? Infinity
+              : distanciaAproximadaMetros(
+                  lastTimeZoneGpsRefreshLat,
+                  lastTimeZoneGpsRefreshLon,
+                  latitud,
+                  longitud
+                );
+
+
+          currentGpsLatitude =
+            latitud;
+
+          currentGpsLongitude =
+            longitud;
+
+
+          /*
+           * Actualizamos el mapa continuamente.
+           */
+
+          actualizarMapa(
+            latitud,
+            longitud
+          );
+
+
+          /*
+           * No hacemos peticiones a Internet por cada
+           * pequeño movimiento. Solo si nos hemos desplazado
+           * al menos aproximadamente 1 km o todavía no existe
+           * una referencia de zona horaria.
+           */
+
+          if (
+            distancia >= 1000 ||
+            TIME_ZONE === null
+          ) {
+
+            lastTimeZoneGpsRefreshLat =
+              latitud;
+
+            lastTimeZoneGpsRefreshLon =
+              longitud;
+
+
+            if (navigator.onLine) {
+
+              await synchronizeTrustedTime();
+
+            }
+
+          }
+
+        },
+
+
+        function(error) {
+
+          console.warn(
+            'Seguimiento GPS:',
+            error
+          );
+
+        },
+
+
+        {
+          enableHighAccuracy: true,
+          maximumAge: 5000,
+          timeout: 15000
+        }
+
+      );
+
+    }
+
+
 
 
     /* =====================================================
@@ -1880,6 +2701,35 @@
 
       try {
 
+        /*
+         * La primera foto de la sesión requiere una
+         * sincronización real. Después puede funcionar
+         * sin Internet usando el reloj monotónico.
+         */
+
+        if (
+          getTrustedNowMs() === null
+        ) {
+
+          alert(
+            'La hora todavía no ha sido sincronizada por Internet. Conéctate una vez para sincronizarla y después podrás tomar fotos sin señal.'
+          );
+
+
+          await synchronizeTrustedTime();
+
+
+          if (
+            getTrustedNowMs() === null
+          ) {
+
+            return;
+
+          }
+
+        }
+
+
         await waitForVideo();
 
 
@@ -2035,21 +2885,41 @@
 
         /* ==============================================
            NOMBRE DEL ARCHIVO
+           USAR SIEMPRE LA HORA DE CONFIANZA
            ============================================== */
 
-        const now =
-          new Date();
+        const trustedCaptureTimeMs =
+          getTrustedNowMs();
+
+
+        if (
+          trustedCaptureTimeMs === null
+        ) {
+
+          throw new Error(
+            'No existe una hora de confianza para esta fotografía.'
+          );
+
+        }
+
+
+        const trustedCaptureDate =
+          new Date(
+            trustedCaptureTimeMs
+          );
+
+
+        const fileTimestamp =
+          trustedCaptureDate
+            .toISOString()
+            .replace(
+              /[:.]/g,
+              '-'
+            );
 
 
         fileName =
-          `Evidencia_${
-            now
-              .toISOString()
-              .replace(
-                /[:.]/g,
-                '-'
-              )
-          }.jpg`;
+          `Evidencia_${fileTimestamp}.jpg`;
 
 
         /* ==============================================
@@ -2094,6 +2964,47 @@
       }
 
     }
+
+
+    /* =====================================================
+       CONTROL AL VOLVER A LA APP
+       ===================================================== */
+
+    document.addEventListener(
+      'visibilitychange',
+      function() {
+
+        if (
+          document.visibilityState === 'visible'
+        ) {
+
+          if (navigator.onLine) {
+
+            synchronizeTrustedTime();
+
+          }
+          else {
+
+            updateTrustedClockDisplay();
+
+            if (
+              getTrustedNowMs() !== null
+            ) {
+
+              setTimeStatus(
+                'Hora offline · usando última sincronización'
+              );
+
+            }
+
+          }
+
+        }
+
+      }
+    );
+
+
 
 
     /* =====================================================
