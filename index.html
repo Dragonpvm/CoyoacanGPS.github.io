@@ -132,53 +132,52 @@
 
 
     /* =====================================================
-       MARCA DE AGUA DE LA CÁMARA
-       SOLO LOGO, REPETIDO Y TRANSPARENTE
+       MARCA DE AGUA
        ===================================================== */
 
-    .camera-watermark {
+    .watermark-layer {
 
       position: absolute;
-
-      left: -10%;
-      top: -10%;
-      width: 120%;
-      height: 120%;
-
-      display: grid;
-
-      grid-template-columns: repeat(6, 1fr);
-      grid-template-rows: repeat(7, 1fr);
-
-      align-items: center;
-      justify-items: center;
-
-      gap: 8px;
-
-      transform: rotate(-18deg);
+      inset: 0;
 
       z-index: 2;
-
       pointer-events: none;
-
       overflow: hidden;
+
+      /* Un poco más visible, pero todavía discreta */
+      opacity: 0.15;
     }
 
 
-    .camera-watermark img {
+    .watermark-logo {
 
-      width: clamp(42px, 10vw, 72px);
-      height: clamp(42px, 10vw, 72px);
+      position: absolute;
+
+      width: clamp(42px, 11vw, 72px);
+      height: auto;
 
       object-fit: contain;
-
-      opacity: 0.14;
 
       display: block;
 
       user-select: none;
       -webkit-user-drag: none;
+
+      /* Ligera sombra para que el PNG se distinga sobre la cámara */
+      filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.75));
     }
+
+
+    .watermark-1 { top: 8%; left: 7%; transform: rotate(-10deg); }
+    .watermark-2 { top: 12%; left: 42%; transform: rotate(8deg); }
+    .watermark-3 { top: 7%; right: 7%; transform: rotate(-7deg); }
+    .watermark-4 { top: 38%; left: 20%; transform: rotate(6deg); }
+    .watermark-5 { top: 34%; right: 20%; transform: rotate(-9deg); }
+    .watermark-6 { top: 56%; left: 6%; transform: rotate(8deg); }
+    .watermark-7 { top: 54%; left: 47%; transform: rotate(-6deg); }
+    .watermark-8 { top: 58%; right: 6%; transform: rotate(10deg); }
+    .watermark-9 { top: 79%; left: 27%; transform: rotate(-8deg); }
+    .watermark-10 { top: 77%; right: 28%; transform: rotate(7deg); }
 
 
     /* =====================================================
@@ -604,70 +603,6 @@
 
 
     /* =====================================================
-       MODAL DE PREVISUALIZACIÓN
-       ===================================================== */
-
-    #preview-modal {
-
-      display: none;
-
-      position: fixed;
-
-      inset: 0;
-
-      background: #000;
-
-      z-index: 100;
-
-      flex-direction: column;
-    }
-
-
-    /* =====================================================
-       FOTO DE PREVISUALIZACIÓN
-       ===================================================== */
-
-    #preview-img {
-
-      width: 100%;
-
-      height: auto;
-
-      flex: 1;
-
-      min-height: 0;
-
-      object-fit: contain;
-
-      background: #000;
-
-      display: block;
-    }
-
-
-    /* =====================================================
-       BOTONES DEL PREVIEW
-       ===================================================== */
-
-    .preview-actions {
-
-      width: 100%;
-
-      height: 85px;
-
-      min-height: 85px;
-
-      background: #0a0a0a;
-
-      display: flex;
-
-      justify-content: space-evenly;
-
-      align-items: center;
-    }
-
-
-    /* =====================================================
        TELÉFONOS PEQUEÑOS
        ===================================================== */
 
@@ -744,6 +679,151 @@
 
     }
 
+
+    /* =====================================================
+       GALERÍA INTERNA
+       ===================================================== */
+
+    .gallery-thumb {
+      width: 58px;
+      height: 58px;
+      min-width: 58px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #1a1a1a;
+      border: 2px solid #444;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .gallery-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-thumb-empty {
+      color: #aaa;
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    #gallery-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 120;
+      flex-direction: column;
+    }
+
+    .gallery-header {
+      width: 100%;
+      height: 64px;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      border-bottom: 1px solid #222;
+      background: #0a0a0a;
+    }
+
+    .gallery-title {
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .gallery-close {
+      background: #1a1a1a;
+      color: #fff;
+      border: 1px solid #333;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .gallery-content {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 12px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .gallery-empty {
+      min-height: 50vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #888;
+      font-size: 0.9rem;
+      padding: 20px;
+    }
+
+    .gallery-item {
+      background: #111;
+      border: 1px solid #2b2b2b;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: #000;
+    }
+
+    .gallery-item-actions {
+      display: flex;
+      gap: 6px;
+      padding: 8px;
+    }
+
+    .gallery-action {
+      flex: 1;
+      min-width: 0;
+      background: #1a1a1a;
+      color: #fff;
+      border: 1px solid #333;
+      padding: 8px 5px;
+      border-radius: 7px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .gallery-action-save {
+      background: #e63946;
+      border-color: #e63946;
+    }
+
+    .gallery-action-delete {
+      background: #151515;
+    }
+
+    @media (min-width: 600px) {
+      .gallery-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
   </style>
 
 </head>
@@ -781,60 +861,22 @@
       ></video>
 
 
-      <!-- =================================================
+      <!-- ===============================================
            MARCA DE AGUA
-           SOLO EL LOGO, SIN TEXTO
-           ================================================= -->
-      <div class="camera-watermark" aria-hidden="true">
+           =============================================== -->
 
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
+      <div class="watermark-layer" aria-hidden="true">
 
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
-        <img src="Logo.png" alt="">
+        <img class="watermark-logo watermark-1" src="Logo.png" alt="">
+        <img class="watermark-logo watermark-2" src="Logo.png" alt="">
+        <img class="watermark-logo watermark-3" src="Logo.png" alt="">
+        <img class="watermark-logo watermark-4" src="Logo.png" alt="">
+        <img class="watermark-logo watermark-5" src="Logo.png" alt="">
+        <img class="watermark-logo watermark-6" src="Logo.png" alt="">
+        <img class="watermark-logo watermark-7" src="Logo.png" alt="">
+        <img class="watermark-logo watermark-8" src="Logo.png" alt="">
+        <img class="watermark-logo watermark-9" src="Logo.png" alt="">
+        <img class="watermark-logo watermark-10" src="Logo.png" alt="">
 
       </div>
 
@@ -1006,12 +1048,23 @@
 
 
       <button
-        class="btn-side"
-        onclick="alert('Galería')"
+        class="gallery-thumb"
+        id="gallery-thumb"
+        onclick="openGallery()"
+        aria-label="Abrir galería"
+        title="Galería"
       >
-
-        🖼️ Galería
-
+        <span
+          class="gallery-thumb-empty"
+          id="gallery-thumb-empty"
+        >
+          🖼️
+        </span>
+        <img
+          id="gallery-thumb-img"
+          alt="Última fotografía"
+          style="display:none;"
+        >
       </button>
 
 
@@ -1021,71 +1074,33 @@
   </div>
 
 
+
+
   <!-- =====================================================
-       PREVIEW
+       GALERÍA INTERNA
        ===================================================== -->
 
-  <div
-    id="preview-modal"
-  >
+  <div id="gallery-modal">
 
-
-    <img
-      id="preview-img"
-      alt="Evidencia"
-    >
-
-
-    <div class="preview-actions">
-
-
+    <div class="gallery-header">
+      <div class="gallery-title">Galería</div>
       <button
-        class="btn-side"
-        style="background:#222;"
-        onclick="discardPhoto()"
+        class="gallery-close"
+        onclick="closeGallery()"
+        aria-label="Cerrar galería"
       >
-
-        ❌ Descartar
-
+        ✕
       </button>
-
-
-      <button
-        class="btn-side"
-        style="
-          background:#e63946;
-          border:none;
-        "
-        onclick="downloadPhoto()"
-      >
-
-        💾 Guardar Evidencia
-
-      </button>
-
-
     </div>
 
+    <div class="gallery-content">
+      <div
+        class="gallery-grid"
+        id="gallery-grid"
+      ></div>
+    </div>
 
   </div>
-
-
-  <!-- =====================================================
-       CANVAS OCULTO
-       ===================================================== -->
-
-  <canvas
-    id="video-canvas"
-    style="display:none;"
-  ></canvas>
-
-
-  <!-- =====================================================
-       LEAFLET JS
-       ===================================================== -->
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 
   <script>
 
@@ -1108,18 +1123,6 @@
     const cameraContainer =
       document.getElementById(
         'camera-container'
-      );
-
-
-    const previewModal =
-      document.getElementById(
-        'preview-modal'
-      );
-
-
-    const previewImg =
-      document.getElementById(
-        'preview-img'
       );
 
 
@@ -1153,6 +1156,30 @@
       );
 
 
+    const galleryModal =
+      document.getElementById(
+        'gallery-modal'
+      );
+
+
+    const galleryGrid =
+      document.getElementById(
+        'gallery-grid'
+      );
+
+
+    const galleryThumbImg =
+      document.getElementById(
+        'gallery-thumb-img'
+      );
+
+
+    const galleryThumbEmpty =
+      document.getElementById(
+        'gallery-thumb-empty'
+      );
+
+
     /* =====================================================
        VARIABLES DEL MAPA
        ===================================================== */
@@ -1167,6 +1194,17 @@
        ===================================================== */
 
     let fileName = '';
+
+
+    /* =====================================================
+       GALERÍA LOCAL DE LA APP
+       ===================================================== */
+
+    const GALLERY_DB_NAME = 'CoyoacanGPSGallery';
+    const GALLERY_DB_VERSION = 1;
+    const GALLERY_STORE = 'photos';
+    let galleryDbPromise = null;
+    let currentCapturedPhotoId = null;
 
 
     /* =====================================================
@@ -2808,6 +2846,437 @@
     }
 
 
+
+    /* =====================================================
+       BASE DE DATOS LOCAL DE LA GALERÍA
+       ===================================================== */
+
+    function openGalleryDB() {
+
+      if (galleryDbPromise) {
+        return galleryDbPromise;
+      }
+
+      galleryDbPromise = new Promise((resolve, reject) => {
+
+        if (!('indexedDB' in window)) {
+          reject(new Error('IndexedDB no está disponible en este navegador.'));
+          return;
+        }
+
+        const request = indexedDB.open(
+          GALLERY_DB_NAME,
+          GALLERY_DB_VERSION
+        );
+
+        request.onupgradeneeded = function(event) {
+
+          const db = event.target.result;
+
+          if (!db.objectStoreNames.contains(GALLERY_STORE)) {
+            const store = db.createObjectStore(
+              GALLERY_STORE,
+              { keyPath: 'id', autoIncrement: true }
+            );
+
+            store.createIndex(
+              'createdAt',
+              'createdAt',
+              { unique: false }
+            );
+          }
+        };
+
+        request.onsuccess = function() {
+          resolve(request.result);
+        };
+
+        request.onerror = function() {
+          reject(request.error);
+        };
+      });
+
+      return galleryDbPromise;
+    }
+
+
+    async function savePhotoToAppGallery(imageData, name) {
+
+      const response = await fetch(imageData);
+      const blob = await response.blob();
+
+      const db = await openGalleryDB();
+
+      return new Promise((resolve, reject) => {
+
+        const transaction = db.transaction(
+          GALLERY_STORE,
+          'readwrite'
+        );
+
+        const store = transaction.objectStore(
+          GALLERY_STORE
+        );
+
+        const request = store.add({
+          fileName: name,
+          blob: blob,
+          mimeType: 'image/jpeg',
+          createdAt: Date.now()
+        });
+
+        request.onsuccess = function() {
+          resolve(request.result);
+        };
+
+        request.onerror = function() {
+          reject(request.error);
+        };
+      });
+    }
+
+
+    async function getAllGalleryPhotos() {
+
+      const db = await openGalleryDB();
+
+      return new Promise((resolve, reject) => {
+
+        const transaction = db.transaction(
+          GALLERY_STORE,
+          'readonly'
+        );
+
+        const store = transaction.objectStore(
+          GALLERY_STORE
+        );
+
+        const request = store.getAll();
+
+        request.onsuccess = function() {
+
+          const photos = request.result || [];
+
+          photos.sort(
+            (a, b) => b.createdAt - a.createdAt
+          );
+
+          resolve(photos);
+        };
+
+        request.onerror = function() {
+          reject(request.error);
+        };
+      });
+    }
+
+
+    async function getGalleryPhoto(id) {
+
+      const db = await openGalleryDB();
+
+      return new Promise((resolve, reject) => {
+
+        const transaction = db.transaction(
+          GALLERY_STORE,
+          'readonly'
+        );
+
+        const request = transaction
+          .objectStore(GALLERY_STORE)
+          .get(id);
+
+        request.onsuccess = function() {
+          resolve(request.result || null);
+        };
+
+        request.onerror = function() {
+          reject(request.error);
+        };
+      });
+    }
+
+
+    async function deleteGalleryPhoto(id) {
+
+      const db = await openGalleryDB();
+
+      return new Promise((resolve, reject) => {
+
+        const transaction = db.transaction(
+          GALLERY_STORE,
+          'readwrite'
+        );
+
+        const request = transaction
+          .objectStore(GALLERY_STORE)
+          .delete(id);
+
+        request.onsuccess = function() {
+          resolve();
+        };
+
+        request.onerror = function() {
+          reject(request.error);
+        };
+      });
+    }
+
+
+    function blobToObjectUrl(blob) {
+      return URL.createObjectURL(blob);
+    }
+
+
+    async function updateGalleryThumbnail() {
+
+      try {
+
+        const photos =
+          await getAllGalleryPhotos();
+
+        if (!photos.length) {
+
+          galleryThumbImg.style.display = 'none';
+          galleryThumbImg.removeAttribute('src');
+          galleryThumbEmpty.style.display = 'block';
+          return;
+        }
+
+        const latest = photos[0];
+        const url = blobToObjectUrl(latest.blob);
+
+        galleryThumbImg.onload = function() {
+          URL.revokeObjectURL(url);
+        };
+
+        galleryThumbImg.src = url;
+        galleryThumbImg.style.display = 'block';
+        galleryThumbEmpty.style.display = 'none';
+
+      } catch (error) {
+        console.error(
+          'No se pudo actualizar la miniatura de galería:',
+          error
+        );
+      }
+    }
+
+
+    async function openGallery() {
+
+      galleryModal.style.display = 'flex';
+      galleryGrid.innerHTML =
+        '<div class="gallery-empty">Cargando fotografías...</div>';
+
+      try {
+        await renderGallery();
+      } catch (error) {
+
+        console.error(
+          'No se pudo abrir la galería:',
+          error
+        );
+
+        galleryGrid.innerHTML =
+          '<div class="gallery-empty">No fue posible cargar la galería.</div>';
+      }
+    }
+
+
+    function closeGallery() {
+      galleryModal.style.display = 'none';
+    }
+
+
+    async function renderGallery() {
+
+      const photos = await getAllGalleryPhotos();
+
+      galleryGrid.innerHTML = '';
+
+      if (!photos.length) {
+
+        galleryGrid.innerHTML =
+          '<div class="gallery-empty">Todavía no hay fotografías.<br>Toma una foto y aparecerá aquí.</div>';
+
+        return;
+      }
+
+      photos.forEach(photo => {
+
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+
+        const image = document.createElement('img');
+        image.alt = 'Fotografía de Coyoacan GPS';
+        image.loading = 'lazy';
+
+        const objectUrl = blobToObjectUrl(photo.blob);
+        image.src = objectUrl;
+
+        image.onload = function() {
+          URL.revokeObjectURL(objectUrl);
+        };
+
+        const actions = document.createElement('div');
+        actions.className = 'gallery-item-actions';
+
+        const saveButton = document.createElement('button');
+        saveButton.className =
+          'gallery-action gallery-action-save';
+        saveButton.textContent = 'Guardar';
+        saveButton.type = 'button';
+        saveButton.onclick = function() {
+          saveGalleryPhotoToPhone(photo.id);
+        };
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className =
+          'gallery-action gallery-action-delete';
+        deleteButton.textContent = 'Borrar';
+        deleteButton.type = 'button';
+        deleteButton.onclick = function() {
+          deletePhotoFromGallery(photo.id);
+        };
+
+        actions.appendChild(saveButton);
+        actions.appendChild(deleteButton);
+
+        item.appendChild(image);
+        item.appendChild(actions);
+        galleryGrid.appendChild(item);
+      });
+    }
+
+
+    async function deletePhotoFromGallery(id) {
+
+      const confirmed = window.confirm(
+        '¿Quieres borrar esta fotografía de la galería de la app?'
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+
+        await deleteGalleryPhoto(id);
+        await renderGallery();
+        await updateGalleryThumbnail();
+
+      } catch (error) {
+
+        console.error(
+          'No se pudo borrar la fotografía:',
+          error
+        );
+
+        alert('No fue posible borrar la fotografía.');
+      }
+    }
+
+
+    async function shareBlobToPhone(blob, name) {
+
+      const file = new File(
+        [blob],
+        name || 'Evidencia.jpg',
+        { type: 'image/jpeg' }
+      );
+
+      /*
+       * En Android e iOS, cuando el navegador admite Web Share
+       * con archivos, se abre el selector nativo del sistema.
+       * El usuario puede elegir Guardar imagen/Fotos cuando
+       * esa opción exista en su dispositivo.
+       */
+      if (
+        navigator.share &&
+        navigator.canShare &&
+        navigator.canShare({ files: [file] })
+      ) {
+
+        await navigator.share({
+          files: [file],
+          title: 'Coyoacan GPS',
+          text: 'Evidencia tomada con Coyoacan GPS'
+        });
+
+        return true;
+      }
+
+      /*
+       * Fallback para navegadores sin Web Share con archivos.
+       * El navegador descargará el JPEG y el sistema decide
+       * dónde colocarlo.
+       */
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+
+      link.href = url;
+      link.download = name || 'Evidencia.jpg';
+      link.style.display = 'none';
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setTimeout(
+        () => URL.revokeObjectURL(url),
+        1500
+      );
+
+      return true;
+    }
+
+
+    async function saveGalleryPhotoToPhone(id) {
+
+      try {
+
+        const photo = await getGalleryPhoto(id);
+
+        if (!photo) {
+          return;
+        }
+
+        await shareBlobToPhone(
+          photo.blob,
+          photo.fileName
+        );
+
+      } catch (error) {
+
+        if (error && error.name === 'AbortError') {
+          return;
+        }
+
+        console.error(
+          'No se pudo guardar la fotografía en el teléfono:',
+          error
+        );
+
+        alert(
+          'No fue posible abrir la opción de guardar en el teléfono.'
+        );
+      }
+    }
+
+
+    async function initializeGallery() {
+      try {
+        await updateGalleryThumbnail();
+      } catch (error) {
+        console.error(
+          'No se pudo inicializar la galería:',
+          error
+        );
+      }
+    }
+
+
     /* =====================================================
        TOMAR FOTO
        ===================================================== */
@@ -3038,15 +3507,17 @@
 
 
         /* ==============================================
-           MOSTRAR FOTO
+           GUARDAR AUTOMÁTICAMENTE EN LA APP
            ============================================== */
 
-        previewImg.src =
-          imageData;
+        currentCapturedPhotoId =
+          await savePhotoToAppGallery(
+            imageData,
+            fileName
+          );
 
 
-        previewModal.style.display =
-          'flex';
+        await updateGalleryThumbnail();
 
 
         /* ==============================================
@@ -3121,65 +3592,10 @@
 
 
     /* =====================================================
-       DESCARTAR FOTO
+       INICIALIZAR GALERÍA AL CARGAR LA APP
        ===================================================== */
 
-    function discardPhoto() {
-
-      previewModal.style.display =
-        'none';
-
-
-      previewImg.src =
-        '';
-
-    }
-
-
-    /* =====================================================
-       GUARDAR FOTO
-       ===================================================== */
-
-    function downloadPhoto() {
-
-      if (
-        !previewImg.src
-      ) {
-
-        return;
-
-      }
-
-
-      const link =
-        document.createElement(
-          'a'
-        );
-
-
-      link.href =
-        previewImg.src;
-
-
-      link.download =
-        fileName ||
-        'Evidencia.jpg';
-
-
-      document.body.appendChild(
-        link
-      );
-
-
-      link.click();
-
-
-      link.remove();
-
-
-      discardPhoto();
-
-    }
+    initializeGallery();
 
 
   </script>
