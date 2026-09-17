@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 
@@ -467,6 +468,7 @@
       overflow-wrap: break-word;
     }
 
+
     /* =====================================================
        ESTADO DE LA HORA
        ===================================================== */
@@ -495,15 +497,18 @@
 
     }
 
+
     .time-status-dot.status-green {
       background: #2ecc71;
       box-shadow: 0 0 7px rgba(46, 204, 113, 0.85);
     }
 
+
     .time-status-dot.status-yellow {
       background: #f1c40f;
       box-shadow: 0 0 7px rgba(241, 196, 15, 0.85);
     }
+
 
     .time-status-dot.status-red {
       background: #e74c3c;
@@ -598,6 +603,23 @@
       border: 4px solid #e63946;
 
       cursor: pointer;
+
+      transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
+    }
+
+
+    /* =====================================================
+       BOTÓN DE CAPTURA EN MODO VIDEO
+       FONDO ROJO + BORDE BLANCO
+       ===================================================== */
+
+    .btn-capture.video-mode {
+
+      background: #e63946;
+
+      border-color: #ffffff;
     }
 
 
@@ -1025,6 +1047,7 @@
            MARCA DE AGUA
            SOLO EL LOGO, SIN TEXTO
            ================================================= -->
+
       <div class="camera-watermark" aria-hidden="true">
 
         <img src="Logo.png" alt="">
@@ -1225,7 +1248,8 @@
 
       <button
         class="btn-side"
-        onclick="alert('Modo video')"
+        id="video-mode-button"
+        onclick="toggleVideoMode()"
       >
 
         📹 Video
@@ -1239,7 +1263,8 @@
 
       <button
         class="btn-capture"
-        onclick="takeSnapshot()"
+        id="capture-button"
+        onclick="handleCaptureButton()"
         aria-label="Tomar fotografía"
       >
       </button>
@@ -1474,6 +1499,130 @@
       document.getElementById(
         'time-status-dot'
       );
+
+
+    /* =====================================================
+       ELEMENTOS DEL MODO VIDEO
+       ===================================================== */
+
+    const videoModeButton =
+      document.getElementById(
+        'video-mode-button'
+      );
+
+
+    const captureButton =
+      document.getElementById(
+        'capture-button'
+      );
+
+
+    /*
+     * FALSE = modo fotografía
+     * TRUE  = modo vídeo
+     */
+
+    let videoModeActive = false;
+
+
+    /* =====================================================
+       CAMBIAR ENTRE FOTO Y VIDEO
+       ===================================================== */
+
+    function toggleVideoMode() {
+
+      videoModeActive =
+        !videoModeActive;
+
+
+      if (videoModeActive) {
+
+        /*
+         * MODO VIDEO
+         *
+         * El círculo pasa a:
+         * rojo + borde blanco.
+         */
+
+        captureButton.classList.add(
+          'video-mode'
+        );
+
+
+        videoModeButton.style.background =
+          '#e63946';
+
+
+        videoModeButton.style.borderColor =
+          '#ffffff';
+
+
+        videoModeButton.setAttribute(
+          'aria-label',
+          'Modo video activo'
+        );
+
+
+      } else {
+
+        /*
+         * MODO FOTO
+         *
+         * El círculo vuelve a:
+         * blanco + borde rojo.
+         */
+
+        captureButton.classList.remove(
+          'video-mode'
+        );
+
+
+        videoModeButton.style.background =
+          '#1a1a1a';
+
+
+        videoModeButton.style.borderColor =
+          '#333';
+
+
+        videoModeButton.setAttribute(
+          'aria-label',
+          'Modo video'
+        );
+
+      }
+
+    }
+
+
+    /* =====================================================
+       BOTÓN CENTRAL
+       ===================================================== */
+
+    function handleCaptureButton() {
+
+      /*
+       * Por ahora el modo foto conserva exactamente
+       * la función que ya tenía.
+       *
+       * El modo vídeo queda preparado visualmente
+       * para la siguiente fase de grabación.
+       */
+
+      if (videoModeActive) {
+
+        alert(
+          'Modo video'
+        );
+
+        return;
+
+      }
+
+
+      takeSnapshot();
+
+    }
 
 
     /* =====================================================
@@ -1916,12 +2065,6 @@
           }
         );
 
-        /*
-         * En Android/iOS, cuando el navegador permite compartir
-         * archivos, abrimos el panel nativo del sistema. Desde ahí
-         * el usuario puede elegir Guardar imagen/Fotos o la app
-         * que corresponda.
-         */
         if (
           navigator.share &&
           navigator.canShare &&
@@ -1951,12 +2094,6 @@
           }
         }
 
-        /*
-         * Respaldo para navegadores que no permiten compartir
-         * archivos. En Android normalmente termina en Descargas;
-         * en iOS puede abrirse la hoja/visor del navegador para
-         * que el usuario guarde la imagen manualmente.
-         */
         const url = URL.createObjectURL(photo.blob);
         const link = document.createElement('a');
 
@@ -2021,34 +2158,6 @@
        HORA DE CONFIANZA
        ===================================================== */
 
-    /*
-     * La hora NO se obtiene directamente de new Date()
-     * para mostrarla en la evidencia.
-     *
-     * Cuando hay Internet:
-     *   1. Se consulta la hora de un servidor externo.
-     *   2. Se guarda esa hora como referencia.
-     *   3. Se usa performance.now() para avanzar el reloj.
-     *
-     * performance.now() es un reloj monotónico durante la
-     * sesión y no cambia porque el usuario modifique la hora
-     * del teléfono.
-     *
-     * Cuando se pierde Internet, el reloj continúa desde la
-     * última sincronización mientras la página siga abierta.
-     */
-
-    /*
-     * La zona horaria se determina automáticamente a partir
-     * de las coordenadas GPS. No está fijada a México.
-     *
-     * Ejemplos:
-     *   Coyoacán -> America/Mexico_City
-     *   Nueva York -> America/New_York
-     *   Londres -> Europe/London
-     *   Tokio -> Asia/Tokyo
-     */
-
     let TIME_ZONE = null;
 
     let currentGpsLatitude = null;
@@ -2068,11 +2177,6 @@
       latitud,
       longitud
     ) {
-
-      /*
-       * TimeAPI permite consultar la zona IANA correspondiente
-       * a unas coordenadas geográficas.
-       */
 
       const url =
         'https://timeapi.io/api/timezone/coordinate?latitude=' +
@@ -2136,12 +2240,6 @@
         return '';
 
       }
-
-
-      /*
-       * Se muestra el identificador IANA porque es preciso
-       * y funciona en cualquier país.
-       */
 
       return zona;
 
@@ -2286,18 +2384,12 @@
       }
 
 
-      /*
-       * Para una hora mundial fiable necesitamos las
-       * coordenadas GPS actuales.
-       */
-
       if (
         currentGpsLatitude === null ||
         currentGpsLongitude === null
       ) {
 
         setTimeStatus('yellow');
-
 
         return false;
 
@@ -2310,12 +2402,6 @@
 
       try {
 
-        /*
-         * PASO 1:
-         * Determinar la zona horaria del lugar donde está
-         * físicamente el dispositivo.
-         */
-
         const zona =
           await obtenerZonaHorariaMundial(
             currentGpsLatitude,
@@ -2326,13 +2412,6 @@
         TIME_ZONE =
           zona;
 
-
-        /*
-         * PASO 2:
-         * Consultar la hora actual de esa zona al servidor.
-         *
-         * Se usa un parámetro anti-caché y cache:no-store.
-         */
 
         const timeApiUrl =
           'https://timeapi.io/api/time/current/zone?timeZone=' +
@@ -2380,20 +2459,6 @@
 
         }
 
-
-        /*
-         * IMPORTANTE:
-         * data.dateTime es la hora LOCAL de la zona consultada.
-         * NO se puede hacer new Date(data.dateTime), porque el
-         * navegador podría interpretarla usando la zona horaria
-         * configurada en el dispositivo. Eso provocaba errores
-         * como mostrar 02:00 cuando la hora real era 14:00.
-         *
-         * Primero intentamos usar utcDateTime si la API lo entrega.
-         * Si no existe, convertimos explícitamente los componentes
-         * de la hora local de TIME_ZONE a un instante UTC usando
-         * las reglas IANA de Intl.
-         */
 
         function convertirHoraLocalZonaAUtcMs(
           dateTimeLocal,
@@ -2552,20 +2617,13 @@
         );
 
 
-        /*
-         * Si ya había una sincronización válida, continuamos
-         * offline con ella.
-         */
-
         if (
           getTrustedNowMs() !== null
         ) {
 
           updateTrustedClockDisplay();
 
-
           setTimeStatus('yellow');
-
 
           return true;
 
@@ -2591,20 +2649,11 @@
     }
 
 
-    /*
-     * Actualizar visualmente cada segundo.
-     * NO consulta la hora del teléfono.
-     */
-
     setInterval(
       updateTrustedClockDisplay,
       1000
     );
 
-
-    /*
-     * Si vuelve Internet, intentamos sincronizar otra vez.
-     */
 
     window.addEventListener(
       'online',
@@ -2615,11 +2664,6 @@
       }
     );
 
-
-    /*
-     * Sincronización periódica mientras haya Internet.
-     * Cinco minutos reduce el consumo y mantiene la referencia fresca.
-     */
 
     setInterval(
       function() {
@@ -2635,13 +2679,6 @@
     );
 
 
-    /*
-     * La primera sincronización se realiza después de obtener
-     * las coordenadas GPS, porque la zona horaria depende del
-     * lugar donde se toma la fotografía.
-     */
-
-
     /* =====================================================
        INICIALIZAR / ACTUALIZAR MAPA
        ===================================================== */
@@ -2652,10 +2689,6 @@
     ) {
 
       try {
-
-        /* ==============================================
-           CREAR MAPA POR PRIMERA VEZ
-           ============================================== */
 
         if (!gpsMap) {
 
@@ -2681,10 +2714,6 @@
             );
 
 
-          /* ============================================
-             CAPA OPENSTREETMAP
-             ============================================ */
-
           L.tileLayer(
             'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             {
@@ -2700,10 +2729,6 @@
           );
 
 
-          /* ============================================
-             MARCADOR
-             ============================================ */
-
           gpsMarker =
             L.marker(
               [
@@ -2718,10 +2743,6 @@
         }
         else {
 
-          /* ============================================
-             ACTUALIZAR POSICIÓN DEL MAPA
-             ============================================ */
-
           gpsMap.setView(
 
             [
@@ -2733,10 +2754,6 @@
 
           );
 
-
-          /* ============================================
-             ACTUALIZAR MARCADOR
-             ============================================ */
 
           if (gpsMarker) {
 
@@ -2753,10 +2770,6 @@
 
         }
 
-
-        /* ==============================================
-           ASEGURAR QUE LEAFLET RECALCULE EL TAMAÑO
-           ============================================== */
 
         setTimeout(
           function() {
@@ -2921,21 +2934,12 @@
             position.coords.accuracy;
 
 
-          /*
-           * Guardar la ubicación actual para determinar
-           * automáticamente la zona horaria mundial.
-           */
-
           currentGpsLatitude =
             latitud;
 
           currentGpsLongitude =
             longitud;
 
-
-          /* ==============================================
-             MOSTRAR COORDENADAS REALES
-             ============================================== */
 
           locationCoordinates.innerText =
             `Lat ${latitud.toFixed(6)}, Long ${longitud.toFixed(6)}`;
@@ -2960,30 +2964,17 @@
           );
 
 
-          /* ==============================================
-             ACTUALIZAR MAPA
-             ============================================== */
-
           actualizarMapa(
             latitud,
             longitud
           );
 
 
-          /* ==============================================
-             OBTENER DIRECCIÓN
-             ============================================== */
-
           await obtenerDireccion(
             latitud,
             longitud
           );
 
-
-          /*
-           * Ahora que tenemos GPS, determinamos la zona
-           * horaria del lugar y sincronizamos la hora real.
-           */
 
           await synchronizeTrustedTime();
 
@@ -3130,22 +3121,11 @@
             longitud;
 
 
-          /*
-           * Actualizamos el mapa continuamente.
-           */
-
           actualizarMapa(
             latitud,
             longitud
           );
 
-
-          /*
-           * No hacemos peticiones a Internet por cada
-           * pequeño movimiento. Solo si nos hemos desplazado
-           * al menos aproximadamente 1 km o todavía no existe
-           * una referencia de zona horaria.
-           */
 
           if (
             distancia >= 1000 ||
@@ -3202,18 +3182,6 @@
 
       try {
 
-        /*
-         * Servicio de geocodificación inversa
-         *
-         * Convierte:
-         *
-         * Latitud + Longitud
-         *
-         * en:
-         *
-         * Calle + ciudad + estado + país
-         */
-
         const url =
           `https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&lat=${encodeURIComponent(latitud)}&lon=${encodeURIComponent(longitud)}`;
 
@@ -3262,27 +3230,15 @@
           data.address;
 
 
-        /* ==============================================
-           PAÍS
-           ============================================== */
-
         const pais =
           address.country ||
           '';
 
 
-        /* ==============================================
-           ESTADO
-           ============================================== */
-
         const estado =
           address.state ||
           '';
 
-
-        /* ==============================================
-           CIUDAD / MUNICIPIO
-           ============================================== */
 
         const ciudad =
           address.city ||
@@ -3292,10 +3248,6 @@
           address.county ||
           '';
 
-
-        /* ==============================================
-           CONSTRUIR PRIMERA LÍNEA
-           ============================================== */
 
         const partesUbicacion = [];
 
@@ -3344,10 +3296,6 @@
           'Ubicación desconocida';
 
 
-        /* ==============================================
-           CALLE
-           ============================================== */
-
         const calle =
           address.road ||
           address.pedestrian ||
@@ -3355,10 +3303,6 @@
           address.path ||
           '';
 
-
-        /* ==============================================
-           NÚMERO
-           ============================================== */
 
         const numero =
           address.house_number ||
@@ -3431,11 +3375,6 @@
           error
         );
 
-
-        /*
-         * Si falla la dirección,
-         * conservamos las coordenadas reales.
-         */
 
         locationTitle.innerText =
           'Ubicación GPS';
@@ -3564,10 +3503,6 @@
         video.videoHeight;
 
 
-      /* ================================================
-         MISMO RECORTE QUE OBJECT-FIT: COVER
-         ================================================ */
-
       const containerRatio =
         width / height;
 
@@ -3620,10 +3555,6 @@
       }
 
 
-      /* ================================================
-         DIBUJAR VIDEO
-         ================================================ */
-
       ctx.drawImage(
 
         video,
@@ -3664,12 +3595,6 @@
 
       try {
 
-        /*
-         * La primera foto de la sesión requiere una
-         * sincronización real. Después puede funcionar
-         * sin Internet usando el reloj monotónico.
-         */
-
         if (
           getTrustedNowMs() === null
         ) {
@@ -3700,10 +3625,6 @@
           captureVideoFrame();
 
 
-        /* ==============================================
-           OCULTAR VIDEO
-           ============================================== */
-
         const originalVideoVisibility =
           video.style.visibility;
 
@@ -3711,10 +3632,6 @@
         video.style.visibility =
           'hidden';
 
-
-        /* ==============================================
-           CANVAS DEL FRAME
-           ============================================== */
 
         const backgroundCanvas =
           document.createElement(
@@ -3780,10 +3697,6 @@
         );
 
 
-        /* ==============================================
-           ESPERAR UN FRAME
-           ============================================== */
-
         await new Promise(
           resolve =>
             requestAnimationFrame(
@@ -3791,10 +3704,6 @@
             )
         );
 
-
-        /* ==============================================
-           CAPTURAR CONTENEDOR COMPLETO
-           ============================================== */
 
         const finalCanvas =
           await html2canvas(
@@ -3835,10 +3744,6 @@
           );
 
 
-        /* ==============================================
-           CONVERTIR A JPEG
-           ============================================== */
-
         const imageBlob =
           await new Promise(function(resolve, reject) {
 
@@ -3858,11 +3763,6 @@
 
           });
 
-
-        /* ==============================================
-           NOMBRE DEL ARCHIVO
-           USAR SIEMPRE LA HORA DE CONFIANZA
-           ============================================== */
 
         const trustedCaptureTimeMs =
           getTrustedNowMs();
@@ -3898,10 +3798,6 @@
           `Evidencia_${fileTimestamp}.jpg`;
 
 
-        /* ==============================================
-           GUARDAR DIRECTAMENTE EN LA GALERÍA INTERNA
-           ============================================== */
-
         await savePhotoToAppGallery(
           imageBlob,
           fileName,
@@ -3911,10 +3807,6 @@
 
         await updateGalleryButton();
 
-
-        /* ==============================================
-           RESTAURAR VIDEO
-           ============================================== */
 
         video.style.visibility =
           originalVideoVisibility;
@@ -3979,8 +3871,7 @@
 
         }
 
-      }
-    );
+      });
 
 
     /* =====================================================
