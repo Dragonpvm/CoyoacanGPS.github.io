@@ -132,6 +132,56 @@
 
 
     /* =====================================================
+       MARCA DE AGUA DE LA CÁMARA
+       SOLO LOGO, REPETIDO Y TRANSPARENTE
+       ===================================================== */
+
+    .camera-watermark {
+
+      position: absolute;
+
+      left: -10%;
+      top: -10%;
+      width: 120%;
+      height: 120%;
+
+      display: grid;
+
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(7, 1fr);
+
+      align-items: center;
+      justify-items: center;
+
+      gap: 8px;
+
+      transform: rotate(-18deg);
+
+      z-index: 2;
+
+      pointer-events: none;
+
+      overflow: hidden;
+    }
+
+
+    .camera-watermark img {
+
+      width: clamp(42px, 10vw, 72px);
+      height: clamp(42px, 10vw, 72px);
+
+      object-fit: contain;
+
+      opacity: 0.14;
+
+      display: block;
+
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+
+    /* =====================================================
        TARJETA GPS
        ===================================================== */
 
@@ -417,7 +467,6 @@
       overflow-wrap: break-word;
     }
 
-
     /* =====================================================
        ESTADO DE LA HORA
        ===================================================== */
@@ -443,6 +492,7 @@
       z-index: 30;
 
       border: 1px solid rgba(255,255,255,0.55);
+
     }
 
     .time-status-dot.status-green {
@@ -458,6 +508,9 @@
     .time-status-dot.status-red {
       background: #e74c3c;
       box-shadow: 0 0 7px rgba(231, 76, 60, 0.85);
+    }
+
+      overflow-wrap: break-word;
     }
 
 
@@ -657,6 +710,12 @@
       }
 
 
+      .time-status {
+
+        font-size: 8px;
+      }
+
+
       .photo-credit {
 
         font-size: 10px;
@@ -722,18 +781,69 @@
       ></video>
 
 
+      <!-- =================================================
+           MARCA DE AGUA
+           SOLO EL LOGO, SIN TEXTO
+           ================================================= -->
+      <div class="camera-watermark" aria-hidden="true">
+
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+        <img src="Logo.png" alt="">
+
+      </div>
+
+
       <!-- ===============================================
            TARJETA GPS
            =============================================== -->
 
       <div class="gps-box">
-
-        <div
-          class="time-status-dot status-red"
-          id="time-status-dot"
-          aria-label="Sin sincronización de hora"
-          title="Sin sincronización de hora"
-        ></div>
 
 
         <!-- =============================================
@@ -834,9 +944,16 @@
             id="live-clock"
           >
 
-            Obteniendo fecha y hora...
+            Hora no disponible
 
           </div>
+
+          <div
+            class="time-status-dot status-yellow"
+            id="time-status-dot"
+            title="Sincronizando hora"
+            aria-label="Estado de sincronización de hora"
+          ></div>
 
 
           <!-- ===========================================
@@ -1677,8 +1794,6 @@
      */
 
 
-
-
     /* =====================================================
        INICIALIZAR / ACTUALIZAR MAPA
        ===================================================== */
@@ -2228,8 +2343,6 @@
     }
 
 
-
-
     /* =====================================================
        OBTENER DIRECCIÓN A PARTIR DEL GPS
        ===================================================== */
@@ -2493,6 +2606,8 @@
        ===================================================== */
 
     obtenerUbicacionGPS();
+
+    iniciarSeguimientoGPS();
 
 
     /* =====================================================
@@ -3003,8 +3118,6 @@
 
       }
     );
-
-
 
 
     /* =====================================================
